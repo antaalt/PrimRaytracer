@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../Config.h"
 
 #include <vector>
 
-#include "../GLProgram.h"
+#include "../Config.h"
 
 
-namespace World {
+namespace Application {
 
 	class Node
 	{
@@ -29,8 +28,6 @@ namespace World {
 		void addChild(Node *p_node);
 		void removeChild(Node *p_node);
 
-		void setGLProgram(Application::GLProgram *glProgram);
-
 		Node * getParent() const;
 
 		glm::mat4 getModel() const;
@@ -44,8 +41,6 @@ namespace World {
 		glm::mat4 m_localTransform;
 		Node *m_parent;
 		std::vector<Node*> m_children;
-
-		Application::GLProgram *m_glProgram;
 	};
 
 }

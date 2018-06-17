@@ -13,7 +13,7 @@
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include "tiny_gltf.h"
 
-namespace World {
+namespace Application {
 
 	Scene::Scene()
 	{
@@ -27,23 +27,73 @@ namespace World {
 	bool Scene::loadScene(std::string path)
 	{
 		// TODO use assimp
-		Application::GLProgram *glProgram = new Application::GLProgram();
-		glProgram->attachShader(Application::GLShader::VERTEX_SHADER, "../shaders/shader.vert");
-		glProgram->attachShader(Application::GLShader::FRAGMENT_SHADER, "../shaders/shader.frag");
-		glProgram->linkProgram();
+		GL::Program *glProgram = new GL::Program();
+		bool res = glProgram->attachShader(GL::Shader::VERTEX_SHADER, "../shaders/simpleShader.vert");
+		ASSERT(res == true, "vertexShaderAttach failed");
+		res = glProgram->attachShader(GL::Shader::FRAGMENT_SHADER, "../shaders/simpleShader.frag");
+		ASSERT(res == true, "fragmentShaderAttach failed");
+		res = glProgram->linkProgram();
+		ASSERT(res == true, "LinkProgram failed");
 
 		// TODO load a file
 		Node &root = addNode();
 		m_root = &root;
+
 		Mesh &mesh = addMesh(&root);
+		// Create a cube
+		for (int x = 0; x < 2; x++)
+		{
+			for (int y = 0; y < 2; y++)
+			{
+				for (int z = 0; z < 2; z++)
+				{
+					Vertex vert;
+					vert.position = glm::vec3(x, y, z);
+					vert.normal = glm::normalize(glm::vec3(x, y, z));
+					vert.color = glm::vec4(x, y, z, 1.f);
+					vert.texCoord[0] = glm::vec2(x, y);
+					mesh.addVertex(vert);
+				}
+			}
+		}
+		mesh.addFace(Face(0, 1, 2));
+		mesh.addFace(Face(2, 1, 3));
+		mesh.addFace(Face(2, 7, 3));
+		mesh.addFace(Face(6, 7, 2));
+		mesh.addFace(Face(3, 5, 1));
+		mesh.addFace(Face(7, 5, 3));
+		mesh.addFace(Face(0, 5, 1));
+		mesh.addFace(Face(5, 4, 0));
+		mesh.addFace(Face(6, 4, 2));
+		mesh.addFace(Face(2, 4, 0));
+		mesh.addFace(Face(6, 4, 7));
+		mesh.addFace(Face(7, 4, 5));
+
+		res = mesh.createVAO();
+		ASSERT(res == true, "VAO failed creation");
+
 		Material &material = addMaterial();
 		material.setProgram(glProgram);
+		Image image;
+		res = image.loadFromFile("../textures/ocean.jpg");
+		ASSERT(res == true, "Image not loaded");
+		GL::Texture32 *texture = new GL::Texture32(image.data(), image.width(), image.height(), static_cast<GL::Depth>(image.stride()));
+		// LEAK HERE
+		material.setTexture(TextureType::COLOR_TEXTURE, texture);
 		mesh.setMaterial(&material);
 		Camera &camera = addCamera();
-		camera.setProjection(90.f, DEFAULT_WIDTH / DEFAULT_HEIGHT);
 		camera.setLocalTransform(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 1.f)));
 		m_currentCamera = 0;
 
+		/*tinygltf::Model model;
+		tinygltf::TinyGLTF tinygltfCTX;
+		std::string err;
+		bool res = tinygltfCTX.LoadASCIIFromFile(&model, &err, "");
+		if (!res || !err.empty())
+		{
+			Log::error("Load gltf failed");
+			return false;
+		}*/
 		return true;
 	}
 

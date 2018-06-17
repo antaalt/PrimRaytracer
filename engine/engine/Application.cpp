@@ -227,7 +227,7 @@ namespace Application {
 		}
 		Utils::Timer timer;
 
-		GLRenderer renderer;
+		GL::Renderer renderer;
 		bool init = renderer.init();
 		ASSERT(init == true, "Renderer not initialized");
 		init = renderer.loadScene("NOT_DEFINED_YET_TODO_GLTF");

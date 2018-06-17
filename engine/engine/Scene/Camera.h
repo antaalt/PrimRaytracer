@@ -2,7 +2,7 @@
 
 #include "Node.h"
 
-namespace World {
+namespace Application {
 
 class Camera : public Node
 {

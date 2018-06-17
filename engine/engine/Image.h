@@ -23,15 +23,23 @@ namespace Application {
 		Image();
 		~Image();
 
-		bool load(std::string path);
-		bool save(std::string path, Format format = BMP);
-
+		bool loadFromFile(std::string path);
+		bool loadFromBytes(unsigned char *data, size_t size);
+		bool saveToFile(std::string path, Format format = BMP);
 		Pixel get(unsigned int x, unsigned int y) const;
 
 		const unsigned char *data() const;
 
+		unsigned char * leak();
+
+		unsigned int stride() const;
+		unsigned int width() const;
+		unsigned int height() const;
+		unsigned int size() const;
+
 	private:
 		unsigned int m_width, m_height;
-		std::vector<unsigned char> m_data;
+		unsigned char * m_data;
+		Format m_format;
 	};
 }

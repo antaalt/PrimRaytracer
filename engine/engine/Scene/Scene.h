@@ -7,7 +7,7 @@
 #include "Light.h"
 #include "Camera.h"
 
-namespace World {
+namespace Application {
 
 	class Scene
 	{

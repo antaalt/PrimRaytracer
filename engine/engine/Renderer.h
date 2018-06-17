@@ -27,24 +27,25 @@ namespace Application {
 		} keyboard;
 	};
 
-	class GLRenderer
-	{
-	public:
-		GLRenderer();
-		GLRenderer(glm::uvec2 resolution);
-		~GLRenderer();
+	namespace GL {
+		class Renderer
+		{
+		public:
+			Renderer();
+			Renderer(glm::uvec2 resolution);
+			~Renderer();
 
-		bool loadScene(std::string path);
+			bool loadScene(std::string path);
 
-		void inputs(Inputs &inputs);
+			void inputs(Inputs &inputs);
 
-		bool init();
+			bool init();
 
-		bool render();
+			bool render();
 
-	private:
-		World::Scene m_scene;
-		glm::uvec2 m_resolution;
-	};
-
+		private:
+			Scene m_scene;
+			glm::uvec2 m_resolution;
+		};
+	}
 }

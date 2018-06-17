@@ -1,6 +1,6 @@
 #include "Light.h"
 
-namespace World {
+namespace Application {
 
 	Light::Light()
 	{

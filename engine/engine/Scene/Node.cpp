@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-namespace World {
+namespace Application {
 
 	Node::Node() : m_localTransform(glm::mat4(1.f)), m_parent(nullptr)
 	{
@@ -98,11 +98,6 @@ namespace World {
 		std::vector<Node*>::iterator position = std::find(m_children.begin(), m_children.end(), p_node);
 		if (position != m_children.end())
 			m_children.erase(position);
-	}
-
-	void Node::setGLProgram(Application::GLProgram * glProgram)
-	{
-		m_glProgram = glProgram;
 	}
 
 	Node * Node::getParent() const

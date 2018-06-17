@@ -1,5 +1,6 @@
 #pragma once
 #include "../Config.h"
+#include "../Enum.h"
 #include "Node.h"
 #include "Material.h"
 
@@ -7,7 +8,7 @@
 #include <string>
 
 
-namespace World {
+namespace Application {
 
 #pragma pack(push,1)
 	struct Vertex {
@@ -27,27 +28,14 @@ namespace World {
 	};
 
 	union Face {
-		unsigned int vertex[3];
+		unsigned int data[3];
 		struct {
-			unsigned int a, b, c;
+			unsigned int A, B, C;
 		};
+		Face() {}
+		Face(unsigned int a, unsigned int b, unsigned int c) : A(a), B(b), C(c) {}
 	};
 #pragma pack(pop)
-
-	enum Attributes {
-		POSITION,
-		NORMAL,
-		/*TANGENT,
-		BITANGENT,*/
-		COLOR,
-		TEXCOORD0,
-		TEXCOORD1,
-		TEXCOORD2,
-		TEXCOORD3,
-		NB_ATTRIBUTES
-	};
-
-	void* offset(Attributes att);
 	
 
 	class Mesh : public Node
@@ -61,8 +49,12 @@ namespace World {
 
 		void render(const glm::mat4 &p_model, const glm::mat4 &p_view, const glm::mat4 &p_projection);
 
-	private:
+		void addFace(Face face);
+		void addVertex(Vertex vert);
+
+	
 		bool createVAO();
+	private:
 		void deleteVAO();
 	private:
 		std::vector<Face> m_faces;

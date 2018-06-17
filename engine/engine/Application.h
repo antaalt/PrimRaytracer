@@ -6,7 +6,7 @@
 #include <SDL.h>
 
 #include "Config.h"
-#include "GLRenderer.h"
+#include "Renderer.h"
 
 
 

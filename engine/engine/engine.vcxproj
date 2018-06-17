@@ -123,29 +123,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Enum.cpp" />
     <ClCompile Include="FBO.cpp" />
-    <ClCompile Include="GLProgram.cpp" />
-    <ClCompile Include="GLTexture.cpp" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="GLRenderer.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene\Camera.cpp" />
     <ClCompile Include="Scene\Light.cpp" />
     <ClCompile Include="Scene\Material.cpp" />
     <ClCompile Include="Scene\Mesh.cpp" />
     <ClCompile Include="Scene\Node.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
-    <ClCompile Include="GLShader.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="Utils\Timer.cpp" />
+    <ClCompile Include="Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Enum.h" />
     <ClInclude Include="FBO.h" />
-    <ClInclude Include="GLProgram.h" />
-    <ClInclude Include="GLRenderer.h" />
-    <ClInclude Include="GLTexture.h" />
+    <ClInclude Include="Program.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Scene\Camera.h" />
     <ClInclude Include="Scene\Light.h" />
@@ -153,15 +156,18 @@
     <ClInclude Include="Scene\Mesh.h" />
     <ClInclude Include="Scene\Node.h" />
     <ClInclude Include="Scene\Scene.h" />
-    <ClInclude Include="GLShader.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Utils\LogTest.h" />
     <ClInclude Include="Utils\Timer.h" />
     <ClInclude Include="Utils\Type.h" />
+    <ClInclude Include="Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\shader.frag" />
     <None Include="..\shaders\shader.vert" />
+    <None Include="..\shaders\simpleShader.frag" />
+    <None Include="..\shaders\simpleShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

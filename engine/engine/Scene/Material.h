@@ -1,10 +1,19 @@
 #pragma once
 
-#include "../GLProgram.h"
+#include "../Program.h"
+#include "../Texture.h"
 
 // PBR material
 // @see https://www.allegorithmic.com/pbr-guide
-namespace World {
+namespace Application {
+
+	enum TextureType {
+		COLOR_TEXTURE,
+		NORMAL_TEXTURE,
+		METALNESS_TEXTURE,
+		ROUGHNESS_TEXTURE,
+		NB_TEXTURES
+	};
 
 	class Material
 	{
@@ -12,11 +21,19 @@ namespace World {
 		Material();
 		~Material();
 
-		void setProgram(Application::GLProgram *glProgram);
-		Application::GLProgram *getProgram();
+		bool use();
+
+		GL::Program * getProgram();
+		void setProgram(GL::Program *program);
+		void setColor(const glm::vec4 &color);
+
+		void setTexture(TextureType textureType, GL::Texture32 *texture);
+		GL::Texture32 *getTexture(TextureType textureType);
 
 	private:
-		Application::GLProgram *m_program;
+		glm::vec4 m_color;
+		GL::Program *m_program;
+		std::map<TextureType, GL::Texture32*> m_textures;
 	};
 
 }
