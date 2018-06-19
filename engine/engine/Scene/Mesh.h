@@ -38,7 +38,7 @@ namespace Application {
 #pragma pack(pop)
 	
 
-	class Mesh : public Node
+	class Mesh
 	{
 	public:
 		Mesh();

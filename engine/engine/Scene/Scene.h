@@ -6,8 +6,14 @@
 #include "Material.h"
 #include "Light.h"
 #include "Camera.h"
+#include "tiny_gltf.h"
 
 namespace Application {
+
+	enum class FileFormat {
+		NONE,
+		GLTF
+	};
 
 	class Scene
 	{
@@ -15,21 +21,22 @@ namespace Application {
 		Scene();
 		~Scene();
 
-		bool loadScene(std::string path);
-		bool loadFromGLTF(std::string path);
+		bool loadScene(std::string path, FileFormat fileformat);
 
+
+	public:
 		bool render();
 
 		Camera * getCurrentCamera();
 		const Camera * getCurrentCamera() const;
 
 		Node &addNode(Node *parent = nullptr);
-		Mesh &addMesh(Node *parent = nullptr);
+		Mesh &addMesh();
 		Camera &addCamera(Node *parent = nullptr);
 		Light &addLight(Node *parent = nullptr);
 		Material &addMaterial();
 
-		Node *getNode(size_t index);
+		/*Node *getNode(size_t index);
 		const Node *getNode(size_t index) const;
 		Mesh *getMesh(size_t index);
 		const Mesh *getMesh(size_t index) const;
@@ -38,8 +45,7 @@ namespace Application {
 		Light *getLight(size_t index);
 		const Light *getLight(size_t index) const;
 		Material *getMaterial(size_t index);
-		const Material *getMaterial(size_t index) const;
-
+		const Material *getMaterial(size_t index) const;*/
 
 	private:
 		// TODO Octree
@@ -52,7 +58,19 @@ namespace Application {
 
 		unsigned int m_currentCamera;
 
-		Node *m_root;
+		std::vector<Node*> m_roots;
+
+		class Loader
+		{
+		public:
+			Loader(Scene &scene);
+			~Loader();
+
+			bool loadFromGLTF(std::string path);
+
+		private:
+			Scene &m_scene;
+		};
 
 	};
 

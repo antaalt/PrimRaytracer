@@ -100,6 +100,16 @@ namespace Application {
 			m_children.erase(position);
 	}
 
+	void Node::setMesh(Mesh * mesh)
+	{
+		m_mesh = mesh;
+	}
+
+	Mesh * Node::getMesh()
+	{
+		return m_mesh;
+	}
+
 	Node * Node::getParent() const
 	{
 		return m_parent;
@@ -126,9 +136,15 @@ namespace Application {
 
 	void Node::render(const glm::mat4 & p_model, const glm::mat4 & p_view, const glm::mat4 & p_projection)
 	{
-		//Log::debug("DRAWING NODE" + glm::to_string(p_model) + "\n" + glm::to_string(p_view) + "\n" + glm::to_string(p_projection));
-		// Empty node, nothing to render
-		// TODO render referential conditionnaly
+		if (m_mesh != nullptr)
+		{
+			const glm::mat4 model = p_model * m_localTransform;
+			m_mesh->render(model, p_view, p_projection);
+		}
+		else
+		{
+			// TODO render referential
+		}
 	}
 
 }

@@ -1,10 +1,5 @@
 #include "Scene.h"
 
-#include <cmath>
-#include <iomanip>
-#include <chrono>
-#include <thread>
-#include <future>
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -24,95 +19,78 @@ namespace Application {
 	{
 	}
 
-	bool Scene::loadScene(std::string path)
+	bool Scene::loadScene(std::string path, FileFormat fileformat)
 	{
-		// TODO use assimp
-		GL::Program *glProgram = new GL::Program();
-		bool res = glProgram->attachShader(GL::Shader::VERTEX_SHADER, "../shaders/simpleShader.vert");
-		ASSERT(res == true, "vertexShaderAttach failed");
-		res = glProgram->attachShader(GL::Shader::FRAGMENT_SHADER, "../shaders/simpleShader.frag");
-		ASSERT(res == true, "fragmentShaderAttach failed");
-		res = glProgram->linkProgram();
-		ASSERT(res == true, "LinkProgram failed");
-
-		// TODO load a file
-		Node &root = addNode();
-		m_root = &root;
-
-		Mesh &mesh = addMesh(&root);
-		// Create a cube
-		for (int x = 0; x < 2; x++)
+		switch (fileformat)
 		{
-			for (int y = 0; y < 2; y++)
+		default:
+		case FileFormat::NONE:
+			// TODO use assimp
+			GL::Program *glProgram = new GL::Program();
+			bool res = glProgram->attachShader(GL::Shader::VERTEX_SHADER, "../shaders/simpleShader.vert");
+			ASSERT(res == true, "vertexShaderAttach failed");
+			res = glProgram->attachShader(GL::Shader::FRAGMENT_SHADER, "../shaders/simpleShader.frag");
+			ASSERT(res == true, "fragmentShaderAttach failed");
+			res = glProgram->linkProgram();
+			ASSERT(res == true, "LinkProgram failed");
+
+			// TODO load a file
+			Node &root = addNode();
+			m_roots.push_back(&root);
+
+			Mesh &mesh = addMesh();
+			root.setMesh(&mesh);
+			// Create a cube
+			for (int x = 0; x < 2; x++)
 			{
-				for (int z = 0; z < 2; z++)
+				for (int y = 0; y < 2; y++)
 				{
-					Vertex vert;
-					vert.position = glm::vec3(x, y, z);
-					vert.normal = glm::normalize(glm::vec3(x, y, z));
-					vert.color = glm::vec4(x, y, z, 1.f);
-					vert.texCoord[0] = glm::vec2(x, y);
-					mesh.addVertex(vert);
+					for (int z = 0; z < 2; z++)
+					{
+						Vertex vert;
+						vert.position = glm::vec3(x, y, z);
+						vert.normal = glm::normalize(glm::vec3(x, y, z));
+						vert.color = glm::vec4(x, y, z, 1.f);
+						vert.texCoord[0] = glm::vec2(x, y);
+						mesh.addVertex(vert);
+					}
 				}
 			}
+			mesh.addFace(Face(0, 1, 2));
+			mesh.addFace(Face(2, 1, 3));
+			mesh.addFace(Face(2, 7, 3));
+			mesh.addFace(Face(6, 7, 2));
+			mesh.addFace(Face(3, 5, 1));
+			mesh.addFace(Face(7, 5, 3));
+			mesh.addFace(Face(0, 5, 1));
+			mesh.addFace(Face(5, 4, 0));
+			mesh.addFace(Face(6, 4, 2));
+			mesh.addFace(Face(2, 4, 0));
+			mesh.addFace(Face(6, 4, 7));
+			mesh.addFace(Face(7, 4, 5));
+
+			res = mesh.createVAO();
+			ASSERT(res == true, "VAO failed creation");
+
+			Material &material = addMaterial();
+			material.setProgram(glProgram);
+			Image image;
+			res = image.loadFromFile("../textures/ocean.jpg");
+			ASSERT(res == true, "Image not loaded");
+			GL::Texture32 *texture = new GL::Texture32(image.data(), image.width(), image.height(), static_cast<GL::Depth>(image.stride()));
+			// LEAK HERE
+			material.setTexture(TextureType::COLOR_TEXTURE, texture);
+			mesh.setMaterial(&material);
+			Camera &camera = addCamera();
+			camera.setLocalTransform(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 1.f)));
+			m_currentCamera = 0;
+			break;
+		case FileFormat::GLTF:
+			Loader loader(*this);
+			return loader.loadFromGLTF(path);
+			break;
 		}
-		mesh.addFace(Face(0, 1, 2));
-		mesh.addFace(Face(2, 1, 3));
-		mesh.addFace(Face(2, 7, 3));
-		mesh.addFace(Face(6, 7, 2));
-		mesh.addFace(Face(3, 5, 1));
-		mesh.addFace(Face(7, 5, 3));
-		mesh.addFace(Face(0, 5, 1));
-		mesh.addFace(Face(5, 4, 0));
-		mesh.addFace(Face(6, 4, 2));
-		mesh.addFace(Face(2, 4, 0));
-		mesh.addFace(Face(6, 4, 7));
-		mesh.addFace(Face(7, 4, 5));
-
-		res = mesh.createVAO();
-		ASSERT(res == true, "VAO failed creation");
-
-		Material &material = addMaterial();
-		material.setProgram(glProgram);
-		Image image;
-		res = image.loadFromFile("../textures/ocean.jpg");
-		ASSERT(res == true, "Image not loaded");
-		GL::Texture32 *texture = new GL::Texture32(image.data(), image.width(), image.height(), static_cast<GL::Depth>(image.stride()));
-		// LEAK HERE
-		material.setTexture(TextureType::COLOR_TEXTURE, texture);
-		mesh.setMaterial(&material);
-		Camera &camera = addCamera();
-		camera.setLocalTransform(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 1.f)));
-		m_currentCamera = 0;
-
-		/*tinygltf::Model model;
-		tinygltf::TinyGLTF tinygltfCTX;
-		std::string err;
-		bool res = tinygltfCTX.LoadASCIIFromFile(&model, &err, "");
-		if (!res || !err.empty())
-		{
-			Log::error("Load gltf failed");
-			return false;
-		}*/
-		return true;
-	}
-
-	bool Scene::loadFromGLTF(std::string path)
-	{
-		tinygltf::Model model;
-		tinygltf::TinyGLTF tinygltfctx;
-		std::string err;
-		bool ret = tinygltfctx.LoadASCIIFromFile(&model, &err, path);
-		if (!err.empty())
-		{
-			Log::error(err);
-			return false;
-		}
-		if (!ret)
-		{
-			Log::error("Failed to parse glTF");
-			return false;
-		}
+		
 		return true;
 	}
 
@@ -125,7 +103,8 @@ namespace Application {
 			Log::error("No camera set");
 			return false;
 		}
-		m_root->draw(glm::mat4(1.f), camera->getView(), camera->getProjection());
+		for(int iRoot = 0; iRoot < m_roots.size(); iRoot++)
+			m_roots[iRoot]->draw(glm::mat4(1.f), camera->getView(), camera->getProjection());
 		return true;
 	}
 
@@ -152,12 +131,10 @@ namespace Application {
 		return node;
 	}
 
-	Mesh & Scene::addMesh(Node * parent)
+	Mesh & Scene::addMesh()
 	{
 		m_meshes.emplace_back();
 		Mesh &mesh = m_meshes.back();
-		if (parent != nullptr)
-			mesh.setParent(parent);
 		return mesh;
 	}
 
@@ -186,7 +163,7 @@ namespace Application {
 		return material;
 	}
 
-	Node * Scene::getNode(size_t index)
+	/*Node * Scene::getNode(size_t index)
 	{
 		return &m_nodes[index];
 	}
@@ -234,6 +211,85 @@ namespace Application {
 	const Material * Scene::getMaterial(size_t index) const
 	{
 		return &m_materials[index];
+	}*/
+
+	Scene::Loader::Loader(Scene &scene) : m_scene(scene)
+	{
+	}
+
+	Scene::Loader::~Loader()
+	{
+	}
+
+	bool Scene::Loader::loadFromGLTF(std::string path)
+	{
+		tinygltf::Model model;
+		tinygltf::TinyGLTF tinygltfctx;
+		std::string err;
+		bool ret = tinygltfctx.LoadASCIIFromFile(&model, &err, path);
+		if (!err.empty())
+		{
+			Log::error(err);
+			return false;
+		}
+		if (!ret)
+		{
+			Log::error("Failed to parse glTF");
+			return false;
+		}
+
+		for (size_t iMesh = 0; iMesh < model.meshes.size(); iMesh++)
+		{
+			tinygltf::Mesh &mesh = model.meshes[iMesh];
+			for (size_t iPrimitive = 0; iPrimitive < mesh.primitives.size(); iPrimitive++)
+			{
+				tinygltf::Primitive &primitive = mesh.primitives[iPrimitive];
+				for (auto it = primitive.attributes.begin(); it != primitive.attributes.end(); it++)
+				{
+
+				}
+			}
+		}
+		for (size_t iNode = 0; iNode < model.nodes.size(); iNode++)
+		{
+			tinygltf::Node &node = model.nodes[iNode];
+			Node &newNode = m_scene.addNode();
+			glm::mat4 localTransform;
+			if (node.matrix.size() == 16)
+			{
+				for (int col = 0; col < 4; col++)
+					for (int row = 0; row < 4; row++)
+						localTransform[col][row] = static_cast<float>(node.matrix[col * 4 + row]);
+			}
+			else
+			{
+				glm::mat4 translation(1.f);
+				glm::quat rotation(1.f, 0.f, 0.f, 0.f);
+				glm::mat4 scale(1.f);
+
+				if (node.translation.size() == 3)
+					for (int i = 0; i < 3; i++)
+						translation[3][i] = static_cast<float>(node.translation[i]);
+
+				if (node.scale.size() == 3)
+					for (int i = 0; i < 3; i++)
+						scale[i][i] = static_cast<float>(node.scale[i]);
+
+				if (node.rotation.size() == 4)
+					for (int i = 0; i < 4; i++)
+						rotation[i] = static_cast<float>(node.rotation[i]);
+
+				localTransform = translation * glm::mat4_cast(rotation) * scale;
+			}
+			newNode.setLocalTransform(localTransform);
+			for (int iChildNode = 0; node.children.size(); iChildNode++)
+			{
+				Node &childNode = m_scene.m_nodes[node.children[iChildNode]];
+				newNode.addChild(&childNode);
+			}
+		}
+
+		return true;
 	}
 
 }

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "../Config.h"
-
+#include "Mesh.h"
 
 namespace Application {
 
@@ -28,6 +28,9 @@ namespace Application {
 		void addChild(Node *p_node);
 		void removeChild(Node *p_node);
 
+		void setMesh(Mesh *mesh);
+		Mesh *getMesh();
+
 		Node * getParent() const;
 
 		glm::mat4 getModel() const;
@@ -41,6 +44,7 @@ namespace Application {
 		glm::mat4 m_localTransform;
 		Node *m_parent;
 		std::vector<Node*> m_children;
+		Mesh *m_mesh;
 	};
 
 }

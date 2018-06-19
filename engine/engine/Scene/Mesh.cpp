@@ -96,19 +96,17 @@ namespace Application {
 			GL::Program * p = m_material->getProgram();
 			if (p != nullptr && p->isValid())
 			{
-				// fill the matrices normal, model, modelView, ModelViewProjection, ... (all which contain model)
 				glm::mat4 mv = p_view * p_model;
 				glm::mat4 mvp = p_projection * mv;
 				//glm::mat3 normal = glm::inverseTranspose(glm::mat3(p_model));
 
-				// TODO set uniforms
 				p->updateMatrixUniform(GL::MatrixUniform::MATRIX_MODEL, p_model);
 				p->updateMatrixUniform(GL::MatrixUniform::MATRIX_VIEW, p_view);
 				p->updateMatrixUniform(GL::MatrixUniform::MATRIX_PROJECTION, p_projection);
 				p->updateMatrixUniform(GL::MatrixUniform::MATRIX_MVP, mvp);
 			}
 			else
-				Log::warn("No program set");
+				Log::warn("No valid program set");
 		}
 		if (m_vao)
 		{

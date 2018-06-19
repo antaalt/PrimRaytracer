@@ -20,7 +20,7 @@ namespace Application {
 
 		bool Renderer::loadScene(std::string path)
 		{
-			bool res = m_scene.loadScene(path);
+			bool res = m_scene.loadScene(path, FileFormat::NONE);
 			float ratio = m_resolution.x / m_resolution.y;
 			m_scene.getCurrentCamera()->setProjection(45.f / ratio, ratio);
 			return res;
