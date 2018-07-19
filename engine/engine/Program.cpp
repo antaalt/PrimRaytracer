@@ -43,9 +43,9 @@ namespace Application {
 
 		bool Program::linkProgram()
 		{
-			for (int i = 0; i < Attributes::NB_ATTRIBUTES; i++)
+			/*for (int i = 0; i < Attributes::NB_ATTRIBUTES; i++)
 				glBindAttribLocation(m_programID, i, attributesNames(static_cast<Attributes>(i)));
-
+				*/
 			// link program
 			glLinkProgram(m_programID);
 			GLint linked;

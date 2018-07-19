@@ -12,6 +12,7 @@ namespace Application {
 		template<typename T>
 		Texture<T>::Texture(const unsigned char *data, unsigned int width, unsigned int height, Depth depth)
 		{
+			ASSERT(depth == RGB, "Not rgb texture");
 			m_depth = depth;
 			m_width = width;
 			m_height = height;
@@ -20,7 +21,7 @@ namespace Application {
 			// TODO check if we need to store image
 			glGenTextures(1, &m_textureID);
 			glBindTexture(GL_TEXTURE_2D, m_textureID);
-			const GLenum type = (sizeof(T) == 4) ? GL_FLOAT : GL_UNSIGNED_BYTE
+			const GLenum type = (sizeof(T) == 4) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, type, &m_data[0]);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -59,7 +60,7 @@ namespace Application {
 			return m_textureID;
 		}
 
-		template Texture<float>;
-		template Texture<unsigned char>;
+		template class Texture<float>;
+		template class Texture<unsigned char>;
 	}
 }

@@ -2,9 +2,9 @@
 
 
 #define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
+/*#define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#define STBI_MSC_SECURE_CRT
+#define STBI_MSC_SECURE_CRT*/
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include "tiny_gltf.h"
 
@@ -24,7 +24,7 @@ namespace Application {
 		switch (fileformat)
 		{
 		default:
-		case FileFormat::NONE:
+		case FileFormat::NONE: {
 			// TODO use assimp
 			GL::Program *glProgram = new GL::Program();
 			bool res = glProgram->attachShader(GL::Shader::VERTEX_SHADER, "../shaders/simpleShader.vert");
@@ -74,20 +74,21 @@ namespace Application {
 
 			Material &material = addMaterial();
 			material.setProgram(glProgram);
-			Image image;
-			res = image.loadFromFile("../textures/ocean.jpg");
-			ASSERT(res == true, "Image not loaded");
-			GL::Texture32 *texture = new GL::Texture32(image.data(), image.width(), image.height(), static_cast<GL::Depth>(image.stride()));
+			Image image("../textures/ocean.jpg");
+			GL::Texture32 *texture = new GL::Texture32(image.data(), image.width(), image.height(), static_cast<GL::Depth>(image.componentSize()));
 			// LEAK HERE
 			material.setTexture(TextureType::COLOR_TEXTURE, texture);
 			mesh.setMaterial(&material);
 			Camera &camera = addCamera();
 			camera.setLocalTransform(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 1.f)));
+
 			m_currentCamera = 0;
+		}
 			break;
-		case FileFormat::GLTF:
+		case FileFormat::GLTF: {
 			Loader loader(*this);
 			return loader.loadFromGLTF(path);
+		}
 			break;
 		}
 		
@@ -103,7 +104,7 @@ namespace Application {
 			Log::error("No camera set");
 			return false;
 		}
-		for(int iRoot = 0; iRoot < m_roots.size(); iRoot++)
+		for(size_t iRoot = 0; iRoot < m_roots.size(); iRoot++)
 			m_roots[iRoot]->draw(glm::mat4(1.f), camera->getView(), camera->getProjection());
 		return true;
 	}
