@@ -2,6 +2,7 @@
 
 #include "Utils/Timer.h"
 #include "Utils/Log.h"
+#include "PathTracer.h"
 
 
 namespace Application {
@@ -237,12 +238,13 @@ namespace Application {
 
 		// LOOP
 		timer.tick();
+		RayTracer::PathTracer tracer(10);
 		while (!events())
 		{
 			timer.displayFPS();
 
 			renderer.inputs(m_inputs);
-			renderer.render();
+			renderer.render(tracer);
 
 			SDL_GL_SwapWindow(m_window);
 			// Free the processor

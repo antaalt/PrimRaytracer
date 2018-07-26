@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Config.h"
-#include "Scene.h"
 #include "Tracer.h"
 
 #include <string>
@@ -29,6 +28,7 @@ namespace Application {
 		} keyboard;
 	};
 
+
 	class Renderer
 	{
 	public:
@@ -45,7 +45,8 @@ namespace Application {
 		bool render(const RayTracer::Tracer &tracer);
 
 	private:
-		Scene m_scene;
+		RayTracer::Scene m_scene;
+		RayTracer::Tracer::Ptr m_tracer;
 		unsigned int m_width, m_height;
 	};
 }

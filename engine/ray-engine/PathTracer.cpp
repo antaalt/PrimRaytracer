@@ -9,9 +9,18 @@ namespace Application::RayTracer {
 	{
 	}
 
+	PathTracer::PathTracer(unsigned int maxDepth) : max_depth(maxDepth)
+	{
+	}
+
 
 	PathTracer::~PathTracer()
 	{
+	}
+
+	Pixel miss()
+	{
+		return Pixel();
 	}
 
 	Pixel PathTracer::castRay(const Ray & ray, const Accelerator & accelerator, const Options & options, unsigned int depth) const
@@ -25,15 +34,14 @@ namespace Application::RayTracer {
 		float pdf;
 		Ray newRay = intersection.material->scatter(ray, intersection, pdf);
 
-
 		Color32 color;
+		Color32 directLight;
+		Color32 indirectLight;
 		switch (intersection.material->type())
 		{
 		case MaterialType::LAMBERTIAN:
 			// TODO compute direct lighting
-			Color32 directLight;
-			Color32 indirectLight = castRay(newRay, accelerator, options, depth++).color32();
-			color = directLight + indirectLight; // TODO pdf & BRDF
+			indirectLight = castRay(newRay, accelerator, options, depth++).color32();
 			break;
 		case MaterialType::SPECULAR:
 			break;
@@ -45,13 +53,13 @@ namespace Application::RayTracer {
 			break;
 		}
 
+		color = directLight + indirectLight; // TODO pdf & BRDF
 		return color;
 	}
 
 	bool PathTracer::trace(const Ray & ray, const Accelerator & accelerator, Intersection &intersection) const
 	{
-		// loop over all element through accelerator, check intersections and return data
-		return true;
+		return accelerator.intersect(ray, intersection);
 	}
 
 }

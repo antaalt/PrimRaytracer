@@ -9,10 +9,10 @@ namespace Application::RayTracer {
 		{
 			normal = n;
 			if (std::fabs(n.x) > std::fabs(n.z))
-				binormal = normalize(Vector3(-n.y, n.x, 0.f));
+				binormal = Vector3::normalize(Vector3(-n.y, n.x, 0.f));
 			else
-				binormal = normalize(Vector3(0, -n.z, n.y));
-			tangent = cross(binormal, normal);
+				binormal = Vector3::normalize(Vector3(0, -n.z, n.y));
+			tangent = Vector3::cross(binormal, normal);
 		}
 
 		inline Vector3 transform(const Normal &p)

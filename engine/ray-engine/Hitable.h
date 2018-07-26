@@ -1,6 +1,8 @@
 #pragma once
 #include "Ray.h"
 
+#include <climits>
+
 
 namespace Application::RayTracer {
 		
@@ -10,8 +12,10 @@ namespace Application::RayTracer {
 		bool hit;
 		Point3 point;
 		Normal normal;
+		Texcoord texCoord;
+		float distance;
 		Material *material;
-		Intersection() : material(nullptr), hit(false) {};
+		Intersection() : material(nullptr), hit(false), distance(std::numeric_limits<float>::max()) {};
 	};
 
 	class Hitable

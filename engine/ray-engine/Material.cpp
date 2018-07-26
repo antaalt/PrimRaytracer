@@ -12,15 +12,15 @@ namespace Application {
 		
 		Vector3 reflect(const Vector3 & incident, const Normal & normal)
 		{
-			return incident - 2.f * dot(incident, normal) * normal;
+			return incident - 2.f * Vector3::dot(incident, normal) * normal;
 		}
 		Vector3 refract(const Vector3 & incident, const Normal & normal, float eta)
 		{
-			float R = 1.f - eta * eta * (1.f - dot(incident, normal) * dot(incident, normal));
+			float R = 1.f - eta * eta * (1.f - Vector3::dot(incident, normal) * Vector3::dot(incident, normal));
 			if (R < 0.f)
 				return Vector3(0.f);
 			else
-				return eta * incident - (eta * dot(incident, normal) + sqrtf(R)) * normal;
+				return eta * incident - (eta * Vector3::dot(incident, normal) + sqrtf(R)) * normal;
 			// TODO use fresnel instead
 			//float R = fresnel(incident, normal, eta); 
 		}

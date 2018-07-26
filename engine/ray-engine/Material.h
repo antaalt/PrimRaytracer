@@ -31,6 +31,7 @@ namespace Application::RayTracer {
 	class Material
 	{
 	public:
+		using Ptr = Material*;
 		Color32 albedo;
 		Texture *colorTexture;
 			
@@ -40,7 +41,7 @@ namespace Application::RayTracer {
 		Material() : colorTexture(nullptr) {}
 	};
 
-	class Lambertian : public Material {
+	class Diffuse : public Material {
 	public:
 		Sampler sampler;
 		virtual Ray scatter(const Ray &in, const Intersection &intersection, float &pdf)
@@ -71,13 +72,13 @@ namespace Application::RayTracer {
 		}
 	};
 
-	class Transmission : public Material {
+	class Dielectric : public Material {
 	public:
 		float eta;
 
 		virtual Ray scatter(const Ray &in, const Intersection &intersection, float &pdf)
 		{
-			bool inside = dot(in.direction, intersection.normal) > 0.f;
+			bool inside = Vector3::dot(in.direction, intersection.normal) > 0.f;
 			float tmp_eta = 1.f / eta;
 			Vector3 refracted = refract(in.direction, intersection.normal, tmp_eta); // TODO better fresnel & co
 			//pdf = 1.f;
@@ -89,7 +90,7 @@ namespace Application::RayTracer {
 		}
 	};
 
-	class MicroFacet : public Material {
+	class Metal : public Material {
 	public:
 		Vector3 roughness;
 		Sampler sampler;

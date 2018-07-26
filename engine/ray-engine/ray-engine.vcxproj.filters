@@ -34,6 +34,15 @@
     <Filter Include="Source Files\Tracer">
       <UniqueIdentifier>{e674d046-520c-467d-aa68-b097d737b324}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scene\Acceleration">
+      <UniqueIdentifier>{3f7b1173-1805-4256-8736-bac6a96fc7c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Acceleration">
+      <UniqueIdentifier>{78c21ae7-e095-45cf-a768-b7ee0ded00ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tracer\Helpers">
+      <UniqueIdentifier>{67bc39fa-3b4b-4bf4-a315-a752ed1a014a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -54,9 +63,6 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
@@ -69,23 +75,32 @@
     <ClCompile Include="Tracer.cpp">
       <Filter>Source Files\Tracer</Filter>
     </ClCompile>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Accelerator.cpp">
-      <Filter>Source Files\Tracer</Filter>
-    </ClCompile>
     <ClCompile Include="Hitable.cpp">
       <Filter>Source Files\Tracer</Filter>
     </ClCompile>
     <ClCompile Include="PathTracer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Tracer</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitive.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Accelerator.cpp">
+      <Filter>Source Files\Scene\Acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="Octree.cpp">
+      <Filter>Source Files\Scene\Acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="NoAccel.cpp">
+      <Filter>Source Files\Scene\Acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Tracer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,9 +128,6 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Types.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
@@ -125,20 +137,11 @@
     <ClInclude Include="Tracer.h">
       <Filter>Header Files\Tracer</Filter>
     </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix4.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Vector3.h">
       <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Accelerator.h">
-      <Filter>Header Files\Tracer</Filter>
     </ClInclude>
     <ClInclude Include="Hitable.h">
       <Filter>Header Files\Tracer</Filter>
@@ -146,23 +149,44 @@
     <ClInclude Include="BoundingBox.h">
       <Filter>Header Files\Tracer</Filter>
     </ClInclude>
-    <ClInclude Include="Onb.h">
-      <Filter>Header Files\Tracer</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Header Files\Tracer</Filter>
-    </ClInclude>
     <ClInclude Include="Random.h">
       <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="PathTracer.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vector4.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="PathTracer.h">
+      <Filter>Header Files\Tracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Primitive.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Accelerator.h">
+      <Filter>Header Files\Scene\Acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="Octree.h">
+      <Filter>Header Files\Scene\Acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="NoAccel.h">
+      <Filter>Header Files\Scene\Acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Onb.h">
+      <Filter>Header Files\Tracer\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files\Tracer\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Tracer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

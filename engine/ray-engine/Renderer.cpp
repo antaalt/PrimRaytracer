@@ -3,6 +3,9 @@
 #include "Tracer.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Octree.h"
+#include "NoAccel.h"
+
 
 namespace Application {
 
@@ -21,8 +24,9 @@ namespace Application {
 
 	bool Renderer::loadScene(std::string path)
 	{
-		/*bool res = m_scene.loadScene(path, FileFormat::NONE);
-		float ratio = m_resolution.x / static_cast<float>(m_resolution.y);
+		
+		m_scene = RayTracer::Scene::GLTF::load(path);
+		/*float ratio = m_resolution.x / static_cast<float>(m_resolution.y);
 		m_scene.getCurrentCamera()->setProjection(90.f / ratio, ratio);
 		return res;*/
 		return true;
@@ -89,26 +93,29 @@ namespace Application {
 		glClearDepth(1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		RayTracer::Accelerator accelerator; // TODO build scene
+		RayTracer::NoAccel acceleration; // TODO build scene
 		RayTracer::Options options;
 		RayTracer::Camera camera;
 		options.backgroundColor = Color32();
 		options.maxDepth = 10;
 
 		RayTracer::Texture output;
+		// TODO add samples
 		for (unsigned int y = 0; y < m_height; y++)
 		{
 			for (unsigned int x = 0; x < m_width; x++)
 			{
 				// TODO generate ray with camera
 				RayTracer::Ray ray(Point3(0.f), Vector3(0.f, 0.f, 1.f));
-				RayTracer::Pixel pixel = tracer.castRay(ray, accelerator, options);
+				RayTracer::Pixel pixel = tracer.castRay(ray, acceleration, options);
 				output.set(x, y, pixel);
 			}
 		}
 
+		glDrawPixels(m_width, m_height, GL_FLOAT, GL_FLOAT, output.data());
 
+		output.saveToFile("output.jpg");
 
-		return true;// m_scene.render();
+		return true;
 	}
 }

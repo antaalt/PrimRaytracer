@@ -57,7 +57,12 @@ namespace Application::RayTracer {
 	}
 	Color32 Pixel::color32()
 	{
-		return Color32(r * 255, g * 255, b * 255, a * 255);
+		return Color32(
+			static_cast<unsigned char>(r * 255.f), 
+			static_cast<unsigned char>(g * 255.f), 
+			static_cast<unsigned char>(b * 255.f), 
+			static_cast<unsigned char>(a * 255.f)
+		);
 	}
 	ColorHDR Pixel::colorHDR()
 	{
