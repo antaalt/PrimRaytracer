@@ -1,14 +1,13 @@
 #include "Material.h"
 
 #include "Physics.h"
-#include "Random.h"
+#include "Sampler.h"
 
 #include <cmath>
 
-using Random = effolkronium::random_static;
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
+	namespace prim {
 		
 		Vector3 reflect(const Vector3 & incident, const Normal & normal)
 		{
@@ -24,7 +23,7 @@ namespace Application {
 			// TODO use fresnel instead
 			//float R = fresnel(incident, normal, eta); 
 		}
-		Vector3 sampleUnitSphere(const Sampler &sampler)
+		Vector3 sampleUnitSphere(const rand::Sampler &sampler)
 		{
 			float r1 = sampler.r1();
 			float r2 = sampler.r2();
@@ -35,7 +34,7 @@ namespace Application {
 			float z = sinTheta * sinf(phi);
 			return Vector3(x, r1, z);
 		}
-		Vector3 sampleMicroFacet(const Sampler &sampler, float roughness)
+		Vector3 sampleMicroFacet(const rand::Sampler &sampler, float roughness)
 		{
 			float r1 = sampler.r1();
 			float r2 = sampler.r2();
@@ -46,14 +45,6 @@ namespace Application {
 			p.y = std::sinf(phi) * std::sinf(theta);
 			p.z = std::cosf(phi);
 			return p;
-		}
-		float Sampler::r1() const
-		{
-			return Random::get(0.f, 1.f);
-		}
-		float Sampler::r2() const
-		{
-			return Random::get(0.f, 1.f);
 		}
 	}
 }

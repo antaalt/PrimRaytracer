@@ -4,7 +4,7 @@
 #include "Utils/Log.h"
 
 
-namespace Application {
+namespace app {
 
 	Application::Application() : Application(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 	{

@@ -4,10 +4,11 @@
 
 #include <vector>
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
 
-		struct Vertex {
+	namespace prim {
+
+		/*struct Vertex {
 			Point3 position;
 			Normal normal;
 			Texcoord texcoord;
@@ -33,12 +34,11 @@ namespace Application {
 			Primitive();
 			~Primitive();
 
-			virtual bool intersect(const Ray &ray, Intersection &intersection) const;
+			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const;
 
 			std::vector<Vertex> vertices;
 			std::vector<Triangle> triangles;
 			Material::Ptr material;
-		};
-
+		};*/
 	}
 }

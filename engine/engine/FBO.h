@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Config.h"
-namespace Application {
+namespace app {
 	namespace GL {
 		class FBO
 		{

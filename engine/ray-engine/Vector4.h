@@ -27,6 +27,8 @@ namespace Math {
 		template <typename T>
 		friend Vector4<T> operator*(const Vector4<T> &vec, float scalar);
 		template <typename T>
+		friend Vector4<T> operator*(const Vector4<T> &lhs, const Vector4<T> &rhs);
+		template <typename T>
 		friend Vector4<T> operator*(float scalar, const Vector4<T> &vec);
 		template <typename T>
 		friend Vector4<T> operator/(const Vector4<T> &vec, float scalar);
@@ -101,6 +103,17 @@ namespace Math {
 	Vector4<T> operator*(const Vector4<T>& lhs, float scalar)
 	{
 		return Vector4<T>(lhs.x * scalar, lhs.y * scalar, lhs.z * scalar, lhs.w * scalar);
+	}
+
+	template<typename T>
+	Vector4<T> operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
+	{
+		return Vector4<T>(
+			lhs.x * rhs.x,
+			lhs.y * rhs.y,
+			lhs.z * rhs.z,
+			lhs.w * rhs.w
+		);
 	}
 
 	template<typename T>

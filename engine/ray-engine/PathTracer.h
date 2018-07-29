@@ -1,20 +1,19 @@
 #pragma once
 #include "Tracer.h"
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
+	namespace tracer {
 
 		class PathTracer : public Tracer
 		{
 		public:
 			PathTracer();
-			PathTracer(unsigned int maxDepth);
 			~PathTracer();
-			virtual Pixel castRay(const Ray &ray, const Accelerator &accelerator, const Options &options, unsigned int depth = 0) const;
+			virtual Pixel castRay(const Ray &ray, const Accelerator::Ptr accelerator, const Options &options, unsigned int depth = 0) const;
 
-			virtual bool trace(const Ray &ray, const Accelerator &accelerator, Intersection &intersection) const;
+			virtual bool trace(const Ray &ray, const Accelerator::Ptr accelerator, prim::HitInfo &info) const;
 
-			unsigned int max_depth;
+			virtual Pixel miss(const Ray &ray) const;
 		};
 	}
 }

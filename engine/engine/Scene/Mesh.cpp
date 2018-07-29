@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-namespace Application {
+namespace app {
 
 	Mesh::Mesh()
 	{

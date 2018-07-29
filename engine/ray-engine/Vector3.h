@@ -34,6 +34,8 @@ namespace Math {
 		friend Vector3<T> operator+(const Vector3<T>& lhs, const Vector3<T>& rhs);
 		template <typename T>
 		friend Vector3<T> operator-(const Vector3<T>& lhs, const Vector3<T>& rhs);
+		template <typename T>
+		friend Vector3<T> operator-(const Vector3<T>& vec);
 
 		// Functions
 		float length() const;
@@ -79,6 +81,8 @@ namespace Math {
 	{
 		return !(*this == v);
 	}
+
+	
 
 	template<typename T>
 	inline float Vector3<T>::length() const
@@ -136,6 +140,12 @@ namespace Math {
 	Vector3<T> operator-(const Vector3<T>& lhs, const Vector3<T>& rhs)
 	{
 		return Vector3<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+	}
+
+	template<typename T>
+	Vector3<T> operator-(const Vector3<T>& vec)
+	{
+		return Vector3<T>(-vec.x, -vec.y, -vec.z);
 	}
 
 	template<typename T>

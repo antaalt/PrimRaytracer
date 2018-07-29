@@ -2,14 +2,14 @@
 
 #include "Types.h"
 
-namespace Application::RayTracer {
+namespace app {
 
-	inline float fresnel(const Vector3 &incident, const Normal &normal, float eta)
-	{
-		
-	}
-	inline float fresnel_schlick()
-	{
-		// TODO equation fs
+	namespace physics {
+
+		inline float fresnel(const Vector3 &incident, const Normal &normal, float eta)
+		{
+
+		}
+
 	}
 }

@@ -4,7 +4,7 @@
 #include <vector>
 
 
-namespace Application {
+namespace app {
 
 	// Format	Extensions		Magic Number
 	// JPEG		.jpg / .jpeg	ff d8 ff e0

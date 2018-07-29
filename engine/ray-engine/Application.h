@@ -11,7 +11,7 @@
 
 
 
-namespace Application {
+namespace app {
 
 	class Application
 	{
@@ -37,7 +37,7 @@ namespace Application {
 		SDL_DisplayMode m_displayMode;
 		SDL_Window *m_window;
 		SDL_GLContext m_glContext;
-		SDL_Rect m_windowSize;
+		unsigned int m_width, m_height;
 		Inputs m_inputs;
 	};
 

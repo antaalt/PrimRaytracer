@@ -8,7 +8,7 @@
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include "tiny_gltf.h"
 
-namespace Application {
+namespace app {
 
 	Scene::Scene()
 	{

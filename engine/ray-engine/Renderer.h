@@ -2,10 +2,12 @@
 
 #include "Config.h"
 #include "Tracer.h"
+#include "Camera.h"
+#include "PixelBuffer.h"
 
 #include <string>
 
-namespace Application {
+namespace app {
 
 	enum KeyPosition {
 		RIGHT,
@@ -28,25 +30,33 @@ namespace Application {
 		} keyboard;
 	};
 
+	namespace tracer {
 
-	class Renderer
-	{
-	public:
-		Renderer();
-		Renderer(unsigned int width, unsigned int height);
-		~Renderer();
+		class Renderer
+		{
+		public:
+			Renderer(unsigned int width, unsigned int height);
+			~Renderer();
 
-		bool loadScene(std::string path);
+			bool loadScene(std::string path, Acceleration acceleration);
 
-		void inputs(Inputs &inputs);
+			void inputs(Inputs &inputs);
 
-		bool init();
+			bool init();
 
-		bool render(const RayTracer::Tracer &tracer);
+			bool render();
 
-	private:
-		RayTracer::Scene m_scene;
-		RayTracer::Tracer::Ptr m_tracer;
-		unsigned int m_width, m_height;
-	};
+			void setTracer(tracer::Tracer::Ptr tracer);
+			void setCamera(tracer::Camera::Ptr camera);
+
+		private:
+			Scene m_scene;
+			Camera::Ptr m_camera;
+			Tracer::Ptr m_tracer;
+			std::vector<tracer::Ray> m_rays;
+			Accelerator::Ptr m_accelerator;
+			unsigned int m_width, m_height;
+			PixelBuffer m_output;
+		};
+	}
 }

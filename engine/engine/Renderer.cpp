@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace Application {
+namespace app {
 	namespace GL {
 
 		Renderer::Renderer() : Renderer(glm::uvec2(DEFAULT_WIDTH, DEFAULT_HEIGHT))

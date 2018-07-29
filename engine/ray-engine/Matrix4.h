@@ -1,10 +1,14 @@
 #pragma once
 
+#include "Vector4.h"
+#include "Vector3.h"
+#include "Quaternion.h"
+
 namespace Math {
 
 	template <typename T>
 	struct Matrix4 {
-		typedef Vector4<T> Col;
+		using Col = Vector4<T>;
 		union {
 			T data[4 * 4];
 			struct {
@@ -22,14 +26,17 @@ namespace Math {
 		inline Matrix4<T> transpose() const;
 		inline Matrix4<T> inverse() const;
 		static Matrix4<T> identity();
+		static Matrix4<T> zero();
 
-		//static Matrix4<T> TRS(const Vector3<T> &translation, const Quaternion<T> &rotation, const Vector3<T> &scale);
+		static Matrix4<T> TRS(const Vector3<T> &translation, const Quaternion<T> &rotation, const Vector3<T> &scale);
 
 		template <typename T>
 		friend Matrix4<T> operator*(const Matrix4<T> &lhs, const Matrix4<T> &rhs);
 
 		template <typename T>
 		friend Vector4<T> operator*(const Matrix4<T> &lhs, const Vector4<T> &rhs);
+		template <typename T>
+		friend Vector3<T> operator*(const Matrix4<T> &lhs, const Vector3<T> &rhs);
 
 		inline bool operator==(const Matrix4<T> &c) const;
 		inline bool operator!=(const Matrix4<T> &c) const;
@@ -41,11 +48,11 @@ namespace Math {
 	template<typename T>
 	inline Matrix4<T> operator*(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
 	{
-		Matrix4<T> out;
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 4; j++)
+		Matrix4<T> out = Matrix4<T>::zero();
+		for (int iCol = 0; iCol < 4; iCol++)
+			for (int iRow = 0; iRow < 4; iRow++)
 				for (int k = 0; k < 4; k++)
-					out[i][j] += lhs[i][k] * rhs[k][j];
+					out[iCol][iRow] += lhs[iCol][k] * rhs[k][iRow];
 		return out;
 	}
 
@@ -57,6 +64,16 @@ namespace Math {
 			lhs.col[0].y * rhs.x + lhs.col[1].y * rhs.y + lhs.col[2].y * rhs.z + lhs.col[3].y * rhs.w,
 			lhs.col[0].z * rhs.x + lhs.col[1].z * rhs.y + lhs.col[2].z * rhs.z + lhs.col[3].z * rhs.w,
 			lhs.col[0].w * rhs.x + lhs.col[1].w * rhs.y + lhs.col[2].w * rhs.z + lhs.col[3].w * rhs.w
+			);
+	}
+
+	template<typename T>
+	Vector3<T> operator*(const Matrix4<T>& lhs, const Vector3<T>& rhs)
+	{
+		return Vector3<T>(
+			lhs.col[0].x * rhs.x + lhs.col[1].x * rhs.y + lhs.col[2].x * rhs.z + lhs.col[3].x,
+			lhs.col[0].y * rhs.x + lhs.col[1].y * rhs.y + lhs.col[2].y * rhs.z + lhs.col[3].y,
+			lhs.col[0].z * rhs.x + lhs.col[1].z * rhs.y + lhs.col[2].z * rhs.z + lhs.col[3].z
 			);
 	}
 
@@ -141,17 +158,27 @@ namespace Math {
 			Col(0, 0, 0, 1)
 			);
 	}
-	/*template<typename T>
+	template<typename T>
+	inline Matrix4<T> Matrix4<T>::zero()
+	{
+		return Matrix4<T>(
+			Col(0, 0, 0, 0),
+			Col(0, 0, 0, 0),
+			Col(0, 0, 0, 0),
+			Col(0, 0, 0, 0)
+			);
+	}
+	template<typename T>
 	inline Matrix4<T> Matrix4<T>::TRS(const Vector3<T>& translation, const Quaternion<T> & rotation, const Vector3<T>& scale)
 	{
 		Matrix4<T> t = Matrix4<T>::identity();
-		t[3] = toVec4(translation, 1.f);
-		Matrix4<T> r = toMat4(rotation);
+		t[3] = Vector4<T>(translation.x, translation.y, translation.z, 1.f);
+		Matrix4<T> r = convert::toMat4(rotation);
 		Matrix4<T> s = Matrix4<T>::identity();
 		for (int i = 0; i < 3; i++)
 			s[i][i] = scale[i];
 		return t * (r * s);
-	}*/
+	}
 	template<typename T>
 	inline bool Matrix4<T>::operator==(const Matrix4<T>& c) const
 	{

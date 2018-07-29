@@ -4,11 +4,11 @@
 #include "BoundingBox.h"
 
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
+	namespace tracer {
 
 
-		class OctNode : public BoundingBox {
+		class OctNode : public prim::BoundingBox {
 		public:
 			Primitive *mesh;
 			Matrix4 transform;
@@ -29,7 +29,9 @@ namespace Application {
 
 			virtual bool build(const Scene &scene);
 
-			virtual bool intersect(const Ray &ray, Intersection &intersection) const;
+			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const;
+
+			virtual prim::HitInfo computeIntersection(const tracer::Ray &ray, const prim::Intersection &intersection) const;
 
 			virtual bool add(const Primitive &primitive);
 

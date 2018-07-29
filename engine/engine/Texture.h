@@ -2,7 +2,7 @@
 #include "Image.h"
 #include "Config.h"
 
-namespace Application {
+namespace app {
 	namespace GL {
 
 		enum Depth {

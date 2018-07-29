@@ -6,7 +6,7 @@
 
 #include <map>
 
-namespace Application {
+namespace app {
 	namespace GL {
 
 		enum MatrixUniform {

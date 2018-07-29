@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-namespace Application {
+namespace app {
 
 	Node::Node() : m_localTransform(glm::mat4(1.f)), m_parent(nullptr)
 	{

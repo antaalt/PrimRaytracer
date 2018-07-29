@@ -1,6 +1,6 @@
 #include "Light.h"
 
-namespace Application {
+namespace app {
 
 	Light::Light()
 	{

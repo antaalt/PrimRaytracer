@@ -3,9 +3,11 @@
 #include "Utils/Timer.h"
 #include "Utils/Log.h"
 #include "PathTracer.h"
+#include "WhittedTracer.h"
+#include "PinholeCamera.h"
 
 
-namespace Application {
+namespace app {
 
 	Application::Application() : Application(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 	{
@@ -13,8 +15,8 @@ namespace Application {
 
 	Application::Application(unsigned int p_width, unsigned int p_height)
 	{
-		m_windowSize.w = p_width;
-		m_windowSize.h = p_height;
+		m_width = p_width;
+		m_height = p_height;
 	}
 
 	Application::~Application()
@@ -46,9 +48,9 @@ namespace Application {
 			else
 				Log::info("Display ", i, ": current display mode is ", m_displayMode.w, "x", m_displayMode.h, "px @ ", m_displayMode.refresh_rate, "hz.");
 		}
-		Log::info("Displaying window in ", m_windowSize.w, "x", m_windowSize.h, "px");
+		Log::info("Displaying window in ", m_width, "x", m_height, "px");
 		// Window creation
-		m_window = SDL_CreateWindow(PROJECT_NAME, 0, 0, m_windowSize.w, m_windowSize.h, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
+		m_window = SDL_CreateWindow(PROJECT_NAME, 0, 0, m_width, m_height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
 
 		// checking the state of the window
 		if (m_window == 0)
@@ -228,23 +230,40 @@ namespace Application {
 		}
 		Utils::Timer timer;
 
-		Renderer renderer;
+		tracer::Renderer renderer(m_width, m_height);
 		bool init = renderer.init();
 		ASSERT(init == true, "Renderer not initialized");
-		init = renderer.loadScene("NOT_DEFINED_YET_TODO_GLTF");
+		/*init = renderer.loadScene("../data/box/box.gltf", tracer::Acceleration::NO_ACCEL);*/
+		init = renderer.loadScene("../data/duck/Duck.gltf", tracer::Acceleration::NO_ACCEL);
 		ASSERT(init == true, "Scene not loaded");
 		// This makes our buffer swap synchronized with the monitor's vertical refresh
 		SDL_GL_SetSwapInterval(1);
 
+		tracer::Tracer *tracer = new tracer::WhittedTracer();
+		renderer.setTracer(tracer);
+		tracer = nullptr;
+		tracer::Camera *cam = new tracer::PinholeCamera(m_width, m_height);
+		cam->lookAt(Point3(
+			0.f,
+			0.f,
+			20.f
+		), Point3(0.f));
+		/*cam->lookAt(Point3(
+			400.1130065917969f,
+			463.2640075683594f,
+			-431.0780334472656f
+		), Point3(0.f));*/
+		renderer.setCamera(cam);
+		cam = nullptr;
+
 		// LOOP
 		timer.tick();
-		RayTracer::PathTracer tracer(10);
 		while (!events())
 		{
 			timer.displayFPS();
 
 			renderer.inputs(m_inputs);
-			renderer.render(tracer);
+			renderer.render();
 
 			SDL_GL_SwapWindow(m_window);
 			// Free the processor

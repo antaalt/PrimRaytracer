@@ -1,10 +1,10 @@
 #include "Primitive.h"
 
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
+	namespace prim {
 
-		Primitive::Primitive()
+		/*Primitive::Primitive()
 		{
 		}
 
@@ -14,7 +14,7 @@ namespace Application {
 
 
 		}
-		bool Primitive::intersect(const Ray & ray, Intersection & intersection) const
+		bool Primitive::intersect(const tracer::Ray & ray, Intersection & intersection) const
 		{
 			Intersection testIntersection;
 			for (size_t iTri = 0; iTri < triangles.size(); iTri++)
@@ -63,27 +63,22 @@ namespace Application {
 				float bRatio = vp1.length() / totalLength;
 				float cRatio = vp2.length() / totalLength;
 
-				testIntersection.hit = true;
-				testIntersection.distance = t;
-				testIntersection.point = P;
-				testIntersection.normal = Normal::normalize(A.normal * aRatio + B.normal * bRatio + C.normal * cRatio);
-				testIntersection.texCoord = A.texcoord * aRatio + B.texcoord * bRatio + C.texcoord * cRatio;
-
-				testIntersection.material = material;				
+				intersection = Intersection(
+					P,
+					Normal::normalize(A.normal * aRatio + B.normal * bRatio + C.normal * cRatio),
+					A.texcoord * aRatio + B.texcoord * bRatio + C.texcoord * cRatio,
+					t,
+					material
+				);
+				
 			}
-			if (testIntersection.distance < std::numeric_limits<float>::max())
-			{
-				intersection = testIntersection;
-				return true;
-			}
-			else
-				return false;
+			return testIntersection.hit();
 		}
 		Triangle::Triangle()
 		{
 		}
 		Triangle::Triangle(unsigned int v1, unsigned int v2, unsigned int v3) : A(v1), B(v2), C(v3)
 		{
-		}
+		}*/
 	}
 }

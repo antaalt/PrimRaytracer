@@ -11,7 +11,7 @@
 
 
 
-namespace Application {
+namespace app {
 
 	class Application
 	{

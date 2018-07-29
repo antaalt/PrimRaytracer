@@ -7,7 +7,7 @@
 #include <string>
 
 
-namespace Application {
+namespace app {
 
 #pragma pack(push,1)
 	struct Vertex {

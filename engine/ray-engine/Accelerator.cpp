@@ -1,15 +1,17 @@
 #include "Accelerator.h"
 
 
-namespace Application::RayTracer {
+namespace app {
 
-	Accelerator::Accelerator()
-	{
+	namespace tracer {
+
+		Accelerator::Accelerator()
+		{
+		}
+
+
+		Accelerator::~Accelerator()
+		{
+		}
 	}
-
-
-	Accelerator::~Accelerator()
-	{
-	}
-
 }

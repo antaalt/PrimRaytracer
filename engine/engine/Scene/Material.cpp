@@ -1,6 +1,6 @@
 #include "Material.h"
 
-namespace Application {
+namespace app {
 
 	Material::Material()
 	{

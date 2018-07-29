@@ -6,7 +6,7 @@
 #include "../Config.h"
 #include "Mesh.h"
 
-namespace Application {
+namespace app {
 
 	class Node
 	{

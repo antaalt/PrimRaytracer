@@ -1,15 +1,18 @@
 #include "Tracer.h"
 
 
-namespace Application::RayTracer {
+namespace app {
 
-	Tracer::Tracer()
-	{
-	}
+	namespace tracer {
+
+		Tracer::Tracer()
+		{
+		}
 
 
-	Tracer::~Tracer()
-	{
+		Tracer::~Tracer()
+		{
+		}
 	}
 
 }

@@ -14,7 +14,7 @@
 #endif*/
 #define NB_SHADERS 6
 
-namespace Application {
+namespace app {
 
 	namespace GL {
 		class Shader

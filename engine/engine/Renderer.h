@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace Application {
+namespace app {
 
 	enum KeyPosition {
 		RIGHT,

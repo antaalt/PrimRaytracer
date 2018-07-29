@@ -1,8 +1,8 @@
 #include "Octree.h"
 
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
+	namespace tracer {
 
 		Octree::Octree()
 		{
@@ -18,9 +18,14 @@ namespace Application {
 			return false;
 		}
 
-		bool Octree::intersect(const Ray & ray, Intersection & intersection) const
+		bool Octree::intersect(const Ray & ray, prim::HitInfo &info) const
 		{
 			return false;
+		}
+
+		prim::HitInfo Octree::computeIntersection(const tracer::Ray & ray, const prim::Intersection & intersection) const
+		{
+			return prim::HitInfo();
 		}
 
 		bool Octree::add(const Primitive & primitive)

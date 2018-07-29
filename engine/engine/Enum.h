@@ -2,7 +2,7 @@
 
 #include "Config.h"
 
-namespace Application {
+namespace app {
 
 	enum Attributes {
 		POSITION,

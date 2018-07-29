@@ -8,7 +8,7 @@
 #include "Camera.h"
 #include "tiny_gltf.h"
 
-namespace Application {
+namespace app {
 
 	enum class FileFormat {
 		NONE,

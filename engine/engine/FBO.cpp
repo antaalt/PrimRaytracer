@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace Application {
+namespace app {
 	namespace GL {
 		FBO::FBO() : FBO(glm::ivec2(DEFAULT_WIDTH, DEFAULT_HEIGHT))
 		{

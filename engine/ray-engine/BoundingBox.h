@@ -2,26 +2,28 @@
 #include "Config.h"
 #include "Hitable.h"
 
-namespace Application::RayTracer {
+namespace app {
 
-	class BoundingBox : public Hitable
-	{
-	public:
-		BoundingBox();
-		BoundingBox(const Point3 &min, const Point3 &max);
-		~BoundingBox();
+	namespace prim {
 
-		virtual bool intersect(const Ray &ray, Intersection &intersection) const;;
+		class BoundingBox
+		{
+		public:
+			BoundingBox();
+			BoundingBox(const Point3 &min, const Point3 &max);
+			~BoundingBox();
 
-		float extent() const;
-		Point3 center() const;
+			bool intersect(const tracer::Ray &ray) const;
 
-		void include(const Point3 &vec);
-		void include(const BoundingBox &bbox);
+			float extent() const;
+			Point3 center() const;
 
-		void reset();
+			void include(const Point3 &vec);
+			void include(const BoundingBox &bbox);
 
-		Point3 min, max;
-	};
+			void reset();
 
+			Point3 min, max;
+		};
+	}
 }

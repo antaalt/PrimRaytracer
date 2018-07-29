@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-	Application::Application app(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	app::Application app(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
 	app.run();
 

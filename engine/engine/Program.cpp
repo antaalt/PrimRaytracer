@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace Application {
+namespace app {
 	namespace GL {
 		Program::Program()
 		{

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 
-namespace Application {
+namespace app {
 	namespace GL {
 		std::string Shader::toString(Type type)
 		{

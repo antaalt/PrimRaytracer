@@ -4,108 +4,110 @@
 #include "Hitable.h"
 #include "Onb.h"
 #include "Types.h"
-#include "Texture.h"
+#include "Sampler.h"
 
-#include <cmath>
+namespace app {
 
-namespace Application::RayTracer {
+	namespace prim {
 
-	struct Sampler {
-		float r1() const;
-		float r2() const;
-	};
+		class Texture;
 
-	Vector3 reflect(const Vector3 &wi, const Normal &normal);
-	Vector3 refract(const Vector3 &wi, const Normal &normal, float eta);
-	Vector3 sampleUnitSphere(const Sampler &sampler);
-	Vector3 sampleMicroFacet(const Sampler &sampler, float roughness);
+		Vector3 reflect(const Vector3 &wi, const Normal &normal);
+		Vector3 refract(const Vector3 &wi, const Normal &normal, float eta);
+		Vector3 sampleUnitSphere(const rand::Sampler &sampler);
+		Vector3 sampleMicroFacet(const rand::Sampler &sampler, float roughness);
 
-	enum class MaterialType {
-		LAMBERTIAN,
-		SPECULAR,
-		TRANSMISSION,
-		MICROFACET,
-		UNDEFINED_TYPE
-	};
+		enum class MaterialType {
+			DIFFUSE,
+			SPECULAR,
+			DIELECTRIC,
+			METAL,
+			UNDEFINED_TYPE
+		};
 
-	class Material
-	{
-	public:
-		using Ptr = Material*;
-		Color32 albedo;
-		Texture *colorTexture;
-			
-		virtual Ray scatter(const Ray &in, const Intersection &intersection, float &pdf) const = 0;
-		virtual MaterialType type() const = 0;
-
-		Material() : colorTexture(nullptr) {}
-	};
-
-	class Diffuse : public Material {
-	public:
-		Sampler sampler;
-		virtual Ray scatter(const Ray &in, const Intersection &intersection, float &pdf)
+		class Material
 		{
-			Vector3 randomDirection = sampleUnitSphere(sampler);
-			Onb onb(intersection.normal);
-			Vector3 direction = onb.transform(randomDirection);
-			//pdf = 1.f / M_PI;
-			return Ray(intersection.point, direction);
-		}
-		virtual MaterialType type() const
-		{
-			return MaterialType::LAMBERTIAN;
-		}
-	};
+		public:
+			using Ptr = Material*;
+			ColorHDR albedo;
+			Texture *colorTexture;
 
-	class Specular : public Material {
-	public:
-		virtual Ray scatter(const Ray &in, const Intersection &intersection, float &pdf)
-		{
-			Vector3 reflected = reflect(in.direction, intersection.normal);
-			//pdf = 1.f;
-			return Ray(intersection.point, reflected);
-		}
-		virtual MaterialType type() const
-		{
-			return MaterialType::SPECULAR;
-		}
-	};
+			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const = 0;
+			virtual MaterialType type() const = 0;
 
-	class Dielectric : public Material {
-	public:
-		float eta;
+			Material() : colorTexture(nullptr) {}
+		};
 
-		virtual Ray scatter(const Ray &in, const Intersection &intersection, float &pdf)
-		{
-			bool inside = Vector3::dot(in.direction, intersection.normal) > 0.f;
-			float tmp_eta = 1.f / eta;
-			Vector3 refracted = refract(in.direction, intersection.normal, tmp_eta); // TODO better fresnel & co
-			//pdf = 1.f;
-			return Ray(intersection.point, refracted);
-		}
-		virtual MaterialType type() const
-		{
-			return MaterialType::TRANSMISSION;
-		}
-	};
+		class Diffuse : public Material {
+		public:
+			Diffuse(rand::Sampler sampler) : sampler(sampler) {}
+			rand::Sampler sampler;
+			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
+			{
+				Vector3 randomDirection = sampleUnitSphere(sampler);
+				transform::Onb onb(intersection.normal);
+				Vector3 direction = onb.transform(randomDirection);
+				//pdf = 1.f / M_PI;
+				return tracer::Ray(intersection.point, direction);
+			}
+			virtual MaterialType type() const
+			{
+				return MaterialType::DIFFUSE;
+			}
+		};
 
-	class Metal : public Material {
-	public:
-		Vector3 roughness;
-		Sampler sampler;
+		class Specular : public Material {
+		public:
+			Specular() {}
+			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
+			{
+				Vector3 reflected = reflect(in.direction, intersection.normal);
+				//pdf = 1.f;
+				return tracer::Ray(intersection.point, reflected);
+			}
+			virtual MaterialType type() const
+			{
+				return MaterialType::SPECULAR;
+			}
+		};
 
-		virtual Ray scatter(const Ray &in, const Intersection &intersection, float &pdf)
-		{
-			Vector3 randomDirection = sampleMicroFacet(sampler,  0.5f);
-			Onb onb(intersection.normal);
-			Vector3 direction = onb.transform(randomDirection);
-			pdf = 1.f; // TODO calculate pdf
-			return Ray(intersection.point, direction);
-		}
-		virtual MaterialType type() const
-		{
-			return MaterialType::MICROFACET;
-		}
-	};
+		class Dielectric : public Material {
+		public:
+			Dielectric(float eta) : eta(eta) {}
+			float eta;
+
+			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
+			{
+				bool inside = Vector3::dot(in.direction, intersection.normal) > 0.f;
+				float tmp_eta = 1.f / eta;
+				Vector3 refracted = refract(in.direction, intersection.normal, tmp_eta); // TODO better fresnel & co
+				//pdf = 1.f;
+				return tracer::Ray(intersection.point, refracted);
+			}
+			virtual MaterialType type() const
+			{
+				return MaterialType::DIELECTRIC;
+			}
+		};
+
+		class Metal : public Material {
+		public:
+			Metal(float roughness, rand::Sampler sampler) : roughness(roughness), sampler(sampler) {}
+			float roughness;
+			rand::Sampler sampler;
+
+			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
+			{
+				Vector3 randomDirection = sampleMicroFacet(sampler, roughness);
+				transform::Onb onb(intersection.normal);
+				Vector3 direction = onb.transform(randomDirection);
+				pdf = 1.f; // TODO calculate pdf
+				return tracer::Ray(intersection.point, direction);
+			}
+			virtual MaterialType type() const
+			{
+				return MaterialType::METAL;
+			}
+		};
+	}
 }

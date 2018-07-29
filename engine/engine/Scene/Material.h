@@ -5,7 +5,7 @@
 
 // PBR material
 // @see https://www.allegorithmic.com/pbr-guide
-namespace Application {
+namespace app {
 
 	enum TextureType {
 		COLOR_TEXTURE,

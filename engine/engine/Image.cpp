@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace Application {
+namespace app {
 	Image::Image()
 	{
 	}

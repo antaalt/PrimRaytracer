@@ -31,20 +31,20 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>app</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>app</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>app</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -75,7 +75,6 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)thirdparty-libs\SDL2-2.0.5\include;$(SolutionDir)thirdparty-libs\glm-0.9.8.5;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -128,20 +127,25 @@
     <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Hitable.cpp" />
+    <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="NoAccel.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="PathTracer.cpp" />
+    <ClCompile Include="PinholeCamera.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="SceneBuilder.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Tracer.cpp" />
-    <ClCompile Include="Types.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
     <ClCompile Include="Utils\Timer.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
+    <ClCompile Include="WhittedTracer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Accelerator.h" />
@@ -150,6 +154,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Hitable.h" />
+    <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="NoAccel.h" />
@@ -157,13 +162,18 @@
     <ClInclude Include="Onb.h" />
     <ClInclude Include="PathTracer.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="Primitive.h" />
+    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Sampler.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Texture.h" />
+    <ClInclude Include="SceneBuilder.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="Tracer.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Utils\Timer.h" />
@@ -172,6 +182,7 @@
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
+    <ClInclude Include="WhittedTracer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

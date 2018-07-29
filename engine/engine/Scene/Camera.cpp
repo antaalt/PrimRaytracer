@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 
-namespace Application {
+namespace app {
 
 	Camera::Camera() : m_nearFar(glm::vec2(0.01f, 100.f))
 	{

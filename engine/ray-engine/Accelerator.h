@@ -2,8 +2,8 @@
 #include "Hitable.h"
 #include "Scene.h"
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
+	namespace tracer {
 
 		enum class Acceleration {
 			ACCELERATION_OCTREE,
@@ -11,15 +11,16 @@ namespace Application {
 			NO_ACCEL
 		};
 
-		class Accelerator : public Hitable
+		class Accelerator
 		{
 		public:
+			using Ptr = Accelerator*;
 			Accelerator();
 			~Accelerator();
 
 			virtual bool build(const Scene &scene) = 0;
 
-			virtual bool intersect(const Ray &ray, Intersection &intersection) const = 0;
+			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const = 0;
 		};
 	}
 }

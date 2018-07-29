@@ -1,6 +1,6 @@
 #include "Enum.h"
 
-void * Application::offset(Attributes att)
+void * app::offset(Attributes att)
 {
 	switch (att)
 	{

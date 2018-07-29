@@ -1,8 +1,8 @@
 #include "Hitable.h"
 
 
-namespace Application {
-	namespace RayTracer {
+namespace app {
+	namespace prim {
 
 		
 	}

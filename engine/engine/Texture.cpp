@@ -1,7 +1,7 @@
 #include "Texture.h"
 
 
-namespace Application {
+namespace app {
 	namespace GL {
 
 		template<typename T>
@@ -22,7 +22,7 @@ namespace Application {
 			glGenTextures(1, &m_textureID);
 			glBindTexture(GL_TEXTURE_2D, m_textureID);
 			const GLenum type = (sizeof(T) == 4) ? GL_FLOAT : GL_UNSIGNED_BYTE;
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, type, &m_data[0]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, type, &m_data[0]);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
