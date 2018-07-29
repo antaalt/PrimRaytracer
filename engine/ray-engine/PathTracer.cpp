@@ -16,10 +16,10 @@ namespace app {
 		{
 		}
 
-		Pixel PathTracer::castRay(const Ray & ray, const Accelerator::Ptr accelerator, const Options & options, unsigned int depth) const
+		Pixel PathTracer::castRay(const Ray & ray, const Accelerator::Ptr accelerator, unsigned int depth) const
 		{
-			if (depth > options.maxDepth)
-				return options.backgroundColor;
+			if (depth > MAX_DEPTH)
+				return BACKGROUND_COLOR;
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
 				return miss(ray);
@@ -34,7 +34,7 @@ namespace app {
 			{
 			case prim::MaterialType::DIFFUSE:
 				// TODO compute direct lighting
-				indirectLight = castRay(newRay, accelerator, options, depth++);
+				indirectLight = castRay(newRay, accelerator, depth++);
 				break;
 			case prim::MaterialType::SPECULAR:
 				break;

@@ -233,7 +233,7 @@ namespace app {
 		tracer::Renderer renderer(m_width, m_height);
 		bool init = renderer.init();
 		ASSERT(init == true, "Renderer not initialized");
-		/*init = renderer.loadScene("../data/box/box.gltf", tracer::Acceleration::NO_ACCEL);*/
+		//init = renderer.loadScene("../data/box/box.gltf", tracer::Acceleration::NO_ACCEL);
 		init = renderer.loadScene("../data/duck/Duck.gltf", tracer::Acceleration::NO_ACCEL);
 		ASSERT(init == true, "Scene not loaded");
 		// This makes our buffer swap synchronized with the monitor's vertical refresh
@@ -248,11 +248,6 @@ namespace app {
 			0.f,
 			20.f
 		), Point3(0.f));
-		/*cam->lookAt(Point3(
-			400.1130065917969f,
-			463.2640075683594f,
-			-431.0780334472656f
-		), Point3(0.f));*/
 		renderer.setCamera(cam);
 		cam = nullptr;
 
@@ -263,8 +258,11 @@ namespace app {
 			timer.displayFPS();
 
 			renderer.inputs(m_inputs);
-			renderer.render();
-
+			bool update = renderer.updateRays();
+			if (update)
+				renderer.renderPreview();
+			else
+				renderer.render();
 			SDL_GL_SwapWindow(m_window);
 			// Free the processor
 			SDL_Delay(0);

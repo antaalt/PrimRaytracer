@@ -61,7 +61,7 @@ namespace app {
 	};
 	// --- Shapes
 	enum class ShapeType {
-		PLANE,
+		PARALLELOGRAM,
 		SPHERE,
 		MESH
 	};
@@ -69,8 +69,8 @@ namespace app {
 		using Ptr = Shape*;
 		virtual ShapeType type() const = 0;
 	};
-	struct Plane : public Shape {
-		Point3 point;
+	struct Parallelogram : public Shape {
+		Point3 point[3];
 		Normal normal;
 		Material::Ptr material;
 		virtual ShapeType type() const;
@@ -111,6 +111,7 @@ namespace app {
 		Primitive &addPrimitive();
 		Mesh &addMesh();
 		Sphere &addSphere();
+		Parallelogram &addParallelogram();
 		Node &addNode();
 		Material &addMaterial();
 		Texture &addTexture();

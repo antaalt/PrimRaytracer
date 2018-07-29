@@ -21,6 +21,8 @@ namespace app {
 		void operator=(const ColorHDR &color);*/
 
 		Pixel operator+(const Pixel &rhs);
+		friend Pixel operator*(float lhs, const Pixel &rhs);
+		friend Pixel operator*(const Pixel &lhs, float rhs);
 
 		Pixel();
 		Pixel(float val);

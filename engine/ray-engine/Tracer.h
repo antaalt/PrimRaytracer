@@ -3,17 +3,13 @@
 #include "Hitable.h"
 #include "Accelerator.h"
 #include "PixelBuffer.h"
+
+#define MAX_DEPTH 10
+#define BACKGROUND_COLOR ColorHDR(0.1f)
+
 namespace app {
 
 	namespace tracer {
-
-		class Root;
-
-
-		struct Options {
-			unsigned int maxDepth;
-			Pixel backgroundColor;
-		};
 
 		class Tracer
 		{
@@ -22,7 +18,7 @@ namespace app {
 			Tracer();
 			virtual ~Tracer();
 
-			virtual Pixel castRay(const Ray &ray, const Accelerator::Ptr accelerator, const Options &options, unsigned int depth = 0) const = 0;
+			virtual Pixel castRay(const Ray &ray, const Accelerator::Ptr accelerator, unsigned int depth = 0) const = 0;
 
 			virtual bool trace(const Ray &ray, const Accelerator::Ptr accelerator, prim::HitInfo &info) const = 0;
 

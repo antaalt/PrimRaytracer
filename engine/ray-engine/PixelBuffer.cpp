@@ -107,4 +107,12 @@ namespace app {
 	{
 		return m_height;
 	}
+	Pixel operator*(float lhs, const Pixel & rhs)
+	{
+		return Pixel(lhs * rhs.r, lhs * rhs.g, lhs * rhs.b, lhs * rhs.a);
+	}
+	Pixel operator*(const Pixel & lhs, float rhs)
+	{
+		return Pixel(rhs * lhs.r, rhs * lhs.g, rhs * lhs.b, rhs * lhs.a);
+	}
 }

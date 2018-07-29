@@ -7,6 +7,9 @@
 
 #include <string>
 
+#define TILE_WIDTH_NUMBER 30
+#define TILE_HEIGHT_NUMBER 30
+
 namespace app {
 
 	enum KeyPosition {
@@ -44,19 +47,23 @@ namespace app {
 
 			bool init();
 
+			bool updateRays();
+
+			bool renderPreview();
+
 			bool render();
 
 			void setTracer(tracer::Tracer::Ptr tracer);
 			void setCamera(tracer::Camera::Ptr camera);
 
 		private:
-			Scene m_scene;
-			Camera::Ptr m_camera;
-			Tracer::Ptr m_tracer;
-			std::vector<tracer::Ray> m_rays;
-			Accelerator::Ptr m_accelerator;
-			unsigned int m_width, m_height;
-			PixelBuffer m_output;
+			Scene scene;
+			Camera::Ptr camera;
+			Tracer::Ptr tracer;
+			std::vector<tracer::Ray> rays;
+			Accelerator::Ptr accelerator;
+			unsigned int width, height;
+			PixelBuffer output;
 		};
 	}
 }

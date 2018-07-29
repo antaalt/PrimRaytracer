@@ -134,7 +134,7 @@
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="PathTracer.cpp" />
     <ClCompile Include="PinholeCamera.cpp" />
-    <ClCompile Include="Primitive.cpp" />
+    <ClCompile Include="Parallelogram.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -163,7 +163,7 @@
     <ClInclude Include="PathTracer.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PinholeCamera.h" />
-    <ClInclude Include="Primitive.h" />
+    <ClInclude Include="Parallelogram.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Ray.h" />

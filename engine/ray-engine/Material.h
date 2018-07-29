@@ -13,7 +13,7 @@ namespace app {
 		class Texture;
 
 		Vector3 reflect(const Vector3 &wi, const Normal &normal);
-		Vector3 refract(const Vector3 &wi, const Normal &normal, float eta);
+		bool refract(Vector3 &out, const Vector3 &wi, const Normal &normal, float eta);
 		Vector3 sampleUnitSphere(const rand::Sampler &sampler);
 		Vector3 sampleMicroFacet(const rand::Sampler &sampler, float roughness);
 
@@ -80,7 +80,8 @@ namespace app {
 			{
 				bool inside = Vector3::dot(in.direction, intersection.normal) > 0.f;
 				float tmp_eta = 1.f / eta;
-				Vector3 refracted = refract(in.direction, intersection.normal, tmp_eta); // TODO better fresnel & co
+				Vector3 refracted;
+				bool tir = refract(refracted, in.direction, intersection.normal, tmp_eta); // TODO better fresnel & co
 				//pdf = 1.f;
 				return tracer::Ray(intersection.point, refracted);
 			}

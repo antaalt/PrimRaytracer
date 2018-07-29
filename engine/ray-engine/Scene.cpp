@@ -43,8 +43,6 @@ namespace app {
 	}
 	Mesh & Scene::addMesh()
 	{
-		/*meshes.emplace_back();
-		return meshes.back();*/
 		Mesh *m = new Mesh();
 		shapes.push_back(m);
 		return *m;
@@ -54,6 +52,12 @@ namespace app {
 		Sphere *s = new Sphere();
 		shapes.push_back(s);
 		return *s;
+	}
+	Parallelogram & Scene::addParallelogram()
+	{
+		Parallelogram *p = new Parallelogram();
+		shapes.push_back(p);
+		return *p;
 	}
 	Node & Scene::addNode()
 	{
@@ -502,9 +506,9 @@ namespace app {
 	{
 		return ShapeType::MESH;
 	}
-	ShapeType Plane::type() const
+	ShapeType Parallelogram::type() const
 	{
-		return ShapeType::PLANE;
+		return ShapeType::PARALLELOGRAM;
 	}
 }
 

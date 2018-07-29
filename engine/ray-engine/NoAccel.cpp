@@ -2,6 +2,7 @@
 
 #include "Triangle.h"
 #include "Sphere.h"
+#include "Parallelogram.h"
 
 
 namespace app {
@@ -93,9 +94,17 @@ namespace app {
 					bbox.include(sphere->center + Point3(-sphere->radius));
 				}
 				break;
-				case ShapeType::PLANE:
+				case ShapeType::PARALLELOGRAM:
 				{
-
+					/*const Parallelogram *plane = reinterpret_cast<const Parallelogram*>(shape);
+					const Matrix4 transform = node.getModel();
+					prim::Parallelogram::Ptr newSphere = new prim::Parallelogram(plane->point[0], plane->point[1], plane->point[2], plane->normal);
+					newSphere->material = m_materials[plane->material->index];
+					m_hitable.push_back(newSphere);
+					bbox.include(plane->point[0]);
+					bbox.include(plane->point[1]);
+					bbox.include(plane->point[2]);*/
+					// TODO add 4th point
 				}
 				break;
 				default:

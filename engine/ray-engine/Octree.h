@@ -1,6 +1,5 @@
 #pragma once
 #include "Accelerator.h"
-#include "Primitive.h"
 #include "BoundingBox.h"
 
 
