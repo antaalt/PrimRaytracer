@@ -19,7 +19,7 @@ namespace app {
 		BoundingBox::~BoundingBox()
 		{
 		}
-		bool BoundingBox::intersect(const tracer::Ray & ray) const
+		bool BoundingBox::intersectBounds(const tracer::Ray & ray) const
 		{
 			float tmin = (min.x - ray.origin.x) / ray.direction.x;
 			float tmax = (max.x - ray.origin.x) / ray.direction.x;

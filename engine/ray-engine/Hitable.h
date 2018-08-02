@@ -24,6 +24,12 @@ namespace app {
 			float distance;
 			float beta; // interpolation
 			float gamma; // interpolation
+			const prim::Hitable * hitable;
+			bool isClosestThan(const Intersection &intersection);
+			
+			HitInfo compute(const tracer::Ray &ray);
+			bool hit();
+			Intersection();
 		};
 
 		class Hitable

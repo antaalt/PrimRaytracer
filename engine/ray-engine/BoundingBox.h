@@ -13,7 +13,7 @@ namespace app {
 			BoundingBox(const Point3 &min, const Point3 &max);
 			~BoundingBox();
 
-			bool intersect(const tracer::Ray &ray) const;
+			bool intersectBounds(const tracer::Ray &ray) const;
 
 			float extent() const;
 			Point3 center() const;

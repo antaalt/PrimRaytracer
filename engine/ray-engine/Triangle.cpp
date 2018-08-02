@@ -41,6 +41,7 @@ namespace app {
 				intersection.distance = t;
 				intersection.beta = beta;
 				intersection.gamma = gamma;
+				intersection.hitable = this;
 				return true;
 			}
 			return false;

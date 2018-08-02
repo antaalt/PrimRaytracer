@@ -117,28 +117,21 @@ namespace app {
 		}
 		bool NoAccel::intersect(const Ray & ray, prim::HitInfo & info) const
 		{
-			if (!bbox.intersect(ray))
+			if (!bbox.intersectBounds(ray))
 				return false;
-			float minDistance = INVALID_INTERSECTION;
 			prim::Intersection intersection;
-			prim::Hitable::Ptr hitObject = nullptr;
 			for (size_t iHitable = 0; iHitable < m_hitableCount; iHitable++)
 			{
 				prim::Intersection localIntersection;
 				if (m_hitable[iHitable]->intersect(ray, localIntersection))
 				{
-					if (localIntersection.distance < minDistance)
-					{
-						hitObject = m_hitable[iHitable];
-						minDistance = localIntersection.distance;
-						intersection = localIntersection;
-					}
+					intersection.isClosestThan(localIntersection);
 				}
 			}
-			if (hitObject == nullptr)
+			if (!intersection.hit())
 				return false;
 			
-			info = hitObject->computeIntersection(ray, intersection);
+			info = intersection.compute(ray);
 			return true;
 		}
 	}
