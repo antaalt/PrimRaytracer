@@ -1,6 +1,6 @@
 #include "WhittedTracer.h"
 #include "Material.h"
-#include "Physics.h"
+#include "Math.h"
 
 namespace app {
 	namespace tracer {
@@ -14,7 +14,7 @@ namespace app {
 		}
 		Pixel WhittedTracer::castRay(const Ray & ray, const Accelerator::Ptr accelerator, unsigned int depth) const
 		{
-			if (depth > MAX_DEPTH)
+			if (depth > 1)//MAX_DEPTH)
 				return miss(ray);
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
@@ -22,14 +22,9 @@ namespace app {
 
 				
 			float pdf = 0;
-			ColorHDR color = info.material->albedo * info.color;// *Vector3::dot(info.normal, -ray.direction); // todo manage backface
-			if (info.material->colorTexture != nullptr)
-			{
-				color = color * info.material->colorTexture->texture2D(info.texcoord.x, info.texcoord.y);
-				return info.material->colorTexture->texture2D(info.texcoord.x, info.texcoord.y);
-			}
-			return color;
-			/*switch (info.material->type())
+			ColorHDR color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color * Vector3::dot(info.normal, -ray.direction);
+
+			switch (info.material->type())
 			{
 			case prim::MaterialType::DIFFUSE:
 				return color;
@@ -56,19 +51,19 @@ namespace app {
 				float R = physics::fresnel(cos_theta, eta);
 				Ray refractedRay(info.point, refractedDirection);
 				Ray reflectedRay(info.point, reflectedDirection);
-				return Pixel(info.normal.x, info.normal.y, info.normal.z, 1.f);
+				//return Pixel(info.normal.x, info.normal.y, info.normal.z, 1.f);
 				//return Pixel(inside);
-				//return R * castRay(reflectedRay, accelerator, ++depth) + (1 - R) * castRay(refractedRay, accelerator, ++depth);
+				return/* R * castRay(reflectedRay, accelerator, ++depth) + (1 - R) **/ castRay(refractedRay, accelerator, ++depth);
 			}
 			case prim::MaterialType::SPECULAR:
 			{
 				Ray nextRay(info.point, prim::reflect(ray.direction, info.normal));
-				return color + castRay(nextRay, accelerator, ++depth);
+				return Pixel(color) + castRay(nextRay, accelerator, ++depth);
 			}
 			case prim::MaterialType::METAL:
 			default:
 				return miss(ray);
-			}*/
+			}
 		}
 		bool WhittedTracer::trace(const Ray & ray, const Accelerator::Ptr accelerator, prim::HitInfo & info) const
 		{
@@ -76,8 +71,8 @@ namespace app {
 		}
 		Pixel WhittedTracer::miss(const Ray & ray) const
 		{
-			return Pixel((ray.direction.x + 1.f) / 2.f, (ray.direction.y + 1.f) / 2.f, (ray.direction.z + 1.f) / 2.f, 1.f);
-			//return BACKGROUND_COLOR;
+			//return Pixel((ray.direction.x + 1.f) / 2.f, (ray.direction.y + 1.f) / 2.f, (ray.direction.z + 1.f) / 2.f, 1.f);
+			return BACKGROUND_COLOR;
 			//return Pixel(Vector3::dot(ray.direction, Vector3(0.f, 1.f, 0.f)));
 		}
 	}

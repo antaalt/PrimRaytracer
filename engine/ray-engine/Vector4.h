@@ -14,6 +14,7 @@ namespace Math {
 		};
 		Vector4();
 		Vector4(T x);
+		Vector4(T* data);
 		Vector4(T x, T y, T z, T w);
 		T &operator[](unsigned int index) { return data[index]; }
 		const T &operator[](unsigned int index) const { return data[index]; }
@@ -54,6 +55,11 @@ namespace Math {
 
 	template<typename T>
 	inline Vector4<T>::Vector4(T x) : x(x), y(x), z(x), w(x)
+	{
+	}
+
+	template<typename T>
+	inline Vector4<T>::Vector4(T * data) : x(data[0]), y(data[1]), z(data[2]), w(data[3])
 	{
 	}
 

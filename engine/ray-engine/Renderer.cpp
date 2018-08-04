@@ -34,8 +34,8 @@ namespace app {
 
 		bool Renderer::loadScene(std::string path, Acceleration acceleration)
 		{
-#if 0
-			this->scene = SceneBuilder::buildCustomSceneTri();
+#if 1
+			this->scene = SceneBuilder::buildCustomScene();
 			this->accelerator = new NoAccel();
 			return this->accelerator->build(this->scene);
 #else

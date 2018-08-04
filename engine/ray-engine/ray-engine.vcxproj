@@ -162,7 +162,7 @@
     <ClInclude Include="Octree.h" />
     <ClInclude Include="Onb.h" />
     <ClInclude Include="PathTracer.h" />
-    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="Parallelogram.h" />
     <ClInclude Include="Quaternion.h" />

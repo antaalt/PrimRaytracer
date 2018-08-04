@@ -28,13 +28,25 @@ namespace app {
 		{
 		public:
 			using Ptr = Material*;
-			ColorHDR albedo;
-			Texture *colorTexture;
 
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const = 0;
 			virtual MaterialType type() const = 0;
 
+			ColorHDR color(float u = 0.f, float v = 0.f) const
+			{
+				if (colorTexture == nullptr)
+					return albedo;
+				else
+					return albedo * colorTexture->texture2D(u, v);
+			}
+
+			void setColor(const ColorHDR &color) { albedo = color; }
+			void setTexture(Texture *texture) { colorTexture = texture; }
+
 			Material() : colorTexture(nullptr) {}
+		protected:
+			ColorHDR albedo;
+			Texture *colorTexture;
 		};
 
 		class Diffuse : public Material {

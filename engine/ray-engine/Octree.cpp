@@ -41,7 +41,7 @@ namespace app {
 				default:
 					return false;
 				}
-				newMaterial->albedo = material.color;
+				newMaterial->setColor(material.color);
 				this->materials.push_back(newMaterial);
 			}
 			for (size_t iNode = 0; iNode < scene.nodes.size(); iNode++)

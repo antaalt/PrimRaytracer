@@ -28,6 +28,8 @@ namespace Math {
 		static Matrix4<T> identity();
 		static Matrix4<T> zero();
 
+		inline float det() const;
+
 		static Matrix4<T> TRS(const Vector3<T> &translation, const Quaternion<T> &rotation, const Vector3<T> &scale);
 
 		template <typename T>
@@ -167,6 +169,24 @@ namespace Math {
 			Col(0, 0, 0, 0),
 			Col(0, 0, 0, 0)
 			);
+	}
+	template<typename T>
+	inline float Matrix4<T>::det() const
+	{
+		return
+			col[0][3] * col[1][2] * col[2][1] * col[3][0] - col[0][2] * col[1][3] * col[2][1] * col[3][0] -
+			col[0][3] * col[1][1] * col[2][2] * col[3][0] + col[0][1] * col[1][3] * col[2][2] * col[3][0] +
+			col[0][2] * col[1][1] * col[2][3] * col[3][0] - col[0][1] * col[1][2] * col[2][3] * col[3][0] -
+			col[0][3] * col[1][2] * col[2][0] * col[3][1] + col[0][2] * col[1][3] * col[2][0] * col[3][1] +
+			col[0][3] * col[1][0] * col[2][2] * col[3][1] - col[0][0] * col[1][3] * col[2][2] * col[3][1] -
+			col[0][2] * col[1][0] * col[2][3] * col[3][1] + col[0][0] * col[1][2] * col[2][3] * col[3][1] +
+			col[0][3] * col[1][1] * col[2][0] * col[3][2] - col[0][1] * col[1][3] * col[2][0] * col[3][2] -
+			col[0][3] * col[1][0] * col[2][1] * col[3][2] + col[0][0] * col[1][3] * col[2][1] * col[3][2] +
+			col[0][1] * col[1][0] * col[2][3] * col[3][2] - col[0][0] * col[1][1] * col[2][3] * col[3][2] -
+			col[0][2] * col[1][1] * col[2][0] * col[3][3] + col[0][1] * col[1][2] * col[2][0] * col[3][3] +
+			col[0][2] * col[1][0] * col[2][1] * col[3][3] - col[0][0] * col[1][2] * col[2][1] * col[3][3] -
+			col[0][1] * col[1][0] * col[2][2] * col[3][3] + col[0][0] * col[1][1] * col[2][2] * col[3][3];
+
 	}
 	template<typename T>
 	inline Matrix4<T> Matrix4<T>::TRS(const Vector3<T>& translation, const Quaternion<T> & rotation, const Vector3<T>& scale)

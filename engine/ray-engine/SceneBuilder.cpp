@@ -36,37 +36,37 @@ namespace app {
 		mat3.index = 2;
 		mat3.color = ColorHDR(0.f, 0.f, 1.f, 1.f);
 		mat3.texture = nullptr;
-		mat3.type = MaterialType::SPECULAR;
+		mat3.type = MaterialType::DIFFUSE;
 
-		Material &mat4 = scene.addMaterial();
+		/*Material &mat4 = scene.addMaterial();
 		mat4.index = 3;
 		mat4.color = ColorHDR(1.f, 1.f, 1.f, 1.f);
 		mat4.texture = nullptr;
-		mat4.type = MaterialType::DIFFUSE;
+		mat4.type = MaterialType::DIFFUSE;*/
 
 		// spheres
 		Sphere &sphere1 = scene.addSphere();
 		sphere1.center = Point3(0.f);
-		sphere1.radius = 4.f;
+		sphere1.radius = 0.4f;
 		sphere1.material = &mat1;
 
 		Sphere &sphere2 = scene.addSphere();
-		sphere2.center = Point3(0.f, 1.f, -10.f);
-		sphere2.radius = 6.f;
+		sphere2.center = Point3(0.f, 0.1f, -1.0f);
+		sphere2.radius = 0.6f;
 		sphere2.material = &mat2;
 
 		Sphere &sphere3 = scene.addSphere();
-		sphere3.center = Point3(15.f, 2.f, -5.f);
-		sphere3.radius = 7.f;
+		sphere3.center = Point3(1.5f, 0.2f, -0.5f);
+		sphere3.radius = 0.7f;
 		sphere3.material = &mat3;
 
 		// Planes
-		Parallelogram &para = scene.addParallelogram();
+		/*Parallelogram &para = scene.addParallelogram();
 		para.material = &mat4;
 		para.point[0] = Point3(-10.f, 0.f, 0.f);
 		para.point[1] = Point3();
 		para.point[2] = Point3();
-		para.normal = Normal(1.f, 0.f, 0.f);
+		para.normal = Normal(1.f, 0.f, 0.f);*/
 
 		// nodes
 		Node &node1 = scene.addNode();
@@ -81,9 +81,9 @@ namespace app {
 		node3.shape = &sphere3;
 		node3.transform = Matrix4::identity();
 
-		Node &node4 = scene.addNode();
+		/*Node &node4 = scene.addNode();
 		node4.shape = &para;
-		node4.transform = Matrix4::identity();
+		node4.transform = Matrix4::identity();*/
 
 		return scene;
 	}

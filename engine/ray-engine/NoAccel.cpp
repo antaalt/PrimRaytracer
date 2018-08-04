@@ -21,10 +21,11 @@ namespace app {
 		}
 		bool NoAccel::build(const Scene & scene)
 		{
+			// TODO move default build to accelerator build and call it from here
 			std::map<const Texture*, Texture*> mapTexture;
 			//std::map<unsigned int, const prim::Material*> mapMaterials; // TODO implement map
 			m_textures.reserve(scene.textures.size());
-			for (size_t iTex = 0; iTex < scene.materials.size(); iTex++)
+			for (size_t iTex = 0; iTex < scene.textures.size(); iTex++)
 			{
 				const Texture &texture = scene.textures[iTex];
 				m_textures.push_back(texture);
@@ -53,9 +54,9 @@ namespace app {
 				default:
 					return false;
 				}
-				newMaterial->albedo = material.color;
+				newMaterial->setColor(material.color);
 				auto it = mapTexture.find(material.texture);
-				newMaterial->colorTexture = ((it == mapTexture.end()) ? nullptr : it->second);
+				newMaterial->setTexture((it == mapTexture.end()) ? nullptr : it->second);
 				m_materials.push_back(newMaterial);
 			}
 			for (size_t iNode = 0; iNode < scene.nodes.size(); iNode++)
@@ -70,6 +71,15 @@ namespace app {
 				{
 					const Mesh *mesh = reinterpret_cast<const Mesh*>(shape);
 					const Matrix4 transform = node.getModel();
+					float det = transform.det();
+					unsigned int triVert1 = 1;
+					unsigned int triVert2 = 2;
+					if (det < 0.f) // mirror triangle
+					{
+						triVert1 = 2;
+						triVert2 = 1;
+					}
+
 					for (size_t iPrim = 0; iPrim < mesh->primitives.size(); iPrim++)
 					{
 						const Primitive::Ptr prim = mesh->primitives[iPrim];
@@ -77,19 +87,19 @@ namespace app {
 						for (size_t iTri = 0; iTri < prim->triangles.size(); iTri++)
 						{
 							const Triangle &tri = prim->triangles[iTri];
-							Vertex &vA = prim->vertices[tri.A];
-							Vertex &vB = prim->vertices[tri.B];
-							Vertex &vC = prim->vertices[tri.C];
-							vA.position = transform * vA.position;
-							vB.position = transform * vB.position;
-							vC.position = transform * vC.position;
-							bbox.include(vA.position);
-							bbox.include(vB.position);
-							bbox.include(vC.position);
+							prim::Vertex data[3];
+							for (unsigned int iVert = 0; iVert < 3; iVert++)
+							{
+								Vertex &v = prim->vertices[tri.vertices[iVert]];
+								data[iVert] = prim::Vertex(v.position, v.normal, v.texcoord, v.color);
+								Vector3 &p = data[iVert].position;
+								p = transform * p;
+								bbox.include(p);
+							}
 							prim::Triangle *newTri = new prim::Triangle(
-								prim::Vertex(vA.position, vA.normal, vA.texcoord, vA.color),
-								prim::Vertex(vB.position, vB.normal, vB.texcoord, vB.color),
-								prim::Vertex(vC.position, vC.normal, vC.texcoord, vC.color)
+								data[0],
+								data[triVert1],
+								data[triVert2]
 							);
 							newTri->material = m_materials[prim->material->index];
 							m_hitable.push_back(newTri);

@@ -1,6 +1,6 @@
 #include "Material.h"
 
-#include "Physics.h"
+#include "Math.h"
 #include "Sampler.h"
 
 #include <cmath>
@@ -15,18 +15,18 @@ namespace app {
 		}
 		bool refract(Vector3 &wt, const Vector3 & wi, const Normal & n, float eta)
 		{
-			float cosThetaI = Vector3::dot(wi, n);
+			/*float cosThetaI = Vector3::dot(wi, n);
 			float sin2thetaI = std::max(0.f, 1.f - cosThetaI * cosThetaI);
 			float sin2thetaT = eta * eta * sin2thetaI;
 			if (sin2thetaT >= 1) return false;
 			float cosThetaT = std::sqrt(1.f - sin2thetaT);
 			wt = eta * -wi + (eta * cosThetaI - cosThetaT) * Vector3(n);
-			return true;
-			/*float IdotN = Vector3::dot(wi, normal);
+			return true;*/
+			float IdotN = Vector3::dot(wi, n);
 			float k = 1.f - eta * eta * (1.f - IdotN * IdotN);
 			if (k < 0.f)
 				return true;
-			wt = (eta * (wi + IdotN * normal) - normal * sqrt(k));*/
+			wt = (eta * (wi + IdotN * n) - n * sqrt(k));
 			return false;
 		}
 		Vector3 sampleUnitSphere(const rand::Sampler &sampler)

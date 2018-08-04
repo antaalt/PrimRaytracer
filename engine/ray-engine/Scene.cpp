@@ -105,7 +105,7 @@ namespace app {
 			{
 				auto itIndex = itTexture->second.json_double_value.find("index");
 				ASSERT(itIndex != itTexture->second.json_double_value.end(), "Index not defined");
-				const unsigned int index = itIndex->second;
+				const unsigned int index = static_cast<unsigned int>(itIndex->second);
 				newMat.texture = &scene.textures[index];
 			}
 		}
@@ -302,10 +302,10 @@ namespace app {
 								break;
 							case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
 								ASSERT(accessor.normalized == true, "Must be normalized");
-								break;
+								//break;
 							case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 								ASSERT(accessor.normalized == true, "Must be normalized");
-								break;
+								//break;
 							default:
 								throw std::runtime_error("Component type for texCoord not supported");
 							}
@@ -313,36 +313,27 @@ namespace app {
 					}
 					// TEXCOORD_1
 					{
-						std::map<std::string, int>::iterator it = tinyPrimitive.attributes.find("TEXCOORD_0");
+						std::map<std::string, int>::iterator it = tinyPrimitive.attributes.find("TEXCOORD_1");
 						if (it != tinyPrimitive.attributes.end())
 						{
 							tinygltf::Accessor &accessor = tinyModel.accessors[it->second];
 							tinygltf::BufferView &bufferView = tinyModel.bufferViews[accessor.bufferView];
 							tinygltf::Buffer &buffer = tinyModel.buffers[bufferView.buffer];
 							size_t size = accessor.count * tinygltf::GetTypeSizeInBytes(accessor.type) * tinygltf::GetComponentSizeInBytes(accessor.componentType);
-							ASSERT(accessor.type == TINYGLTF_TYPE_VEC2, "TEXCOORD_0 not vec2");
+							ASSERT(accessor.type == TINYGLTF_TYPE_VEC2, "TEXCOORD_1 not vec2");
 							switch (accessor.componentType)
 							{
 							case TINYGLTF_COMPONENT_TYPE_FLOAT:
-								break;
+								//break;
 							case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
 								ASSERT(accessor.normalized == true, "Must be normalized");
-								break;
+								//break;
 							case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 								ASSERT(accessor.normalized == true, "Must be normalized");
-								break;
+								//break;
 							default:
 								throw std::runtime_error("Component type for texCoord not supported");
 							}
-							/*for (size_t iVert = 0; iVert < accessor.count; iVert++)
-							{
-							Vertex &vert = newPrim.vertices[iVert];
-							memcpy(
-							vert.normal.data,
-							&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-							sizeof(Point3)
-							);
-							}*/
 						}
 					}
 					// COLOR_0
@@ -413,16 +404,17 @@ namespace app {
 							default:
 								throw std::runtime_error("Accessor type incorrect");
 							}
-								
-							/*for (size_t iVert = 0; iVert < accessor.count; iVert++)
+						}
+						else // NO COLORS. set defaults
+						{
+							for (size_t iVert = 0; iVert < newPrim.vertices.size(); iVert++)
 							{
-							Vertex &vert = newPrim.vertices[iVert];
-							memcpy(
-							vert.normal.data,
-							&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-							sizeof(Point3)
-							);
-							}*/
+								Vertex &vert = newPrim.vertices[iVert];
+								vert.color.x = 1.f;
+								vert.color.y = 1.f;
+								vert.color.z = 1.f;
+								vert.color.w = 1.f;
+							}
 						}
 					}
 				}
