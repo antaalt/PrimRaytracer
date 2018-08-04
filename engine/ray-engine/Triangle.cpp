@@ -27,25 +27,6 @@ namespace app {
 		}
 		bool Triangle::intersect(const tracer::Ray & ray, Intersection & intersection) const
 		{
-			/*const Vector3 e0 = B.position - A.position;
-			const Vector3 e1 = A.position - C.position;
-			const Normal n = Vector3::cross(e1, e0);
-			const Vector3 e2 = (1.0f / Vector3::dot(n, ray.direction)) * (A.position - ray.origin);
-			const Vector3 i = Vector3::cross(ray.direction, e2);
-			float beta = Vector3::dot(i, e1);
-			float gamma = Vector3::dot(i, e0);
-			float t = Vector3::dot(n, e2);
-			const bool hit = ((t<ray.tmax) & (t>ray.tmin) & (beta >= 0.0f) & (gamma >= 0.0f) & (beta + gamma <= 1));
-			if (hit)
-			{
-				intersection.distance = t;
-				intersection.beta = beta;
-				intersection.gamma = gamma;
-				intersection.hitable = this;
-				return true;
-			}
-			return false;*/
-
 #if defined(MOLLER_TRUMBORE)
 			// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 			const float epsilon = 0.0000001f;
@@ -57,7 +38,8 @@ namespace app {
 			if (a < epsilon) 
 				return false;
 #else 
-			if (fabs(a) < epsilon) return false;
+			if (fabs(a) < epsilon)
+				return false;
 #endif 
 			float f = 1.f / a;
 			
@@ -70,7 +52,7 @@ namespace app {
 			if (v < 0.f || u + v > 1.f)
 				return false;
 			float t = f * Vector3::dot(AC, q);
-			if (t > epsilon)
+			if (t > epsilon && t > ray.tmin && t < ray.tmax)
 				return intersection.set(t, this, u, v);
 			else
 				return false;

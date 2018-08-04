@@ -15,6 +15,13 @@ namespace app {
 		}
 	}
 
+	inline float clamp(float value, float min, float max)
+	{
+		if (value > max) return max;
+		if (value < min) return min;
+		return value;
+	}
+
 	inline float lerp(float a, float b, float t)
 	{
 		return a + (b - a) * t;
