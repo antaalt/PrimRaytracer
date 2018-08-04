@@ -140,6 +140,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneBuilder.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tracer.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Utils\Log.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneBuilder.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Tracer.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Types.h" />

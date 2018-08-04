@@ -3,20 +3,9 @@
 #include <vector>
 #include "Types.h"
 #include "../engine/Image.h"
+#include "Texture.h"
 
 namespace app {
-
-	struct Texture {
-		using Ptr = Texture*;
-		Texture();
-		Texture(const Image &image);
-		ColorHDR texture2D(float u, float v);
-		unsigned int stride();
-	private:
-		std::vector<float> m_data;
-		unsigned int m_width, m_height;
-		unsigned int m_component;
-	};
 
 	enum class MaterialType {
 		DIFFUSE,
@@ -27,8 +16,8 @@ namespace app {
 	};
 
 	struct Material {
-		unsigned int index;
 		using Ptr = Material*;
+		unsigned int index;
 		Texture::Ptr texture;
 		ColorHDR color;
 		MaterialType type;
@@ -39,6 +28,9 @@ namespace app {
 		Normal normal;
 		Texcoord texcoord;
 		ColorHDR color;
+
+		Vertex() {}
+		Vertex(Point3 p, Normal n, Texcoord t, ColorHDR c) : position(p), normal(n), texcoord(t), color(c) {}
 	};
 
 	struct Triangle {
@@ -114,7 +106,7 @@ namespace app {
 		Parallelogram &addParallelogram();
 		Node &addNode();
 		Material &addMaterial();
-		Texture &addTexture();
+		Texture &addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
 
 		struct GLTF
 		{

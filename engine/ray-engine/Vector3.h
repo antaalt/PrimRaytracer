@@ -87,7 +87,7 @@ namespace Math {
 	template<typename T>
 	inline float Vector3<T>::length() const
 	{
-		return std::sqrtf(x * x + y * y + z * z);
+		return std::sqrtf(x*x + y*y + z*z);
 	}
 
 	template<typename T>
@@ -100,9 +100,12 @@ namespace Math {
 	inline Vector3<T> Vector3<T>::cross(const Vector3<T>& lhs, const Vector3<T>& rhs)
 	{
 		return Vector3<T>(
-			lhs.y * rhs.z + lhs.z * rhs.y,
-			lhs.z * rhs.x + lhs.x * rhs.z,
-			lhs.x * rhs.y + lhs.y * rhs.x
+			lhs.y * rhs.z - lhs.z * rhs.y,
+			lhs.z * rhs.x - lhs.x * rhs.z,
+			lhs.x * rhs.y - lhs.y * rhs.x
+			/*lhs.y * rhs.z - lhs.z * rhs.y,
+			lhs.z * rhs.x - lhs.x * rhs.z,
+			lhs.x * rhs.y - lhs.y * rhs.x*/
 		);
 	}
 

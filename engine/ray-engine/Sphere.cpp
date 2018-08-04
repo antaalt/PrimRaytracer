@@ -30,15 +30,9 @@ namespace app {
 			float t1 = b - det;
 			float t2 = b + det;
 			if (t1 > ray.tmin && t1 < ray.tmax)
-			{
-				intersection.distance = t1;
-				return true;
-			}
+				return intersection.set(t1, this);
 			else if (t2 > ray.tmin && t2 < ray.tmax)
-			{
-				intersection.distance = t2;
-				return true;
-			}
+				return intersection.set(t2, this);
 			else
 				return false;
 		}
@@ -46,9 +40,12 @@ namespace app {
 		HitInfo Sphere::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
 		{
 			HitInfo info;
-			info.point = ray.origin + ray.direction * intersection.distance;
+			info.point = ray.origin + ray.direction * intersection.getDistance();
 			info.normal = Vector3::normalize(info.point - m_center);
-			info.texcoord = Texcoord(0.f); // TODO compute texcoord
+			// https://en.wikipedia.org/wiki/UV_mapping
+			float u = 0.5f + atan2(-info.normal.z, -info.normal.x) / (2.f * M_PIf);
+			float v = 0.5f - asin(-info.normal.y) / M_PIf;
+			info.texcoord = Texcoord(u, v);
 			info.color = ColorHDR(1.f);
 			info.material = material;
 			return info;

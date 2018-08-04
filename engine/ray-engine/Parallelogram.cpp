@@ -34,13 +34,13 @@ namespace app {
 			Vector3::cross(this->point[1], this->point[2]);
 			Vector3::cross(this->point[2], this->point[3]);
 			Vector3::cross(this->point[1], this->point[2]);*/
-			intersection.distance = t;
+			intersection.set(t, this);
 			return true;
 		}
 		HitInfo Parallelogram::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
 		{
 			HitInfo info;
-			info.point = ray.origin + ray.direction * intersection.distance;
+			info.point = ray.origin + ray.direction * intersection.getDistance();
 			info.normal = this->normal;
 			info.texcoord = Texcoord(); // TODO compute texcoord
 			info.color = ColorHDR(1.f);

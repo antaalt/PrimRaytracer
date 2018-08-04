@@ -34,8 +34,8 @@ namespace app {
 
 		bool Renderer::loadScene(std::string path, Acceleration acceleration)
 		{
-#if 1
-			this->scene = SceneBuilder::buildCustomScene();
+#if 0
+			this->scene = SceneBuilder::buildCustomSceneTri();
 			this->accelerator = new NoAccel();
 			return this->accelerator->build(this->scene);
 #else
@@ -63,15 +63,15 @@ namespace app {
 			const float scaleFactor = 0.01f;
 			if (inputs.mouse.mouse[LEFT])
 			{
-				this->camera->rotate(inputs.mouse.pos[0] * scaleFactor, Vector3(0.f, 1.f, 0.f));
-				this->camera->rotate(-inputs.mouse.pos[1] * scaleFactor, Vector3(1.f, 0.f, 0.f));
+				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[0]), Vector3(0.f, 1.f, 0.f));
+				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[1]), Vector3(1.f, 0.f, 0.f));
 			}
 			if (inputs.mouse.mouse[RIGHT])
 			{
-				this->camera->translate(Vector3(inputs.mouse.pos[0] * 0.1f, inputs.mouse.pos[1] * 0.1f, 0.f));
+				this->camera->translate(Vector3(-inputs.mouse.pos[0] * 0.01f, inputs.mouse.pos[1] * 0.01f, 0.f));
 			}
 			if(inputs.mouse.wheel[1] != 0)
-				this->camera->translate(Vector3(0.f, 0.f, -inputs.mouse.wheel[1]));
+				this->camera->translate(Vector3(0.f, 0.f, static_cast<float>(inputs.mouse.wheel[1])* 0.1f));
 			inputs.mouse.pos[0] = 0;
 			inputs.mouse.pos[1] = 0;
 			inputs.mouse.wheel[0] = 0;
@@ -127,7 +127,7 @@ namespace app {
 			glClearColor(1.f, 1.f, 1.f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			Log::debug("Rendering");
+			Log::debug("Rendering preview");
 
 			Pixel *pixel = this->output.data();
 			unsigned int tileWidth = this->width / TILE_WIDTH_NUMBER;
@@ -164,6 +164,10 @@ namespace app {
 			{
 				for (unsigned int x = 0; x < this->width; x++, index++)
 				{
+					if ((y == this->height / 2.f) && (x == this->width / 2.f))
+					{
+						Log::info(this->rays[index].direction, " - ", this->rays[index].origin);
+					}
 					pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator); // TODO average by samples
 				}
 				//Log::debug("Progress : ", (y / static_cast<float>(this->height)) * 100.f, "%");

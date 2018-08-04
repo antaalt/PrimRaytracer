@@ -60,7 +60,7 @@ namespace app {
 			Scene scene;
 			Camera::Ptr camera;
 			Tracer::Ptr tracer;
-			std::vector<tracer::Ray> rays;
+			std::vector<Ray> rays;
 			Accelerator::Ptr accelerator;
 			unsigned int width, height;
 			PixelBuffer output;

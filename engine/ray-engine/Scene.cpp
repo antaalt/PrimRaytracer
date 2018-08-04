@@ -15,27 +15,6 @@ namespace app {
 	Triangle::Triangle(unsigned int v1, unsigned int v2, unsigned int v3): A(v1), B(v2), C(v3)
 	{
 	}
-	Texture::Texture()
-	{
-	}
-	Texture::Texture(const Image & image)
-	{
-		// TODO convert image to textures
-	}
-
-	ColorHDR Texture::texture2D(float u, float v)
-	{
-		unsigned int uPixel = static_cast<unsigned int>(m_width / u);
-		unsigned int vPixel = static_cast<unsigned int>(m_height / u); // TODO linear and co
-		unsigned int index = vPixel * m_width + uPixel;
-		return ColorHDR(m_data[index], m_data[index + 1], m_data[index + 2], m_data[index + 3]);
-	}
-
-	unsigned int Texture::stride()
-	{
-		return sizeof(float) * m_component;
-	}
-
 	Primitive & Scene::addPrimitive()
 	{
 		primitives.emplace_back();
@@ -69,9 +48,9 @@ namespace app {
 		materials.emplace_back();
 		return materials.back();
 	}
-	Texture & Scene::addTexture()
+	Texture & Scene::addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components)
 	{
-		textures.emplace_back();
+		textures.emplace_back(data, width, height, components);
 		return textures.back();
 	}
 	Scene Scene::GLTF::load(std::string path)
@@ -91,8 +70,16 @@ namespace app {
 		Scene scene;
 		const size_t nbScene = tinyModel.scenes.size();
 		// TODO manage multiple scenes
-		scene.materials.reserve(tinyModel.materials.size());
+		// --- TEXTURES
+		scene.textures.reserve(tinyModel.textures.size());
+		for (size_t iTex = 0; iTex < tinyModel.textures.size(); iTex++)
+		{
+			tinygltf::Texture &tinyTex = tinyModel.textures[iTex];
+			tinygltf::Image &tinyImage = tinyModel.images[tinyTex.source];
+			Texture &newTex = scene.addTexture(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component);
+		}
 		// --- MATERIALS
+		scene.materials.reserve(tinyModel.materials.size());
 		for (size_t iMaterial = 0; iMaterial < tinyModel.materials.size(); iMaterial++)
 		{
 			tinygltf::Material &tinyMat = tinyModel.materials[iMaterial];
@@ -110,6 +97,16 @@ namespace app {
 					static_cast<float>(color[2]),
 					static_cast<float>(color[3])
 				);
+			}
+			auto itTexture = tinyMat.values.find("baseColorTexture");
+			if (itTexture == tinyMat.values.end())
+				newMat.texture = nullptr;
+			else
+			{
+				auto itIndex = itTexture->second.json_double_value.find("index");
+				ASSERT(itIndex != itTexture->second.json_double_value.end(), "Index not defined");
+				const unsigned int index = itIndex->second;
+				newMat.texture = &scene.textures[index];
 			}
 		}
 		// --- MESHES
@@ -293,6 +290,15 @@ namespace app {
 							switch (accessor.componentType)
 							{
 							case TINYGLTF_COMPONENT_TYPE_FLOAT:
+								for (size_t iVert = 0; iVert < accessor.count; iVert++)
+								{
+									Vertex &vert = newPrim.vertices[iVert];
+									memcpy(
+										vert.texcoord.data,
+										&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
+										sizeof(Texcoord)
+									);
+								}
 								break;
 							case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
 								ASSERT(accessor.normalized == true, "Must be normalized");
@@ -303,15 +309,6 @@ namespace app {
 							default:
 								throw std::runtime_error("Component type for texCoord not supported");
 							}
-							/*for (size_t iVert = 0; iVert < accessor.count; iVert++)
-							{
-							Vertex &vert = newPrim.vertices[iVert];
-							memcpy(
-							vert.normal.data,
-							&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-							sizeof(Point3)
-							);
-							}*/
 						}
 					}
 					// TEXCOORD_1

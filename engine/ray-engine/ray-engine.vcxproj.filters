@@ -135,6 +135,9 @@
     <ClCompile Include="Parallelogram.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\Log.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="Parallelogram.h">
       <Filter>Header Files\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

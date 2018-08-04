@@ -234,7 +234,7 @@ namespace app {
 		bool init = renderer.init();
 		ASSERT(init == true, "Renderer not initialized");
 		//init = renderer.loadScene("../data/box/box.gltf", tracer::Acceleration::NO_ACCEL);
-		init = renderer.loadScene("../data/duck/Duck.gltf", tracer::Acceleration::NO_ACCEL);
+		init = renderer.loadScene("../data/boxTextured/BoxTextured.gltf", tracer::Acceleration::NO_ACCEL);
 		ASSERT(init == true, "Scene not loaded");
 		// This makes our buffer swap synchronized with the monitor's vertical refresh
 		SDL_GL_SetSwapInterval(1);
@@ -246,23 +246,22 @@ namespace app {
 		cam->lookAt(Point3(
 			0.f,
 			0.f,
-			20.f
+			1.f
 		), Point3(0.f));
 		renderer.setCamera(cam);
 		cam = nullptr;
 
 		// LOOP
-		timer.tick();
 		while (!events())
 		{
-			timer.displayFPS();
-
+			timer.tick();
 			renderer.inputs(m_inputs);
 			bool update = renderer.updateRays();
 			if (update)
 				renderer.renderPreview();
 			else
 				renderer.render();
+			Log::info("Duration : ", timer.elapsedTime<Utils::Timer::milliseconds>(), "ms");
 			SDL_GL_SwapWindow(m_window);
 			// Free the processor
 			SDL_Delay(0);

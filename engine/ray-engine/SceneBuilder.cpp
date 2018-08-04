@@ -87,4 +87,56 @@ namespace app {
 
 		return scene;
 	}
+	Scene SceneBuilder::buildCustomSceneTri()
+	{
+		Scene scene;
+		scene.materials.reserve(2);
+		scene.shapes.reserve(2);
+		scene.primitives.reserve(1);
+		scene.nodes.reserve(2);
+
+		// materials
+		Material &mat1 = scene.addMaterial();
+		mat1.index = 0;
+		mat1.color = ColorHDR(1.f, 1.f, 1.f, 1.f);
+		mat1.texture = nullptr;
+		mat1.type = MaterialType::DIFFUSE;
+		mat1.index = 0;
+
+		Material &mat2 = scene.addMaterial();
+		mat2.index = 0;
+		mat2.color = ColorHDR(0.f, 1.f, 0.f, 1.f);
+		mat2.texture = nullptr;
+		mat2.type = MaterialType::DIFFUSE;
+		mat2.index = 1;
+
+		Mesh &mesh = scene.addMesh();
+		Primitive &prim = scene.addPrimitive();
+		Vertex vA = Vertex(Point3(0.f), Normal(), Texcoord(0.f), ColorHDR(1.f, 0.f, 0.f, 1.f));
+		Vertex vB = Vertex(Point3(0.f, 1.f, 0.f), Normal(), Texcoord(0.f), ColorHDR(0.f, 1.f, 0.f, 1.f));
+		Vertex vC = Vertex(Point3(1.f, 0.f, 0.f), Normal(), Texcoord(0.f), ColorHDR(0.f, 0.f, 1.f, 1.f));
+		prim.vertices.push_back(vA);
+		prim.vertices.push_back(vB);
+		prim.vertices.push_back(vC);
+		Triangle tri = Triangle(0, 2, 1);
+		prim.triangles.push_back(tri);
+		prim.material = &mat1;
+		mesh.primitives.push_back(&prim);
+
+		Sphere &sphere = scene.addSphere();
+		sphere.radius = 0.8f;
+		sphere.center = Point3(0.f, 0.f, -1.f);
+		sphere.material = &mat2;
+
+		// nodes
+		Node &node1 = scene.addNode();
+		node1.shape = &mesh;
+		node1.transform = Matrix4::identity();
+
+		Node &node2 = scene.addNode();
+		node2.shape = &sphere;
+		node2.transform = Matrix4::identity();
+
+		return scene;
+	}
 }

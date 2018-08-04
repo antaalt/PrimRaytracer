@@ -4,6 +4,8 @@
 #include "Sphere.h"
 #include "Parallelogram.h"
 
+#include <map>
+
 
 namespace app {
 	namespace tracer {
@@ -19,6 +21,16 @@ namespace app {
 		}
 		bool NoAccel::build(const Scene & scene)
 		{
+			std::map<const Texture*, Texture*> mapTexture;
+			//std::map<unsigned int, const prim::Material*> mapMaterials; // TODO implement map
+			m_textures.reserve(scene.textures.size());
+			for (size_t iTex = 0; iTex < scene.materials.size(); iTex++)
+			{
+				const Texture &texture = scene.textures[iTex];
+				m_textures.push_back(texture);
+				mapTexture.insert(std::make_pair(&texture, &m_textures.back()));
+			}
+			m_materials.reserve(scene.materials.size());
 			for (size_t iMat = 0; iMat < scene.materials.size(); iMat++)
 			{
 				const Material &material = scene.materials[iMat];
@@ -42,6 +54,8 @@ namespace app {
 					return false;
 				}
 				newMaterial->albedo = material.color;
+				auto it = mapTexture.find(material.texture);
+				newMaterial->colorTexture = ((it == mapTexture.end()) ? nullptr : it->second);
 				m_materials.push_back(newMaterial);
 			}
 			for (size_t iNode = 0; iNode < scene.nodes.size(); iNode++)
@@ -117,8 +131,8 @@ namespace app {
 		}
 		bool NoAccel::intersect(const Ray & ray, prim::HitInfo & info) const
 		{
-			if (!bbox.intersectBounds(ray))
-				return false;
+			/*if (!bbox.intersectBounds(ray))
+				return false;*/
 			prim::Intersection intersection;
 			for (size_t iHitable = 0; iHitable < m_hitableCount; iHitable++)
 			{

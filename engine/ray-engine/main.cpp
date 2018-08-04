@@ -1,10 +1,9 @@
 #include "Application.h"
-
 int main(int argc, char *argv[])
 {
 	app::Application application(480, 360);
 	application.run();
 	
-	//system("pause");
+	system("pause");
 	return 0;
 }

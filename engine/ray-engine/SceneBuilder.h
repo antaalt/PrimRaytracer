@@ -10,6 +10,7 @@ namespace app {
 		~SceneBuilder();
 
 		static Scene buildCustomScene();
+		static Scene buildCustomSceneTri();
 	};
 }
 

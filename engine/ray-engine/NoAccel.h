@@ -20,8 +20,8 @@ namespace app {
 		private:
 			std::vector<prim::Hitable::Ptr> m_hitable;
 			std::vector<prim::Material::Ptr> m_materials;
-			size_t m_hitableCount;
 			std::vector<Texture> m_textures;
+			size_t m_hitableCount;
 			prim::BoundingBox bbox;
 		};
 	}

@@ -3,6 +3,9 @@
 #include "Hitable.h"
 #include "Types.h"
 
+#define MOLLER_TRUMBORE
+#define BACKFACE_CULLING
+
 namespace app {
 	namespace prim {
 

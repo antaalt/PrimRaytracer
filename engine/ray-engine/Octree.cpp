@@ -11,10 +11,10 @@ namespace app {
 
 		Octree::~Octree()
 		{
-			for (size_t i = 0; i < m_hitables.size(); i++)
-				delete m_hitables[i];
-			for (size_t i = 0; i < m_materials.size(); i++)
-				delete m_materials[i];
+			for (size_t i = 0; i < this->hitables.size(); i++)
+				delete this->hitables[i];
+			for (size_t i = 0; i < this->materials.size(); i++)
+				delete this->materials[i];
 		}
 
 		bool Octree::build(const Scene & scene)
@@ -42,7 +42,7 @@ namespace app {
 					return false;
 				}
 				newMaterial->albedo = material.color;
-				m_materials.push_back(newMaterial);
+				this->materials.push_back(newMaterial);
 			}
 			for (size_t iNode = 0; iNode < scene.nodes.size(); iNode++)
 			{
@@ -77,8 +77,8 @@ namespace app {
 								prim::Vertex(vB.position, vB.normal, vB.texcoord, vB.color),
 								prim::Vertex(vC.position, vC.normal, vC.texcoord, vC.color)
 							);
-							newTri->material = m_materials[prim->material->index];
-							m_hitables.push_back(newTri);
+							newTri->material = this->materials[prim->material->index];
+							this->hitables.push_back(newTri);
 						}
 					}
 				}
@@ -90,10 +90,10 @@ namespace app {
 				}
 
 			}
-			initOctree(10);
-			for (size_t iHitable = 0; iHitable < m_hitables.size(); iHitable++)
+			initOctree(1);
+			for (size_t iHitable = 0; iHitable < this->hitables.size(); iHitable++)
 			{
-				prim::Hitable *hitable = m_hitables[iHitable];
+				prim::Hitable *hitable = this->hitables[iHitable];
 				// assume all are triangles;
 				prim::Triangle *triangle = static_cast<prim::Triangle*>(hitable);
 				
@@ -108,7 +108,7 @@ namespace app {
 			prim::Hitable::Ptr hitObject = nullptr;
 			for (size_t iChild = 0; iChild < 8; iChild++)
 			{
-				OctNode* node = m_childrens[iChild];
+				OctNode* node = this->childrens[iChild];
 				prim::Intersection localIntersection;
 				if (node->intersect(ray, localIntersection))
 					intersection.isClosestThan(localIntersection);
@@ -121,28 +121,37 @@ namespace app {
 
 		void Octree::initOctree(unsigned int maxDepth)
 		{
-			bbox.center();
+			for (int i = 0; i < 8; ++i) {
+				// Compute new bounding box for this child
+				Point3 newOrigin = bbox.center();
+				newOrigin.x += halfDimension.x * (i & 4 ? .5f : -.5f);
+				newOrigin.y += halfDimension.y * (i & 2 ? .5f : -.5f);
+				newOrigin.z += halfDimension.z * (i & 1 ? .5f : -.5f);
+				this->childrens[i] = new OctNode(newOrigin, halfDimension*.5f);
+			}
 		}
 
 		void Octree::addTriangle(const prim::Triangle * tri)
 		{
 			for (unsigned int i = 0; i < 8; i++)
-				m_childrens[i]->addTriangle(tri);
+				this->childrens[i]->addTriangle(tri);
 		}
 
 		bool OctNode::isLeafNode() const
 		{
-			return childrens[0] == nullptr;
+			return this->childrens[0] == nullptr;
 		}
 
-		OctNode::OctNode() : origin(Point3(0.f)), halfDimension(Vector3(0.f))
+		OctNode::OctNode() : OctNode(Point3(0.f), Vector3(0.f))
 		{
 		}
 
-		OctNode::OctNode(const BoundingBox & bbox) : BoundingBox(bbox), origin(bbox.center())
+		OctNode::OctNode(const Point3 & newOrigin, const Vector3 & halfDimension)
 		{
 			for (unsigned int i = 0; i < 8; i++)
-				childrens[i] = nullptr;
+				this->childrens[i] = nullptr;
+			this->max = newOrigin + halfDimension;
+			this->min = newOrigin - halfDimension;
 		}
 
 		OctNode::~OctNode()

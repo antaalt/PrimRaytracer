@@ -5,13 +5,12 @@
 #include "Onb.h"
 #include "Types.h"
 #include "Sampler.h"
+#include "Texture.h"
 
 namespace app {
 
 	namespace prim {
-
-		class Texture;
-
+		
 		Vector3 reflect(const Vector3 &wi, const Normal &normal);
 		bool refract(Vector3 &out, const Vector3 &wi, const Normal &normal, float eta);
 		Vector3 sampleUnitSphere(const rand::Sampler &sampler);

@@ -52,7 +52,7 @@ namespace Math {
 		for (int iCol = 0; iCol < 4; iCol++)
 			for (int iRow = 0; iRow < 4; iRow++)
 				for (int k = 0; k < 4; k++)
-					out[iCol][iRow] += lhs[iCol][k] * rhs[k][iRow];
+					out[iCol][iRow] += rhs[iCol][k] * lhs[k][iRow];
 		return out;
 	}
 

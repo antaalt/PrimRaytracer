@@ -11,6 +11,7 @@ namespace app {
 	namespace prim {
 
 		class Material;
+		struct Intersection;
 
 		struct HitInfo {
 			Point3 point;
@@ -18,18 +19,6 @@ namespace app {
 			Texcoord texcoord;
 			ColorHDR color;
 			Material *material;
-		};
-
-		struct Intersection {
-			float distance;
-			float beta; // interpolation
-			float gamma; // interpolation
-			const prim::Hitable * hitable;
-			bool isClosestThan(const Intersection &intersection);
-			
-			HitInfo compute(const tracer::Ray &ray);
-			bool hit();
-			Intersection();
 		};
 
 		class Hitable
@@ -40,6 +29,52 @@ namespace app {
 
 			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection &intersection) const = 0;
 			Material *material;
+		};
+
+		struct Intersection {
+		private:
+			float distance;
+			const Hitable * hitable;
+			// Interpolation
+			float u;
+			float v;
+		public:
+			Intersection() : distance(INVALID_INTERSECTION), hitable(nullptr)
+			{
+			}
+
+			bool isClosestThan(const Intersection &intersection)
+			{
+				if (distance < intersection.distance)
+					return true;
+				this->distance = intersection.distance;
+				this->u = intersection.u;
+				this->v = intersection.v;
+				this->hitable = intersection.hitable;
+				return false;
+			}
+			HitInfo compute(const tracer::Ray & ray) const
+			{
+				return this->hitable->computeIntersection(ray, *this);
+			}
+			bool hit() const
+			{
+				return (this->hitable != nullptr);
+			}
+
+			bool set(float distance, const Hitable* hitable, float u = 0.f, float v = 0.f)
+			{
+				this->distance = distance;
+				this->hitable = hitable;
+				this->u = u;
+				this->v = v;
+				return true;
+			}
+
+			float getDistance() const { return distance; }
+			float getU() const { return u; }
+			float getV() const { return v; }
+			//const Hitable *getHitable() const;
 		};
 	}
 }
