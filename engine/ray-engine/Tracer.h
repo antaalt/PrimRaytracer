@@ -5,7 +5,7 @@
 #include "PixelBuffer.h"
 
 #define MAX_DEPTH 10
-#define BACKGROUND_COLOR ColorHDR(0.1f)
+#define BACKGROUND_COLOR color4(0.1f)
 
 namespace app {
 

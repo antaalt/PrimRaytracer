@@ -7,8 +7,8 @@
 
 #include <string>
 
-#define TILE_WIDTH_NUMBER 30
-#define TILE_HEIGHT_NUMBER 30
+#define TILE_WIDTH_NUMBER 20
+#define TILE_HEIGHT_NUMBER 20
 
 namespace app {
 
@@ -35,6 +35,15 @@ namespace app {
 
 	namespace tracer {
 
+		struct Tile {
+			unsigned int width, height;
+			unsigned int x, y;
+			bool render(PixelBuffer &buffer);
+
+		private:
+			std::vector<Ray> rays;
+		};
+
 		class Renderer
 		{
 		public:
@@ -52,6 +61,8 @@ namespace app {
 			bool renderPreview();
 
 			bool render();
+
+			bool renderParallel();
 
 			void setTracer(tracer::Tracer::Ptr tracer);
 			void setCamera(tracer::Camera::Ptr camera);

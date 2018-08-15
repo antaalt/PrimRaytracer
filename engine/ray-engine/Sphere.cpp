@@ -8,7 +8,7 @@ namespace app {
 		{
 		}
 
-		Sphere::Sphere(const Point3 & center, float radius) : m_center(center), m_radius(radius)
+		Sphere::Sphere(const point3 & center, float radius) : m_center(center), m_radius(radius)
 		{
 		}
 
@@ -19,9 +19,9 @@ namespace app {
 
 		bool Sphere::intersect(const tracer::Ray & ray, Intersection & intersection) const
 		{
-			Vector3 eyeDirection = m_center - ray.origin;
-			float b = Vector3::dot(eyeDirection, ray.direction); // a is always 1 because dot of same normalized vector
-			float det = b * b - Vector3::dot(eyeDirection, eyeDirection) + m_radius * m_radius;
+			vec3 eyeDirection = m_center - ray.origin;
+			float b = vec3::dot(eyeDirection, ray.direction); // a is always 1 because dot of same normalized vector
+			float det = b * b - vec3::dot(eyeDirection, eyeDirection) + m_radius * m_radius;
 			if (det < 0)
 				return false;
 			else
@@ -41,12 +41,12 @@ namespace app {
 		{
 			HitInfo info;
 			info.point = ray.origin + ray.direction * intersection.getDistance();
-			info.normal = Vector3::normalize(info.point - m_center);
+			info.normal = vec3::normalize(info.point - m_center);
 			// https://en.wikipedia.org/wiki/UV_mapping
 			float u = 0.5f + atan2(-info.normal.z, -info.normal.x) / (2.f * M_PIf);
 			float v = 0.5f - asin(-info.normal.y) / M_PIf;
-			info.texcoord = Texcoord(u, v);
-			info.color = ColorHDR(1.f);
+			info.texcoord = uv2(u, v);
+			info.color = color4(1.f);
 			info.material = material;
 			return info;
 		}

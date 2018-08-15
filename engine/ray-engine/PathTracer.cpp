@@ -28,8 +28,8 @@ namespace app {
 			Ray newRay = mat->scatter(ray, info, pdf);
 
 			Pixel color;
-			ColorHDR directLight;
-			ColorHDR indirectLight;
+			color4 directLight;
+			color4 indirectLight;
 			switch (mat->type())
 			{
 			case prim::MaterialType::DIFFUSE:

@@ -15,10 +15,7 @@ namespace app {
 		void clamp();
 		void applyGamma();
 
-		operator Color32();
-		operator ColorHDR();
-		/*void operator=(const Color32 &color);
-		void operator=(const ColorHDR &color);*/
+		operator color4();
 
 		Pixel operator+(const Pixel &rhs);
 		friend Pixel operator*(float lhs, const Pixel &rhs);
@@ -26,8 +23,7 @@ namespace app {
 
 		Pixel();
 		Pixel(float val);
-		Pixel(const Color32 &color);
-		Pixel(const ColorHDR &color);
+		Pixel(const color4 &color);
 		Pixel(float r, float g, float b, float a);
 	};
 

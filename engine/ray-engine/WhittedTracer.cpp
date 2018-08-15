@@ -22,30 +22,29 @@ namespace app {
 
 				
 			float pdf = 0;
-			ColorHDR color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color * Vector3::dot(info.normal, -ray.direction);
-
+			color4 color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color * vec3::dot(info.normal, -ray.direction);
 			switch (info.material->type())
 			{
 			case prim::MaterialType::DIFFUSE:
 				return color;
 			case prim::MaterialType::DIELECTRIC:
 			{
-				Vector3 reflectedDirection;
-				Vector3 refractedDirection;
-				const bool inside = (Vector3::dot(info.normal, ray.direction) > 0.f);
+				vec3 reflectedDirection;
+				vec3 refractedDirection;
+				const bool inside = (vec3::dot(info.normal, ray.direction) > 0.f);
 				float eta = 1.5f; // TODO get from material
 				float cos_theta;
 				if (inside) // going out of the medium
 				{
 					if (prim::refract(refractedDirection, ray.direction, -info.normal, eta))
 						return castRay(Ray(info.point, prim::reflect(ray.direction, -info.normal)), accelerator, ++depth); // TIR
-					cos_theta = Vector3::dot(ray.direction, info.normal);
+					cos_theta = vec3::dot(ray.direction, info.normal);
 					reflectedDirection = prim::reflect(ray.direction, -info.normal);
 				}
 				else // going in the medium
 				{
 					prim::refract(refractedDirection, ray.direction, info.normal, 1.f / eta);
-					cos_theta = Vector3::dot(-ray.direction, info.normal);
+					cos_theta = vec3::dot(-ray.direction, info.normal);
 					reflectedDirection = prim::reflect(ray.direction, info.normal);
 				}
 				float R = physics::fresnel(cos_theta, eta);
@@ -73,7 +72,7 @@ namespace app {
 		{
 			//return Pixel((ray.direction.x + 1.f) / 2.f, (ray.direction.y + 1.f) / 2.f, (ray.direction.z + 1.f) / 2.f, 1.f);
 			return BACKGROUND_COLOR;
-			//return Pixel(Vector3::dot(ray.direction, Vector3(0.f, 1.f, 0.f)));
+			//return Pixel(vec3::dot(ray.direction, vec3(0.f, 1.f, 0.f)));
 		}
 	}
 }

@@ -6,14 +6,8 @@
 #include <GL\glew.h>
 // OpenGL
 #include <GL\GL.h>
-// GLM
-#define GLM_FORCE_SWIZZLE
-/*#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\quaternion.hpp>
-#include <glm\gtx\string_cast.hpp>*/
+// Math
 #include "Types.h"
-
 #include "Utils\Log.h"
 
 

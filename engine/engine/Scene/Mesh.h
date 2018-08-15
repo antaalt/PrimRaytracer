@@ -26,15 +26,32 @@ namespace app {
 		}
 	};
 
-	union Face {
+	union Triangle {
 		unsigned int data[3];
 		struct {
 			unsigned int A, B, C;
 		};
-		Face() {}
-		Face(unsigned int a, unsigned int b, unsigned int c) : A(a), B(b), C(c) {}
+		Triangle() {}
+		Triangle(unsigned int a, unsigned int b, unsigned int c) : A(a), B(b), C(c) {}
 	};
 #pragma pack(pop)
+
+	class Primitive
+	{
+	public:
+		Primitive();
+		~Primitive();
+		std::vector<Triangle> triangles;
+		std::vector<Vertex> vertices;
+		Material *material;
+		bool createVAO();
+		void deleteVAO();
+		void render(const glm::mat4 &p_model, const glm::mat4 &p_view, const glm::mat4 &p_projection);
+	private:
+		GLuint m_vboArrayBuffer;
+		GLuint m_vboElementArrayBuffer;
+		GLuint m_vao;
+	};
 	
 
 	class Mesh
@@ -43,26 +60,10 @@ namespace app {
 		Mesh();
 		~Mesh();
 
-		void setMaterial(Material *material);
-		Material *getMaterial();
+		Primitive &addPrimitive();
 
 		void render(const glm::mat4 &p_model, const glm::mat4 &p_view, const glm::mat4 &p_projection);
 
-		void addFace(Face face);
-		void addVertex(Vertex vert);
-
-	
-		bool createVAO();
-	private:
-		void deleteVAO();
-	private:
-		std::vector<Face> m_faces;
-		std::vector<Vertex> m_vertices;
-		GLuint m_vboArrayBuffer;
-		GLuint m_vboElementArrayBuffer;
-		GLuint m_vao;
-
-		bool m_has[Attributes::NB_ATTRIBUTES];
-		Material *m_material;
+		std::vector<Primitive> primitives;
 	};
 }

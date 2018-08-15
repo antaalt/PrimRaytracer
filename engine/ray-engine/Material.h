@@ -11,10 +11,10 @@ namespace app {
 
 	namespace prim {
 		
-		Vector3 reflect(const Vector3 &wi, const Normal &normal);
-		bool refract(Vector3 &out, const Vector3 &wi, const Normal &normal, float eta);
-		Vector3 sampleUnitSphere(const rand::Sampler &sampler);
-		Vector3 sampleMicroFacet(const rand::Sampler &sampler, float roughness);
+		vec3 reflect(const vec3 &wi, const norm3 &normal);
+		bool refract(vec3 &out, const vec3 &wi, const norm3 &normal, float eta);
+		vec3 sampleUnitSphere(const rand::Sampler &sampler);
+		vec3 sampleMicroFacet(const rand::Sampler &sampler, float roughness);
 
 		enum class MaterialType {
 			DIFFUSE,
@@ -32,7 +32,7 @@ namespace app {
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const = 0;
 			virtual MaterialType type() const = 0;
 
-			ColorHDR color(float u = 0.f, float v = 0.f) const
+			color4 color(float u = 0.f, float v = 0.f) const
 			{
 				if (colorTexture == nullptr)
 					return albedo;
@@ -40,12 +40,12 @@ namespace app {
 					return albedo * colorTexture->texture2D(u, v);
 			}
 
-			void setColor(const ColorHDR &color) { albedo = color; }
+			void setColor(const color4 &color) { albedo = color; }
 			void setTexture(Texture *texture) { colorTexture = texture; }
 
 			Material() : colorTexture(nullptr) {}
 		protected:
-			ColorHDR albedo;
+			color4 albedo;
 			Texture *colorTexture;
 		};
 
@@ -55,9 +55,9 @@ namespace app {
 			rand::Sampler sampler;
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
 			{
-				Vector3 randomDirection = sampleUnitSphere(sampler);
+				vec3 randomDirection = sampleUnitSphere(sampler);
 				transform::Onb onb(intersection.normal);
-				Vector3 direction = onb.transform(randomDirection);
+				vec3 direction = onb.transform(randomDirection);
 				//pdf = 1.f / M_PI;
 				return tracer::Ray(intersection.point, direction);
 			}
@@ -72,7 +72,7 @@ namespace app {
 			Specular() {}
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
 			{
-				Vector3 reflected = reflect(in.direction, intersection.normal);
+				vec3 reflected = reflect(in.direction, intersection.normal);
 				//pdf = 1.f;
 				return tracer::Ray(intersection.point, reflected);
 			}
@@ -89,9 +89,9 @@ namespace app {
 
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
 			{
-				bool inside = Vector3::dot(in.direction, intersection.normal) > 0.f;
+				bool inside = vec3::dot(in.direction, intersection.normal) > 0.f;
 				float tmp_eta = 1.f / eta;
-				Vector3 refracted;
+				vec3 refracted;
 				bool tir = refract(refracted, in.direction, intersection.normal, tmp_eta); // TODO better fresnel & co
 				//pdf = 1.f;
 				return tracer::Ray(intersection.point, refracted);
@@ -110,9 +110,9 @@ namespace app {
 
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
 			{
-				Vector3 randomDirection = sampleMicroFacet(sampler, roughness);
+				vec3 randomDirection = sampleMicroFacet(sampler, roughness);
 				transform::Onb onb(intersection.normal);
-				Vector3 direction = onb.transform(randomDirection);
+				vec3 direction = onb.transform(randomDirection);
 				pdf = 1.f; // TODO calculate pdf
 				return tracer::Ray(intersection.point, direction);
 			}

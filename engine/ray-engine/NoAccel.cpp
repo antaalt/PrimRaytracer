@@ -70,7 +70,8 @@ namespace app {
 				case ShapeType::MESH:
 				{
 					const Mesh *mesh = reinterpret_cast<const Mesh*>(shape);
-					const Matrix4 transform = node.getModel();
+					const mat4 transform = node.getModel();
+					const mat3 normalTransform = convert::toMat3(transform);
 					float det = transform.det();
 					unsigned int triVert1 = 1;
 					unsigned int triVert2 = 2;
@@ -91,9 +92,11 @@ namespace app {
 							for (unsigned int iVert = 0; iVert < 3; iVert++)
 							{
 								Vertex &v = prim->vertices[tri.vertices[iVert]];
-								data[iVert] = prim::Vertex(v.position, v.normal, v.texcoord, v.color);
-								Vector3 &p = data[iVert].position;
+								vec3 p = v.position;
+								norm3 n = v.normal;
 								p = transform * p;
+								n = normalTransform * n;
+								data[iVert] = prim::Vertex(p, n, v.texcoord, v.color);
 								bbox.include(p);
 							}
 							prim::Triangle *newTri = new prim::Triangle(
@@ -110,12 +113,12 @@ namespace app {
 				case ShapeType::SPHERE:
 				{
 					const Sphere *sphere = reinterpret_cast<const Sphere*>(shape);
-					const Matrix4 transform = node.getModel();
+					const mat4 transform = node.getModel();
 					prim::Sphere::Ptr newSphere = new prim::Sphere(sphere->center, sphere->radius);
 					newSphere->material = m_materials[sphere->material->index];
 					m_hitable.push_back(newSphere);
-					bbox.include(sphere->center + Point3(sphere->radius));
-					bbox.include(sphere->center + Point3(-sphere->radius));
+					bbox.include(sphere->center + point3(sphere->radius));
+					bbox.include(sphere->center + point3(-sphere->radius));
 				}
 				break;
 				case ShapeType::PARALLELOGRAM:
@@ -141,8 +144,8 @@ namespace app {
 		}
 		bool NoAccel::intersect(const Ray & ray, prim::HitInfo & info) const
 		{
-			/*if (!bbox.intersectBounds(ray))
-				return false;*/
+			if (!bbox.intersectBounds(ray))
+				return false;
 			prim::Intersection intersection;
 			for (size_t iHitable = 0; iHitable < m_hitableCount; iHitable++)
 			{
@@ -157,6 +160,16 @@ namespace app {
 			
 			info = intersection.compute(ray);
 			return true;
+		}
+		bool NoAccel::intersect(const Ray & ray) const
+		{
+			if (!bbox.intersectBounds(ray))
+				return false;
+			prim::Intersection intersection;
+			for (size_t iHitable = 0; iHitable < m_hitableCount; iHitable++)
+				if (m_hitable[iHitable]->intersect(ray, intersection))
+					return true;
+			return false;
 		}
 	}
 }

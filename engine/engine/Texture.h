@@ -14,7 +14,7 @@ namespace app {
 		{
 		public:
 			Texture();
-			Texture(const unsigned char *data, unsigned int width, unsigned int height, Depth depth);
+			Texture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
 			~Texture();
 
 			int stride() const;

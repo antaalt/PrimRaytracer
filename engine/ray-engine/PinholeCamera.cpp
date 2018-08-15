@@ -17,7 +17,7 @@ namespace app {
 		{
 			float xt = x / static_cast<float>(m_width) * 2.f - 1.f;
 			float yt = y / static_cast<float>(m_height) * 2.f - 1.f;
-			Vector3 direction = Vector3::normalize(Vector3(
+			vec3 direction = vec3::normalize(vec3(
 				u.x * xt + v.x * yt + w.x,
 				u.y * xt + v.y * yt + w.y,
 				u.z * xt + v.z * yt + w.z

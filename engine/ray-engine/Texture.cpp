@@ -53,7 +53,7 @@ namespace app {
 		}
 	}
 
-	ColorHDR Texture::texture2D(float u, float v)
+	color4 Texture::texture2D(float u, float v)
 	{
 		float ui = u * m_width;
 		float vi = v * m_height;
@@ -77,7 +77,7 @@ namespace app {
 		);
 #else
 		unsigned int index = vPixel * m_width * m_component + uPixel * m_component;
-		return ColorHDR(&m_data[index]);;
+		return color4(&m_data[index]);
 #endif
 	}
 
@@ -85,15 +85,15 @@ namespace app {
 	{
 		return sizeof(float) * m_component;
 	}
-	ColorHDR Texture::at(unsigned int x, unsigned int y)
+	color4 Texture::at(unsigned int x, unsigned int y)
 	{
 #if defined(TEXTURE_REPEAT)
 		x = x % m_width;
 		y = y % m_height;
 #else
 		if (x >= m_width || x < 0 || y >= m_height || m_height == 0)
-			return ColorHDR(0.f);
+			return color4(0.f);
 #endif
-		return ColorHDR(&m_data[y * m_width * m_component + x * m_component]);
+		return color4(&m_data[y * m_width * m_component + x * m_component]);
 	}
 }

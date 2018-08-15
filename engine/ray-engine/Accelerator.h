@@ -21,6 +21,8 @@ namespace app {
 			virtual bool build(const Scene &scene) = 0;
 
 			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const = 0;
+
+			virtual bool intersect(const Ray &ray) const = 0;
 		};
 	}
 }

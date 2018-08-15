@@ -14,10 +14,10 @@ namespace app {
 		struct Intersection;
 
 		struct HitInfo {
-			Point3 point;
-			Normal normal;
-			Texcoord texcoord;
-			ColorHDR color;
+			point3 point;
+			norm3 normal;
+			uv2 texcoord;
+			color4 color;
 			Material *material;
 		};
 

@@ -7,6 +7,8 @@
 
 #include "SceneBuilder.h"
 
+#include <ppl.h>
+
 
 namespace app {
 	namespace tracer {
@@ -34,7 +36,7 @@ namespace app {
 
 		bool Renderer::loadScene(std::string path, Acceleration acceleration)
 		{
-#if 1
+#if 0
 			this->scene = SceneBuilder::buildCustomScene();
 			this->accelerator = new NoAccel();
 			return this->accelerator->build(this->scene);
@@ -63,15 +65,15 @@ namespace app {
 			const float scaleFactor = 0.01f;
 			if (inputs.mouse.mouse[LEFT])
 			{
-				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[0]), Vector3(0.f, 1.f, 0.f));
-				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[1]), Vector3(1.f, 0.f, 0.f));
+				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[0]), vec3(0.f, 1.f, 0.f));
+				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[1]), vec3(1.f, 0.f, 0.f));
 			}
 			if (inputs.mouse.mouse[RIGHT])
 			{
-				this->camera->translate(Vector3(-inputs.mouse.pos[0] * 0.01f, inputs.mouse.pos[1] * 0.01f, 0.f));
+				this->camera->translate(vec3(-inputs.mouse.pos[0] * 0.01f, inputs.mouse.pos[1] * 0.01f, 0.f));
 			}
 			if(inputs.mouse.wheel[1] != 0)
-				this->camera->translate(Vector3(0.f, 0.f, static_cast<float>(inputs.mouse.wheel[1])* 0.1f));
+				this->camera->translate(vec3(0.f, 0.f, static_cast<float>(inputs.mouse.wheel[1])* 0.1f));
 			inputs.mouse.pos[0] = 0;
 			inputs.mouse.pos[1] = 0;
 			inputs.mouse.wheel[0] = 0;
@@ -112,9 +114,9 @@ namespace app {
 
 		bool Renderer::updateRays()
 		{
-			unsigned int index = 0;
 			if (!this->camera->computeTransform())
 				return false;
+			unsigned int index = 0;
 			for (unsigned int y = 0; y < this->height; y++)
 				for (unsigned int x = 0; x < this->width; x++)
 					this->rays[index++] = this->camera->generateRay(x, y);
@@ -176,17 +178,48 @@ namespace app {
 
 			return true;
 		}
+		bool Renderer::renderParallel()
+		{
+			glClearColor(1.f, 1.f, 1.f, 1.f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			Log::debug("Rendering");
+
+			// TODO add samples
+			Pixel *pixel = this->output.data();
+			unsigned int index = 0;
+
+			concurrency::parallel_for(size_t(0), size_t(50), [&](size_t i)
+			{
+				std::cout << i << ",";
+			});
+			/*for (unsigned int y = 0; y < this->height; y++)
+			{
+				for (unsigned int x = 0; x < this->width; x++, index++)
+				{
+					if ((y == this->height / 2.f) && (x == this->width / 2.f))
+					{
+						Log::info(this->rays[index].direction, " - ", this->rays[index].origin);
+					}
+					pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator); // TODO average by samples
+				}
+				//Log::debug("Progress : ", (y / static_cast<float>(this->height)) * 100.f, "%");
+			}*/
+			glDrawPixels(this->width, this->height, GL_RGBA, GL_FLOAT, this->output.data());
+
+			return true;
+		}
 		void Renderer::setTracer(tracer::Tracer::Ptr tracer)
 		{
+			if (this->tracer != nullptr)
+				delete this->tracer;
 			this->tracer = tracer;
 		}
 		void Renderer::setCamera(tracer::Camera::Ptr camera)
 		{
+			if (this->camera != nullptr)
+				delete this->camera;
 			this->camera = camera;
-			// TODO, manage projection, hide camera impementation
-			/*float ratio = this->resolution.x / static_cast<float>(this->resolution.y);
-			this->scene.getCurrentCamera()->setProjection(90.f / ratio, ratio);
-			return res;*/
 		}
 	}
 }

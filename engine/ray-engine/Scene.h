@@ -19,18 +19,18 @@ namespace app {
 		using Ptr = Material*;
 		unsigned int index;
 		Texture::Ptr texture;
-		ColorHDR color;
+		color4 color;
 		MaterialType type;
 	};
 
 	struct Vertex {
-		Point3 position;
-		Normal normal;
-		Texcoord texcoord;
-		ColorHDR color;
+		point3 position;
+		norm3 normal;
+		uv2 texcoord;
+		color4 color;
 
 		Vertex() {}
-		Vertex(Point3 p, Normal n, Texcoord t, ColorHDR c) : position(p), normal(n), texcoord(t), color(c) {}
+		Vertex(point3 p, norm3 n, uv2 t, color4 c) : position(p), normal(n), texcoord(t), color(c) {}
 	};
 
 	struct Triangle {
@@ -62,14 +62,14 @@ namespace app {
 		virtual ShapeType type() const = 0;
 	};
 	struct Parallelogram : public Shape {
-		Point3 point[3];
-		Normal normal;
+		point3 point[3];
+		norm3 normal;
 		Material::Ptr material;
 		virtual ShapeType type() const;
 	};
 	struct Sphere : public Shape {
 		float radius;
-		Point3 center;
+		point3 center;
 		Material::Ptr material;
 		virtual ShapeType type() const;
 	};
@@ -84,12 +84,12 @@ namespace app {
 		using Ptr = Node*;
 		Shape::Ptr shape;
 		Material::Ptr material;
-		Matrix4 transform;
+		mat4 transform;
 		Node::Ptr parent;
 		std::vector<Node::Ptr> childrens;
 		Node() : parent(nullptr) {}
 
-		Matrix4 getModel() const;
+		mat4 getModel() const;
 	};
 
 	struct Scene {

@@ -5,7 +5,7 @@
 
 namespace app {
 
-	Node::Node() : m_localTransform(glm::mat4(1.f)), m_parent(nullptr)
+	Node::Node() : m_localTransform(glm::mat4(1.f)), m_parent(nullptr), m_mesh(nullptr)
 	{
 	}
 

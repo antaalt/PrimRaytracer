@@ -6,14 +6,31 @@ namespace app {
 	{
 	}
 
-
 	Mesh::~Mesh()
 	{
 	}
-	
-	bool Mesh::createVAO()
+	Primitive & Mesh::addPrimitive()
 	{
-		if (!m_vertices.size() || !m_faces.size())
+		primitives.emplace_back();
+		return primitives.back();
+	}
+	void Mesh::render(const glm::mat4 & p_model, const glm::mat4 & p_view, const glm::mat4 & p_projection)
+	{
+		for (size_t iPrim = 0; iPrim < primitives.size(); iPrim++)
+			primitives[iPrim].render(p_model, p_view, p_projection);
+	}
+
+	Primitive::Primitive()
+	{
+
+	}
+	Primitive::~Primitive()
+	{
+		deleteVAO();
+	}
+	bool Primitive::createVAO()
+	{
+		if (!vertices.size() || !triangles.size())
 			return false;
 
 		if (!glewIsExtensionSupported("GL_ARB_vertex_array_object GL_ARB_vertex_buffer_object"))
@@ -31,7 +48,7 @@ namespace app {
 			return false;
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboArrayBuffer);
-		glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
 		glGenBuffers(1, &m_vboElementArrayBuffer);
 		if (!m_vboElementArrayBuffer)
@@ -40,35 +57,36 @@ namespace app {
 			return false;
 		}
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboElementArrayBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_faces.size() * 3 * sizeof(unsigned int), &m_faces[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, triangles.size() * 3 * sizeof(unsigned int), &triangles[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(POSITION);
 		glVertexAttribPointer(POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), offset(POSITION));
-		if (m_has[Attributes::NORMAL])
-		{
+		//if (m_has[Attributes::NORMAL])
+		//{
 			glEnableVertexAttribArray(NORMAL);
 			glVertexAttribPointer(NORMAL, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), offset(NORMAL));
-		}
-		if (m_has[Attributes::COLOR])
-		{
+		//}
+		//if (m_has[Attributes::COLOR])
+		//{
 			glEnableVertexAttribArray(COLOR);
 			glVertexAttribPointer(COLOR, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), offset(COLOR));
-		}
+		//}
 
 		for (GLuint att = Attributes::TEXCOORD0; att < NB_ATTRIBUTES; att++)
 		{
-			if (m_has[att])
-			{
+			//if (m_has[att])
+			//{
 				glEnableVertexAttribArray(att);
 				glVertexAttribPointer(att, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offset(static_cast<Attributes>(att)));
-			}
+			//}
 		}
 
 		glBindVertexArray(0);
 
 		return true;
 	}
-	void Mesh::deleteVAO()
+
+	void Primitive::deleteVAO()
 	{
 		if (m_vao)
 			glDeleteVertexArrays(1, &m_vao);
@@ -80,20 +98,13 @@ namespace app {
 		m_vao = 0;
 		m_vboArrayBuffer = m_vboElementArrayBuffer = 0;
 	}
-	void Mesh::setMaterial(Material * material)
+
+	void Primitive::render(const glm::mat4 & p_model, const glm::mat4 & p_view, const glm::mat4 & p_projection)
 	{
-		m_material = material;
-	}
-	Material * Mesh::getMaterial()
-	{
-		return m_material;
-	}
-	void Mesh::render(const glm::mat4 & p_model, const glm::mat4 & p_view, const glm::mat4 & p_projection)
-	{
-		if (m_material != nullptr)
+		if (material != nullptr)
 		{
-			m_material->use();
-			GL::Program * p = m_material->getProgram();
+			material->use();
+			GL::Program * p = material->getProgram();
 			if (p != nullptr && p->isValid())
 			{
 				glm::mat4 mv = p_view * p_model;
@@ -113,19 +124,11 @@ namespace app {
 			// VAO has been created : bind VAO
 			glBindVertexArray(m_vao);
 
-			glDrawElements(GL_TRIANGLES, m_faces.size() * 3, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, triangles.size() * 3, GL_UNSIGNED_INT, 0);
 
 			// Unbind all
 			glBindVertexArray(0);
 		}
 	}
-	void Mesh::addFace(Face face)
-	{
-		m_faces.push_back(face);
-	}
-	void Mesh::addVertex(Vertex vert)
-	{
-		m_vertices.push_back(vert);
-	}
-	
+
 }

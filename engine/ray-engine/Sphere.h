@@ -7,15 +7,15 @@ namespace app {
 		{
 		public:
 			Sphere();
-			Sphere(const Point3 &center, float radius);
+			Sphere(const point3 &center, float radius);
 			~Sphere();
 
 			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const;
 			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection &intersection) const;
 
-		private:
+		protected:
 			float m_radius;
-			Point3 m_center;
+			point3 m_center;
 		};
 	}
 }

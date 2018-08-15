@@ -8,12 +8,6 @@
 #define WARN_HEADER		"WARN  > "
 
 namespace Log {
-	void info(const char *str);
-	void debug(const char *str);
-	void error(const char *str);
-	void warn(const char *str);
-
-
 	template <typename T>
 	void info(const char *str, T data);
 	template <typename T>

@@ -243,11 +243,11 @@ namespace app {
 		renderer.setTracer(tracer);
 		tracer = nullptr;
 		tracer::Camera *cam = new tracer::PinholeCamera(m_width, m_height);
-		cam->lookAt(Point3(
+		cam->lookAt(point3(
 			0.f,
 			0.f,
 			1.f
-		), Point3(0.f));
+		), point3(0.f));
 		renderer.setCamera(cam);
 		cam = nullptr;
 

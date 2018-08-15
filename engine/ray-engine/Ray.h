@@ -14,12 +14,12 @@ namespace app {
 		};
 
 		struct Ray {
-			Point3 origin;
-			Vector3 direction;
+			point3 origin;
+			vec3 direction;
 			float tmin, tmax;
 			RayType type;
 			Ray() : tmin(EPSILON), tmax(::std::numeric_limits<float>::max()), type(GEOMETRY_RAY) {}
-			Ray(Point3 origin, Vector3 direction, RayType ray_type = GEOMETRY_RAY, float tmin = EPSILON, float tmax = ::std::numeric_limits<float>::max()) :
+			Ray(point3 origin, vec3 direction, RayType ray_type = GEOMETRY_RAY, float tmin = EPSILON, float tmax = ::std::numeric_limits<float>::max()) :
 				origin(origin),
 				direction(direction),
 				type(ray_type),

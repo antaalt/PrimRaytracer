@@ -65,14 +65,14 @@ namespace app {
 				return false;
 			}
 			// Always detach shaders after a successful link.
-			for (auto it = m_shaders.begin(); it != m_shaders.end(); it++)
+			/*for (auto it = m_shaders.begin(); it != m_shaders.end(); it++)
 			{
 				GL::Shader *shader = it->second;
 				glDetachShader(m_programID, shader->getID());
 				// TODO need to delete it ? https://www.khronos.org/opengl/wiki/Shader_Compilation
 				delete shader;
 			}
-			m_shaders.clear();
+			m_shaders.clear();*/
 
 			// get uniforms locations
 			use();
@@ -80,7 +80,9 @@ namespace app {
 				m_matrixUniformsID[i] = glGetUniformLocation(m_programID, matrixUniformsNames(static_cast<MatrixUniform>(i)));
 			doNotUse();
 
-			return true;
+			glValidateProgram(m_programID);
+
+			return isValid();
 		}
 		void Program::use()
 		{

@@ -55,7 +55,7 @@ namespace app {
 				case ShapeType::MESH:
 				{
 					const Mesh *mesh = reinterpret_cast<const Mesh*>(shape);
-					const Matrix4 transform = node.getModel();
+					const mat4 transform = node.getModel();
 					for (size_t iPrim = 0; iPrim < mesh->primitives.size(); iPrim++)
 					{
 						const Primitive::Ptr prim = mesh->primitives[iPrim];
@@ -119,11 +119,16 @@ namespace app {
 			return true;
 		}
 
+		bool Octree::intersect(const Ray & ray) const
+		{
+			return false;
+		}
+
 		void Octree::initOctree(unsigned int maxDepth)
 		{
 			for (int i = 0; i < 8; ++i) {
 				// Compute new bounding box for this child
-				Point3 newOrigin = bbox.center();
+				point3 newOrigin = bbox.center();
 				newOrigin.x += halfDimension.x * (i & 4 ? .5f : -.5f);
 				newOrigin.y += halfDimension.y * (i & 2 ? .5f : -.5f);
 				newOrigin.z += halfDimension.z * (i & 1 ? .5f : -.5f);
@@ -142,11 +147,11 @@ namespace app {
 			return this->childrens[0] == nullptr;
 		}
 
-		OctNode::OctNode() : OctNode(Point3(0.f), Vector3(0.f))
+		OctNode::OctNode() : OctNode(point3(0.f), vec3(0.f))
 		{
 		}
 
-		OctNode::OctNode(const Point3 & newOrigin, const Vector3 & halfDimension)
+		OctNode::OctNode(const point3 & newOrigin, const vec3 & halfDimension)
 		{
 			for (unsigned int i = 0; i < 8; i++)
 				this->childrens[i] = nullptr;
@@ -210,7 +215,7 @@ namespace app {
 			return false;
 		}
 
-		unsigned int OctNode::getOctant(const Vector3 & point) const
+		unsigned int OctNode::getOctant(const vec3 & point) const
 		{
 			unsigned int oct = 0;
 			if (point.x >= origin.x) oct |= (1 << 2);

@@ -27,9 +27,9 @@ namespace app {
 		return a + (b - a) * t;
 	}
 
-	inline ColorHDR lerp(const ColorHDR &a, const ColorHDR &b, float t)
+	inline color4 lerp(const color4 &a, const color4 &b, float t)
 	{
-		return ColorHDR(
+		return color4(
 			lerp(a.x, b.x, t),
 			lerp(a.y, b.y, t),
 			lerp(a.z, b.z, t),

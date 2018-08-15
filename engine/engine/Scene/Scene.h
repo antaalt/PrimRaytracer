@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "Camera.h"
 #include "tiny_gltf.h"
+#include "../Texture.h"
 
 namespace app {
 
@@ -21,57 +22,34 @@ namespace app {
 		Scene();
 		~Scene();
 
-		bool loadScene(std::string path, FileFormat fileformat);
-
-
-	public:
 		bool render();
-
-		Camera * getCurrentCamera();
-		const Camera * getCurrentCamera() const;
 
 		Node &addNode(Node *parent = nullptr);
 		Mesh &addMesh();
 		Camera &addCamera(Node *parent = nullptr);
 		Light &addLight(Node *parent = nullptr);
 		Material &addMaterial();
+		GL::Texture32 &addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
 
-		/*Node *getNode(size_t index);
-		const Node *getNode(size_t index) const;
-		Mesh *getMesh(size_t index);
-		const Mesh *getMesh(size_t index) const;
-		Camera *getCamera(size_t index);
-		const Camera *getCamera(size_t index) const;
-		Light *getLight(size_t index);
-		const Light *getLight(size_t index) const;
-		Material *getMaterial(size_t index);
-		const Material *getMaterial(size_t index) const;*/
+		Camera &getCurrentCamera();
 
-	private:
-		// TODO Octree
-		std::vector<Node> m_nodes;
-		std::vector<Mesh> m_meshes;
-		std::vector<Material> m_materials;
-		std::vector<Light> m_lights;
+		std::vector<GL::Texture32> textures;
+		std::vector<Node> nodes;
+		std::vector<Mesh> meshes;
+		std::vector<Material> materials;
+		std::vector<Light> lights;
+		std::vector<Camera> cameras;
 
-		std::vector<Camera> m_cameras;
+		unsigned int currentCamera;
 
-		unsigned int m_currentCamera;
+		std::vector<Node*> roots;
 
-		std::vector<Node*> m_roots;
-
-		class Loader
-		{
-		public:
-			Loader(Scene &scene);
-			~Loader();
-
-			bool loadFromGLTF(std::string path);
-
-		private:
-			Scene &m_scene;
+		struct GLTF {
+			static bool load(std::string path, Scene &scene);
 		};
-
+		struct CUSTOM {
+			static bool load(std::string path, Scene &scene);
+		};
 	};
 
 }

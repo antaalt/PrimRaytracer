@@ -230,7 +230,8 @@ namespace app {
 		GL::Renderer renderer;
 		bool init = renderer.init();
 		ASSERT(init == true, "Renderer not initialized");
-		init = renderer.loadScene("NOT_DEFINED_YET_TODO_GLTF");
+		init = renderer.loadScene("../data/boxTextured/BoxTextured.gltf");
+		//init = renderer.loadScene("../data/box/Box.gltf");
 		ASSERT(init == true, "Scene not loaded");
 		// This makes our buffer swap synchronized with the monitor's vertical refresh
 		SDL_GL_SetSwapInterval(1);

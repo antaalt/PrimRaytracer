@@ -25,8 +25,6 @@ namespace app {
 			LIGHT_UNIFORM,
 		};
 
-
-
 		const char* matrixUniformsNames(MatrixUniform mat);
 
 		class Program

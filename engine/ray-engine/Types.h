@@ -9,28 +9,39 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
-using Vector3 = Math::Vector3<float>;
-using Point3 = Math::Vector3<float>;
-using Normal = Math::Vector3<float>;
-using Texcoord = Math::Vector2<float>;
-using Vector4 = Math::Vector4<float>;
+using vec3 = Math::Vector3<float>;
+using point3 = Math::Vector3<float>;
+using norm3 = Math::Vector3<float>;
+using uv2 = Math::Vector2<float>;
+using vec4 = Math::Vector4<float>;
 #if defined(USE_COLOR)
-using Color32 = Math::Vector4<unsigned char>;
-using ColorHDR = Math::Vector4<float>;
+using color4 = Math::Vector4<float>;
 #endif
 #endif
 
 #if defined(USE_MATRIX)
 #include "Matrix4.h"
-using Matrix4 = Math::Matrix4<float>;
+#include "Matrix3.h"
+using mat4 = Math::Matrix4<float>;
+using mat3 = Math::Matrix3<float>;
 #endif
 
 #if defined(USE_QUATERNION)
 #include "Quaternion.h"
-using Quaternion = Math::Quaternion<float>;
+using quat = Math::Quaternion<float>;
 #endif
 
 namespace convert {
+	template <typename T>
+	Math::Vector3<T> toVec3(const Math::Vector4<T> &vec)
+	{
+		return Math::Vector3<T>(vec.x, vec.y, vec.z);
+	}
+	template <typename T>
+	Math::Vector4<T> toVec4(const Math::Vector3<T> &vec, T val)
+	{
+		return Math::Vector4<T>(vec.x, vec.y, vec.z, val);
+	}
 #if defined(USE_QUATERNION) && defined(USE_MATRIX)
 	template <typename T>
 	Math::Matrix4<T> toMat4(const Math::Quaternion<T> &quat)
@@ -70,15 +81,15 @@ namespace convert {
 		m[3][3] = T(1.0);
 		return m;
 	}
+
+	template <typename T>
+	Math::Matrix3<T> toMat3(const Math::Matrix4<T> &mat)
+	{
+		return Math::Matrix3<T>(
+			toVec3(mat[0]),
+			toVec3(mat[1]),
+			toVec3(mat[2])
+		);
+	}
 #endif
-	template <typename T>
-	Math::Vector3<T> toVec3(const Math::Vector4<T> &vec)
-	{
-		return Math::Vector3<T>(vec.x, vec.y, vec.z);
-	}
-	template <typename T>
-	Math::Vector4<T> toVec4(const Math::Vector3<T> &vec, T val)
-	{
-		return Math::Vector4<T>(vec.x, vec.y, vec.z, val);
-	}
 }

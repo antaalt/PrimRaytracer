@@ -10,13 +10,13 @@ namespace app {
 	namespace prim {
 
 		struct Vertex {
-			Point3 position;
-			Normal normal;
-			Texcoord texcoord;
-			ColorHDR color;
+			point3 position;
+			norm3 normal;
+			uv2 texcoord;
+			color4 color;
 
 			Vertex();
-			Vertex(Point3 p, Normal n, Texcoord tc, ColorHDR color);
+			Vertex(point3 p, norm3 n, uv2 tc, color4 color);
 		};
 
 		class Triangle : public Hitable

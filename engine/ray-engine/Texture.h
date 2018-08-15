@@ -12,10 +12,10 @@ namespace app {
 		Texture();
 		Texture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
 		Texture(const std::vector<float> &data, unsigned int width, unsigned int height, unsigned int components);
-		ColorHDR texture2D(float u, float v);
+		color4 texture2D(float u, float v);
 		unsigned int stride();
 
-		ColorHDR at(unsigned int x, unsigned int y);
+		color4 at(unsigned int x, unsigned int y);
 	private:
 		std::vector<float> m_data;
 		unsigned int m_width, m_height;

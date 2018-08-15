@@ -16,7 +16,7 @@ namespace app {
 			virtual bool computeTransform();
 
 		private:
-			Vector3 u, v, w, eye;
+			vec3 u, v, w, eye;
 		};
 	}
 }

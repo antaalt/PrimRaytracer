@@ -85,13 +85,13 @@ namespace app {
 			tinygltf::Material &tinyMat = tinyModel.materials[iMaterial];
 			Material &newMat = scene.addMaterial();
 			newMat.index = iMaterial;
-			auto itColor = tinyMat.values.find("baseColorFactor");
-			if (itColor == tinyMat.values.end())
-				newMat.color = ColorHDR(1.f);
+			auto itcolor4 = tinyMat.values.find("basecolor4Factor");
+			if (itcolor4 == tinyMat.values.end())
+				newMat.color = color4(1.f);
 			else
 			{
-				tinygltf::ColorValue color = itColor->second.ColorFactor();
-				newMat.color = ColorHDR(
+				tinygltf::ColorValue color = itcolor4->second.ColorFactor();
+				newMat.color = color4(
 					static_cast<float>(color[0]),
 					static_cast<float>(color[1]),
 					static_cast<float>(color[2]),
@@ -224,7 +224,7 @@ namespace app {
 								memcpy(
 									vert.position.data, 
 									&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)], 
-									sizeof(Point3)
+									sizeof(point3)
 								);
 							}
 						}
@@ -242,15 +242,15 @@ namespace app {
 							tinygltf::BufferView &bufferView = tinyModel.bufferViews[accessor.bufferView];
 							tinygltf::Buffer &buffer = tinyModel.buffers[bufferView.buffer];
 							size_t size = accessor.count * tinygltf::GetTypeSizeInBytes(accessor.type) * tinygltf::GetComponentSizeInBytes(accessor.componentType);
-							ASSERT(accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT, "Normal not float");
-							ASSERT(accessor.type == TINYGLTF_TYPE_VEC3, "Normal not vec3");
+							ASSERT(accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT, "normal not float");
+							ASSERT(accessor.type == TINYGLTF_TYPE_VEC3, "normal not vec3");
 							for (size_t iVert = 0; iVert < accessor.count; iVert++)
 							{
 								Vertex &vert = newPrim.vertices[iVert];
 								memcpy(
 									vert.normal.data,
 									&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-									sizeof(Point3)
+									sizeof(point3)
 								);
 							}
 						}
@@ -272,7 +272,7 @@ namespace app {
 								memcpy(
 									vert.normal.data,
 									&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-									sizeof(Point3)
+									sizeof(point3)
 								);
 							}*/
 						}
@@ -296,7 +296,7 @@ namespace app {
 									memcpy(
 										vert.texcoord.data,
 										&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-										sizeof(Texcoord)
+										sizeof(uv2)
 									);
 								}
 								break;
@@ -336,16 +336,16 @@ namespace app {
 							}
 						}
 					}
-					// COLOR_0
+					// color4_0
 					{
-						std::map<std::string, int>::iterator it = tinyPrimitive.attributes.find("COLOR_0");
+						std::map<std::string, int>::iterator it = tinyPrimitive.attributes.find("color4_0");
 						if (it != tinyPrimitive.attributes.end())
 						{
 							tinygltf::Accessor &accessor = tinyModel.accessors[it->second];
 							tinygltf::BufferView &bufferView = tinyModel.bufferViews[accessor.bufferView];
 							tinygltf::Buffer &buffer = tinyModel.buffers[bufferView.buffer];
 							size_t size = accessor.count * tinygltf::GetTypeSizeInBytes(accessor.type) * tinygltf::GetComponentSizeInBytes(accessor.componentType);
-							ASSERT(accessor.type == TINYGLTF_TYPE_VEC4, "COLOR_0 not vec4");
+							ASSERT(accessor.type == TINYGLTF_TYPE_VEC4, "color4_0 not vec4");
 							switch (accessor.type)
 							{
 							case TINYGLTF_TYPE_VEC3:
@@ -386,7 +386,7 @@ namespace app {
 										memcpy(
 											vert.color.data,
 											&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-											sizeof(ColorHDR)
+											sizeof(color4)
 										);
 									}
 									break;
@@ -405,7 +405,7 @@ namespace app {
 								throw std::runtime_error("Accessor type incorrect");
 							}
 						}
-						else // NO COLORS. set defaults
+						else // NO color4S. set defaults
 						{
 							for (size_t iVert = 0; iVert < newPrim.vertices.size(); iVert++)
 							{
@@ -443,9 +443,9 @@ namespace app {
 			}
 			else
 			{
-				Vector3 translation(0.f);
-				Quaternion rotation = Quaternion::identity();
-				Vector3 scale(1.f);
+				vec3 translation(0.f);
+				quat rotation = quat::identity();
+				vec3 scale(1.f);
 
 				if (tinyNode.translation.size() == 3)
 					for (int i = 0; i < 3; i++)
@@ -459,7 +459,7 @@ namespace app {
 					for (int i = 0; i < 4; i++)
 						rotation[i] = static_cast<float>(tinyNode.rotation[i]);
 
-				node.transform = Matrix4::TRS(translation, rotation, scale);
+				node.transform = mat4::TRS(translation, rotation, scale);
 			}
 		}
 		// Child nodes
@@ -481,7 +481,7 @@ namespace app {
 	{
 		return false;
 	}
-	Matrix4 Node::getModel() const
+	mat4 Node::getModel() const
 	{
 		if (parent == nullptr)
 			return transform;

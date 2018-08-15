@@ -5,7 +5,7 @@ namespace app {
 
 	namespace tracer {
 
-		Camera::Camera(unsigned int width, unsigned int height) : m_transform(Matrix4::identity()), m_width(width), m_height(height)
+		Camera::Camera(unsigned int width, unsigned int height) : m_transform(mat4::identity()), m_width(width), m_height(height)
 		{
 		}
 
@@ -13,11 +13,11 @@ namespace app {
 		Camera::~Camera()
 		{
 		}
-		void Camera::lookAt(const Point3 & eye, const Point3 & target, const Vector3 &up)
+		void Camera::lookAt(const point3 & eye, const point3 & target, const vec3 &up)
 		{
-			Vector3 forward = Vector3::normalize(target - eye);
-			Vector3 right = Vector3::cross(Vector3::normalize(up), forward);
-			Vector3 upCoordinate = Vector3::cross(forward, right);
+			vec3 forward = vec3::normalize(target - eye);
+			vec3 right = vec3::cross(vec3::normalize(up), forward);
+			vec3 upCoordinate = vec3::cross(forward, right);
 
 			m_transform[0] = convert::toVec4(right, 0.f);
 			m_transform[1] = convert::toVec4(upCoordinate, 0.f);
@@ -25,14 +25,14 @@ namespace app {
 			m_transform[3] = convert::toVec4(eye, 1.f);
 			m_changed = true;
 		}
-		void Camera::rotate(float angle, const Vector3 & axis)
+		void Camera::rotate(float angle, const vec3 & axis)
 		{
-			Matrix4 m;
+			mat4 m;
 			float radians = angle * M_PIf / 180.f;
 			// NOTE: Element 0,1 is wrong in Foley and Van Dam, Pg 227!
 			float sintheta = sinf(radians);
 			float costheta = cosf(radians);
-			Vector3 an = Vector3::normalize(axis);
+			vec3 an = vec3::normalize(axis);
 			float ux = an.x;
 			float uy = an.y;
 			float uz = an.z;
@@ -58,9 +58,9 @@ namespace app {
 			m_transform = m_transform * m;
 			m_changed = true;
 		}
-		void Camera::translate(const Vector3 & translation)
+		void Camera::translate(const vec3 & translation)
 		{
-			Matrix4 m = Matrix4::identity();
+			mat4 m = mat4::identity();
 			m[3].x = translation.x;
 			m[3].y = translation.y;
 			m[3].z = translation.z;

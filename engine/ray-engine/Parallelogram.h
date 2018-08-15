@@ -9,7 +9,7 @@ namespace app {
 		{
 		public:
 			Parallelogram();
-			Parallelogram(const Point3 &A, const Point3 &B, const Point3 &C, const Normal &normal);
+			Parallelogram(const point3 &A, const point3 &B, const point3 &C, const norm3 &normal);
 			~Parallelogram();
 
 			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const;
@@ -17,8 +17,8 @@ namespace app {
 			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection &intersection) const;
 
 		private:
-			Point3 point[4];
-			Normal normal;
+			point3 point[4];
+			norm3 normal;
 		};
 	}
 }

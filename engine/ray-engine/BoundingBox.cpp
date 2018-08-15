@@ -11,7 +11,7 @@ namespace app {
 			reset();
 		}
 
-		BoundingBox::BoundingBox(const Point3 &min, const Point3 &max) : min(min), max(max)
+		BoundingBox::BoundingBox(const point3 &min, const point3 &max) : min(min), max(max)
 		{
 		}
 
@@ -60,11 +60,11 @@ namespace app {
 		{
 			return (max - min).length();
 		}
-		Point3 BoundingBox::center() const
+		point3 BoundingBox::center() const
 		{
 			return (max + min) / 2.f;
 		}
-		void BoundingBox::include(const Point3 & vec)
+		void BoundingBox::include(const point3 & vec)
 		{
 			if (min.x > vec.x) min.x = vec.x;
 			if (min.y > vec.y) min.y = vec.y;
@@ -80,8 +80,8 @@ namespace app {
 		}
 		void BoundingBox::reset()
 		{
-			min = Point3(std::numeric_limits<float>::max());
-			max = Point3(std::numeric_limits<float>::min());
+			min = point3(std::numeric_limits<float>::max());
+			max = point3(std::numeric_limits<float>::min());
 		}
 	}
 }

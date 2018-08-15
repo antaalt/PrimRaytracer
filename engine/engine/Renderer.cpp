@@ -20,28 +20,28 @@ namespace app {
 
 		bool Renderer::loadScene(std::string path)
 		{
-			bool res = m_scene.loadScene(path, FileFormat::NONE);
+			//bool res = Scene::CUSTOM::load(path, m_scene);
+			bool res = Scene::GLTF::load(path, m_scene);
+			ASSERT(res == true, "error");
 			float ratio = m_resolution.x / static_cast<float>(m_resolution.y);
-			m_scene.getCurrentCamera()->setProjection(90.f / ratio, ratio);
-			return res;
+			m_scene.getCurrentCamera().setProjection(90.f / ratio, ratio);
+			return true;
 		}
 
 		void Renderer::inputs(Inputs & inputs)
 		{
-			Camera *camera = m_scene.getCurrentCamera();
-			if (camera == nullptr)
-				return;
+			Camera &camera = m_scene.getCurrentCamera();
 			const float scaleFactor = 0.01f;
 			if (inputs.mouse.mouse[LEFT])
 			{
-				camera->rotate(inputs.mouse.pos.x * scaleFactor, glm::vec3(0.f, 1.f, 0.f));
-				camera->rotate(inputs.mouse.pos.y * scaleFactor, glm::vec3(1.f, 0.f, 0.f));
+				camera.rotate(inputs.mouse.pos.x * scaleFactor, glm::vec3(0.f, 1.f, 0.f));
+				camera.rotate(inputs.mouse.pos.y * scaleFactor, glm::vec3(1.f, 0.f, 0.f));
 			}
 			if (inputs.mouse.mouse[RIGHT])
 			{
-				camera->translate(glm::vec3(-scaleFactor * inputs.mouse.pos.x, scaleFactor * inputs.mouse.pos.y, 0.f));
+				camera.translate(glm::vec3(scaleFactor * inputs.mouse.pos.x, -scaleFactor * inputs.mouse.pos.y, 0.f));
 			}
-			camera->translate(glm::vec3(0.f, 0.f, -inputs.mouse.wheel.y * scaleFactor));
+			camera.translate(glm::vec3(0.f, 0.f, -inputs.mouse.wheel.y * scaleFactor));
 			//Log::debug("POSITION : " + glm::to_string(inputs.mouse.pos) + " - " + glm::to_string(inputs.mouse.wheel));
 			inputs.mouse.pos.x = 0;
 			inputs.mouse.pos.y = 0;
