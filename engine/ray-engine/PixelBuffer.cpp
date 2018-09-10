@@ -70,6 +70,10 @@ namespace app {
 	{
 		return m_data.data();
 	}
+	const Pixel * PixelBuffer::data() const
+	{
+		return m_data.data();
+	}
 	unsigned int PixelBuffer::width() const
 	{
 		return m_width;

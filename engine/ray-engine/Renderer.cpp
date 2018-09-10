@@ -34,14 +34,9 @@ namespace app {
 				delete this->tracer;
 		}
 
-		bool Renderer::loadScene(std::string path, Acceleration acceleration)
+		bool Renderer::buildScene(Scene &scene, Acceleration acceleration)
 		{
-#if 0
-			this->scene = SceneBuilder::buildCustomScene();
-			this->accelerator = new NoAccel();
-			return this->accelerator->build(this->scene);
-#else
-			this->scene = Scene::GLTF::load(path);
+			this->scene = scene;
 			switch (acceleration)
 			{
 			case Acceleration::ACCELERATION_OCTREE:
@@ -50,66 +45,11 @@ namespace app {
 			case Acceleration::NO_ACCEL:
 				this->accelerator = new NoAccel();
 				break;
-			case Acceleration::ACCELERATION_BOUNDING_BOX:
+			case Acceleration::ACCELERATION_BVH:
 			default:
 				return false;
 			}
 			return this->accelerator->build(this->scene);
-#endif
-		}
-
-		void Renderer::inputs(Inputs & inputs)
-		{
-			if (this->camera == nullptr)
-				return;
-			const float scaleFactor = 0.01f;
-			if (inputs.mouse.mouse[LEFT])
-			{
-				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[0]), vec3(0.f, 1.f, 0.f));
-				this->camera->rotate(static_cast<float>(-inputs.mouse.pos[1]), vec3(1.f, 0.f, 0.f));
-			}
-			if (inputs.mouse.mouse[RIGHT])
-			{
-				this->camera->translate(vec3(-inputs.mouse.pos[0] * 0.01f, inputs.mouse.pos[1] * 0.01f, 0.f));
-			}
-			if(inputs.mouse.wheel[1] != 0)
-				this->camera->translate(vec3(0.f, 0.f, static_cast<float>(inputs.mouse.wheel[1])* 0.1f));
-			inputs.mouse.pos[0] = 0;
-			inputs.mouse.pos[1] = 0;
-			inputs.mouse.wheel[0] = 0;
-			inputs.mouse.wheel[1] = 0;
-		}
-
-		bool Renderer::init()
-		{
-			glDrawBuffer(GL_BACK);
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			glClearDepth(1.0f);
-
-			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(GL_LEQUAL);
-
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_BACK);
-
-			glEnable(GL_TEXTURE_2D);
-
-			/*glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
-
-			glViewport(0, 0, this->width, this->height);
-			glScissor(0, 0, this->width, this->height);
-			glEnable(GL_SCISSOR_TEST);
-
-			// Glew initialisation
-			glewExperimental = GL_TRUE;
-			GLenum status = glewInit();
-			if (status != GLEW_OK)
-			{
-				Log::error("Error while initializing GLEW : ", glewGetErrorString(status));
-				return false;
-			}
-			return true;
 		}
 
 		bool Renderer::updateRays()
@@ -126,8 +66,6 @@ namespace app {
 		bool Renderer::renderPreview()
 		{
 			// TODO reduce depth for this render
-			glClearColor(1.f, 1.f, 1.f, 1.f);
-			glClear(GL_COLOR_BUFFER_BIT);
 
 			Log::debug("Rendering preview");
 
@@ -147,16 +85,12 @@ namespace app {
 							pixel[yTile + xTile] = outPixel;
 				}
 			}
-			glDrawPixels(this->width, this->height, GL_RGBA, GL_FLOAT, this->output.data());
 
 			return true;
 		}
 
 		bool Renderer::render()
 		{
-			glClearColor(1.f, 1.f, 1.f, 1.f);
-			glClear(GL_COLOR_BUFFER_BIT);
-
 			Log::debug("Rendering");
 
 			// TODO add samples
@@ -166,22 +100,15 @@ namespace app {
 			{
 				for (unsigned int x = 0; x < this->width; x++, index++)
 				{
-					if ((y == this->height / 2.f) && (x == this->width / 2.f))
-					{
-						Log::info(this->rays[index].direction, " - ", this->rays[index].origin);
-					}
 					pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator); // TODO average by samples
 				}
-				//Log::debug("Progress : ", (y / static_cast<float>(this->height)) * 100.f, "%");
 			}
-			glDrawPixels(this->width, this->height, GL_RGBA, GL_FLOAT, this->output.data());
 
 			return true;
 		}
+
 		bool Renderer::renderParallel()
 		{
-			glClearColor(1.f, 1.f, 1.f, 1.f);
-			glClear(GL_COLOR_BUFFER_BIT);
 
 			Log::debug("Rendering");
 
@@ -205,7 +132,6 @@ namespace app {
 				}
 				//Log::debug("Progress : ", (y / static_cast<float>(this->height)) * 100.f, "%");
 			}*/
-			glDrawPixels(this->width, this->height, GL_RGBA, GL_FLOAT, this->output.data());
 
 			return true;
 		}
@@ -220,6 +146,10 @@ namespace app {
 			if (this->camera != nullptr)
 				delete this->camera;
 			this->camera = camera;
+		}
+		const PixelBuffer & Renderer::image() const
+		{
+			return output;
 		}
 	}
 }

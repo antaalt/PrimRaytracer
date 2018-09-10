@@ -69,6 +69,34 @@ namespace app {
 			SDL_Quit();
 			return false;
 		}
+
+		glDrawBuffer(GL_BACK);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearDepth(1.0f);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
+		glEnable(GL_TEXTURE_2D);
+
+		/*glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
+
+		glViewport(0, 0, this->m_width, this->m_height);
+		glScissor(0, 0, this->m_width, this->m_height);
+		glEnable(GL_SCISSOR_TEST);
+
+		// Glew initialisation
+		glewExperimental = GL_TRUE;
+		GLenum status = glewInit();
+		if (status != GLEW_OK)
+		{
+			Log::error("Error while initializing GLEW : ", glewGetErrorString(status));
+			return false;
+		}
 		
 
 		return true;
@@ -106,8 +134,7 @@ namespace app {
 				break;
 			}
 		}
-		
-		return m_inputs.keyboard.escape || m_inputs.keyboard.escape;
+		return inputs();
 	}
 
 	void Application::onMouseButtonUp(SDL_MouseButtonEvent & e)
@@ -222,7 +249,7 @@ namespace app {
 		}
 	}
 
-	void Application::run()
+	void Application::run(app::Scene &scene, options &options)
 	{
 		if (!init()) {
 			Log::error("Could not init window");
@@ -231,43 +258,55 @@ namespace app {
 		Utils::Timer timer;
 
 		tracer::Renderer renderer(m_width, m_height);
-		bool init = renderer.init();
-		ASSERT(init == true, "Renderer not initialized");
-		//init = renderer.loadScene("../data/box/box.gltf", tracer::Acceleration::NO_ACCEL);
-		init = renderer.loadScene("../data/boxTextured/BoxTextured.gltf", tracer::Acceleration::NO_ACCEL);
-		ASSERT(init == true, "Scene not loaded");
+		bool init = renderer.buildScene(scene, options.acceleration);
+		renderer.setTracer(options.tracer);
+		renderer.setCamera(options.camera);
+		m_camera = options.camera;
 		// This makes our buffer swap synchronized with the monitor's vertical refresh
 		SDL_GL_SetSwapInterval(1);
-
-		tracer::Tracer *tracer = new tracer::WhittedTracer();
-		renderer.setTracer(tracer);
-		tracer = nullptr;
-		tracer::Camera *cam = new tracer::PinholeCamera(m_width, m_height);
-		cam->lookAt(point3(
-			0.f,
-			0.f,
-			1.f
-		), point3(0.f));
-		renderer.setCamera(cam);
-		cam = nullptr;
-
 		// LOOP
 		while (!events())
 		{
+
+			glClearColor(1.f, 1.f, 1.f, 1.f);
+			glClear(GL_COLOR_BUFFER_BIT);
 			timer.tick();
-			renderer.inputs(m_inputs);
 			bool update = renderer.updateRays();
 			if (update)
 				renderer.renderPreview();
 			else
 				renderer.render();
+			glDrawPixels(this->m_width, this->m_height, GL_RGBA, GL_FLOAT, renderer.image().data());
 			Log::info("Duration : ", timer.elapsedTime<Utils::Timer::milliseconds>(), "ms");
 			SDL_GL_SwapWindow(m_window);
 			// Free the processor
 			SDL_Delay(0);
 		}
-
+		m_camera = nullptr; // Application do not own the pointer
 		destroy();
+	}
+
+	bool Application::inputs()
+	{
+		if (m_camera == nullptr)
+			return true;
+		const float scaleFactor = 0.01f;
+		if (m_inputs.mouse.mouse[LEFT])
+		{
+			this->m_camera->rotate(static_cast<float>(-m_inputs.mouse.pos[0]), vec3(0.f, 1.f, 0.f));
+			this->m_camera->rotate(static_cast<float>(-m_inputs.mouse.pos[1]), vec3(1.f, 0.f, 0.f));
+		}
+		if (m_inputs.mouse.mouse[RIGHT])
+		{
+			this->m_camera->translate(vec3(-m_inputs.mouse.pos[0] * 0.01f, m_inputs.mouse.pos[1] * 0.01f, 0.f));
+		}
+		if (m_inputs.mouse.wheel[1] != 0)
+			this->m_camera->translate(vec3(0.f, 0.f, static_cast<float>(m_inputs.mouse.wheel[1])* 0.1f));
+		m_inputs.mouse.pos[0] = 0;
+		m_inputs.mouse.pos[1] = 0;
+		m_inputs.mouse.wheel[0] = 0;
+		m_inputs.mouse.wheel[1] = 0;
+		return m_inputs.keyboard.escape || m_inputs.keyboard.space;
 	}
 
 	void Application::destroy()

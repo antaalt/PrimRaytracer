@@ -38,6 +38,7 @@ namespace app {
 		const Pixel &operator()(unsigned int x, unsigned int y) const;
 
 		Pixel *data();
+		const Pixel *data() const;
 		unsigned int width() const;
 		unsigned int height() const;
 	private:

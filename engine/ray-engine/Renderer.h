@@ -12,26 +12,6 @@
 
 namespace app {
 
-	enum KeyPosition {
-		RIGHT,
-		LEFT,
-		MIDDLE
-	};
-	struct Inputs {
-		struct Mouse {
-			bool mouse[3];
-			int pos[2];
-			int wheel[2];
-		} mouse;
-		struct KeyBoard {
-			bool ctrl[2];
-			bool alt[2];
-			bool shift[2];
-			bool space;
-			bool escape;
-			bool printScreen;
-		} keyboard;
-	};
 
 	namespace tracer {
 
@@ -39,7 +19,7 @@ namespace app {
 			unsigned int width, height;
 			unsigned int x, y;
 			bool render(PixelBuffer &buffer);
-
+			Tile(unsigned int w, unsigned int h, unsigned int x, unsigned int y);
 		private:
 			std::vector<Ray> rays;
 		};
@@ -50,11 +30,7 @@ namespace app {
 			Renderer(unsigned int width, unsigned int height);
 			~Renderer();
 
-			bool loadScene(std::string path, Acceleration acceleration);
-
-			void inputs(Inputs &inputs);
-
-			bool init();
+			bool buildScene(Scene &scene, Acceleration acceleration);
 
 			bool updateRays();
 
@@ -66,6 +42,8 @@ namespace app {
 
 			void setTracer(tracer::Tracer::Ptr tracer);
 			void setCamera(tracer::Camera::Ptr camera);
+
+			const PixelBuffer &image() const;
 
 		private:
 			Scene scene;

@@ -7,7 +7,7 @@ namespace app {
 
 		enum class Acceleration {
 			ACCELERATION_OCTREE,
-			ACCELERATION_BOUNDING_BOX,
+			ACCELERATION_BVH,
 			NO_ACCEL
 		};
 
