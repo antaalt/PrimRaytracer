@@ -2,9 +2,22 @@
 #include "Config.h"
 
 #include "Ray.h"
+#include "Utils/Type.h"
 
 namespace app {
 	namespace tracer {
+
+		using Aperture = app::IndexType<float, struct aperture>;
+
+		struct Film {
+			unsigned int width, height;
+		};
+
+		struct Lens {
+			Aperture aperture;
+			
+		};
+
 
 		class Camera
 		{

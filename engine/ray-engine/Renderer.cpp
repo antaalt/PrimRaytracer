@@ -6,6 +6,7 @@
 #include "NoAccel.h"
 
 #include "SceneBuilder.h"
+#include "Math.h"
 
 #include <ppl.h>
 
@@ -13,12 +14,13 @@
 namespace app {
 	namespace tracer {
 
-		Renderer::Renderer(unsigned int width, unsigned int height) : 
+		Renderer::Renderer(unsigned int width, unsigned int height, unsigned int tileSize) :
 			width(width), 
 			height(height), 
 			camera(nullptr), 
 			accelerator(nullptr), 
-			tracer(nullptr)
+			tracer(nullptr),
+			tileSize(tileSize)
 		{
 			this->output = PixelBuffer(width, height);
 			this->rays.resize(width *  height);
@@ -36,7 +38,6 @@ namespace app {
 
 		bool Renderer::buildScene(Scene &scene, Acceleration acceleration)
 		{
-			this->scene = scene;
 			switch (acceleration)
 			{
 			case Acceleration::ACCELERATION_OCTREE:
@@ -49,7 +50,8 @@ namespace app {
 			default:
 				return false;
 			}
-			return this->accelerator->build(this->scene);
+			this->buildTiles(tileSize);
+			return this->accelerator->build(scene);
 		}
 
 		bool Renderer::updateRays()
@@ -70,22 +72,16 @@ namespace app {
 			Log::debug("Rendering preview");
 
 			Pixel *pixel = this->output.data();
-			unsigned int tileWidth = this->width / TILE_WIDTH_NUMBER;
-			unsigned int tileHeight = this->height / TILE_HEIGHT_NUMBER;
-			for (unsigned int y = 0; y < TILE_HEIGHT_NUMBER; y++)
+			for (auto it = tiles.begin(); it != tiles.end(); it++)
 			{
-				for (unsigned int x = 0; x < TILE_WIDTH_NUMBER; x++)
-				{
-					const unsigned int indexY = y * tileHeight * this->width;
-					const unsigned int indexX = x * tileWidth;
-					Pixel outPixel = this->tracer->castRay(this->rays[indexY + indexX], this->accelerator);
-
-					for (unsigned int yTile = indexY; yTile < indexY + tileHeight * this->width; yTile += this->width)
-						for (unsigned int xTile = indexX; xTile < indexX + tileWidth; xTile++)
-							pixel[yTile + xTile] = outPixel;
-				}
+				Tile &tile = (*it);
+				ivec2 center = tile.min + tile.center();
+				const int index = center.y * this->width + center.x;
+				Pixel p = this->tracer->castRay(this->rays[index], this->accelerator);
+				for (int y = tile.min.y; y < tile.max.y; y++)
+					for (int x = tile.min.x; x < tile.max.x; x++)
+						pixel[y * this->width + x] = p;
 			}
-
 			return true;
 		}
 
@@ -95,6 +91,21 @@ namespace app {
 
 			// TODO add samples
 			Pixel *pixel = this->output.data();
+#if defined(PARALLEL_RENDERING)
+			concurrency::parallel_for(size_t(0), tiles.size(), [&](size_t i)
+			{
+				Pixel *pixel = this->output.data();
+				Tile &tile = this->tiles[i];
+				for (int y = tile.min.y; y < tile.max.y; y++)
+				{
+					for (int x = tile.min.x; x < tile.max.x; x++)
+					{
+						const int index = y * this->width + x;
+						pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator);
+					}
+				}
+			});
+#else
 			unsigned int index = 0;
 			for (unsigned int y = 0; y < this->height; y++)
 			{
@@ -103,38 +114,28 @@ namespace app {
 					pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator); // TODO average by samples
 				}
 			}
-
+#endif
 			return true;
 		}
 
-		bool Renderer::renderParallel()
-		{
-
-			Log::debug("Rendering");
-
-			// TODO add samples
-			Pixel *pixel = this->output.data();
-			unsigned int index = 0;
-
-			concurrency::parallel_for(size_t(0), size_t(50), [&](size_t i)
+		void Renderer::buildTiles(unsigned int tileSize) {
+			ivec2 nTiles(
+				static_cast<int>(std::ceil(this->width / static_cast<float>(tileSize))),
+				static_cast<int>(std::ceil(this->height / static_cast<float>(tileSize)))
+			);
+			tiles.clear();
+			for (int y = 0; y < nTiles.y; y++)
 			{
-				std::cout << i << ",";
-			});
-			/*for (unsigned int y = 0; y < this->height; y++)
-			{
-				for (unsigned int x = 0; x < this->width; x++, index++)
+				for (int x = 0; x < nTiles.x; x++)
 				{
-					if ((y == this->height / 2.f) && (x == this->width / 2.f))
-					{
-						Log::info(this->rays[index].direction, " - ", this->rays[index].origin);
-					}
-					pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator); // TODO average by samples
+					this->tiles.push_back(Tile(
+						ivec2(x * tileSize, y * tileSize),
+						ivec2(min((x + 1) * tileSize, this->width), min((y + 1) * tileSize, this->height))
+					));
 				}
-				//Log::debug("Progress : ", (y / static_cast<float>(this->height)) * 100.f, "%");
-			}*/
-
-			return true;
+			}
 		}
+
 		void Renderer::setTracer(tracer::Tracer::Ptr tracer)
 		{
 			if (this->tracer != nullptr)

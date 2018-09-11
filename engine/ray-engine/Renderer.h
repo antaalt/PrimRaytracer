@@ -9,6 +9,7 @@
 
 #define TILE_WIDTH_NUMBER 20
 #define TILE_HEIGHT_NUMBER 20
+#define PARALLEL_RENDERING
 
 namespace app {
 
@@ -16,18 +17,20 @@ namespace app {
 	namespace tracer {
 
 		struct Tile {
-			unsigned int width, height;
-			unsigned int x, y;
-			bool render(PixelBuffer &buffer);
-			Tile(unsigned int w, unsigned int h, unsigned int x, unsigned int y);
-		private:
-			std::vector<Ray> rays;
+			Tile(const ivec2 &min, const ivec2 &max): min(min), max(max) {}
+
+			int width() { return max.x - min.x; }
+			int height() { return max.y - min.y; }
+			ivec2 center() { return (max - min) * 0.5f; }
+
+			ivec2 min;
+			ivec2 max;
 		};
 
 		class Renderer
 		{
 		public:
-			Renderer(unsigned int width, unsigned int height);
+			Renderer(unsigned int width, unsigned int height, unsigned int tileSize);
 			~Renderer();
 
 			bool buildScene(Scene &scene, Acceleration acceleration);
@@ -38,7 +41,7 @@ namespace app {
 
 			bool render();
 
-			bool renderParallel();
+			void buildTiles(unsigned int tileSize);
 
 			void setTracer(tracer::Tracer::Ptr tracer);
 			void setCamera(tracer::Camera::Ptr camera);
@@ -46,11 +49,14 @@ namespace app {
 			const PixelBuffer &image() const;
 
 		private:
-			Scene scene;
+			//Scene scene;
 			Camera::Ptr camera;
 			Tracer::Ptr tracer;
-			std::vector<Ray> rays;
 			Accelerator::Ptr accelerator;
+
+			std::vector<Ray> rays;
+			std::vector<Tile> tiles;
+			unsigned int tileSize;
 			unsigned int width, height;
 			PixelBuffer output;
 		};

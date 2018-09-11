@@ -14,13 +14,12 @@ namespace app {
 		}
 		Pixel WhittedTracer::castRay(const Ray & ray, const Accelerator::Ptr accelerator, unsigned int depth) const
 		{
-			if (depth > 1)//MAX_DEPTH)
+			if (depth > 1)// > MAX_DEPTH)
 				return miss(ray);
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
 				return miss(ray);
 
-				
 			float pdf = 0;
 			color4 color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color * vec3::dot(info.normal, -ray.direction);
 			switch (info.material->type())

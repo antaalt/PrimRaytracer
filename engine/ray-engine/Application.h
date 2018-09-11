@@ -54,6 +54,7 @@ namespace app {
 		void destroy();
 		bool init();
 		bool events();
+		bool save(std::string path);
 		void onKeyDown(SDL_KeyboardEvent &e);
 		void onKeyUp(SDL_KeyboardEvent &e);
 		void onMouseButtonDown(SDL_MouseButtonEvent &e);

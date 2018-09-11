@@ -257,17 +257,16 @@ namespace app {
 		}
 		Utils::Timer timer;
 
-		tracer::Renderer renderer(m_width, m_height);
+		tracer::Renderer renderer(m_width, m_height, 32);
 		bool init = renderer.buildScene(scene, options.acceleration);
 		renderer.setTracer(options.tracer);
 		renderer.setCamera(options.camera);
 		m_camera = options.camera;
 		// This makes our buffer swap synchronized with the monitor's vertical refresh
 		SDL_GL_SetSwapInterval(1);
-		// LOOP
+		// LOOP		
 		while (!events())
 		{
-
 			glClearColor(1.f, 1.f, 1.f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			timer.tick();

@@ -22,7 +22,7 @@ int renderSingleFrame()
 	//app::Scene scene = app::Scene::GLTF::load("../data/box/box.gltf");
 	//app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
 
-	app::tracer::Renderer renderer(width, height);
+	app::tracer::Renderer renderer(width, height, 32);
 	renderer.setCamera(camera);
 	renderer.setTracer(tracer);
 	renderer.buildScene(scene, app::tracer::Acceleration::NO_ACCEL);
@@ -53,9 +53,9 @@ int renderDisplay()
 	options.acceleration = app::tracer::Acceleration::NO_ACCEL;
 
 	// Load Scene
-	app::Scene scene = app::SceneBuilder::buildCustomScene();
+	//app::Scene scene = app::SceneBuilder::buildCustomScene();
 	//app::Scene scene = app::Scene::GLTF::load("../data/box/box.gltf");
-	//app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
+	app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
 
 	application.run(scene, options);
 

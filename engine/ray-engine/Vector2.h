@@ -15,6 +15,8 @@ namespace Math {
 		Vector2();
 		Vector2(T x);
 		Vector2(T x, T y);
+		template <typename U>
+		Vector2(U x, U y);
 		T &operator[](unsigned int index) { return data[index]; }
 		const T &operator[](unsigned int index) const { return data[index]; }
 
@@ -57,6 +59,12 @@ namespace Math {
 
 	template<typename T>
 	inline Vector2<T>::Vector2(T x, T y) : x(x), y(y)
+	{
+	}
+
+	template<typename T>
+	template<typename U>
+	inline Vector2<T>::Vector2(U x, U y) : x(static_cast<T>(x)), y(static_cast<T>(y))
 	{
 	}
 

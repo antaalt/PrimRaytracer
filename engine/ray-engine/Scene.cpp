@@ -85,12 +85,12 @@ namespace app {
 			tinygltf::Material &tinyMat = tinyModel.materials[iMaterial];
 			Material &newMat = scene.addMaterial();
 			newMat.index = iMaterial;
-			auto itcolor4 = tinyMat.values.find("basecolor4Factor");
-			if (itcolor4 == tinyMat.values.end())
+			auto itColor = tinyMat.values.find("baseColorFactor");
+			if (itColor == tinyMat.values.end())
 				newMat.color = color4(1.f);
 			else
 			{
-				tinygltf::ColorValue color = itcolor4->second.ColorFactor();
+				tinygltf::ColorValue color = itColor->second.ColorFactor();
 				newMat.color = color4(
 					static_cast<float>(color[0]),
 					static_cast<float>(color[1]),
@@ -336,16 +336,16 @@ namespace app {
 							}
 						}
 					}
-					// color4_0
+					// COLOR_0
 					{
-						std::map<std::string, int>::iterator it = tinyPrimitive.attributes.find("color4_0");
+						std::map<std::string, int>::iterator it = tinyPrimitive.attributes.find("COLOR_0");
 						if (it != tinyPrimitive.attributes.end())
 						{
 							tinygltf::Accessor &accessor = tinyModel.accessors[it->second];
 							tinygltf::BufferView &bufferView = tinyModel.bufferViews[accessor.bufferView];
 							tinygltf::Buffer &buffer = tinyModel.buffers[bufferView.buffer];
 							size_t size = accessor.count * tinygltf::GetTypeSizeInBytes(accessor.type) * tinygltf::GetComponentSizeInBytes(accessor.componentType);
-							ASSERT(accessor.type == TINYGLTF_TYPE_VEC4, "color4_0 not vec4");
+							ASSERT(accessor.type == TINYGLTF_TYPE_VEC4, "COLOR_0 not vec4");
 							switch (accessor.type)
 							{
 							case TINYGLTF_TYPE_VEC3:
@@ -405,7 +405,7 @@ namespace app {
 								throw std::runtime_error("Accessor type incorrect");
 							}
 						}
-						else // NO color4S. set defaults
+						else // NO COLORS. set defaults
 						{
 							for (size_t iVert = 0; iVert < newPrim.vertices.size(); iVert++)
 							{

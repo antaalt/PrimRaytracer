@@ -267,10 +267,10 @@
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
-      <Filter>Source Files\Utils</Filter>
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Location.h">
-      <Filter>Source Files\Utils</Filter>
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

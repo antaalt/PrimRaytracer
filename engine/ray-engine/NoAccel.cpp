@@ -21,7 +21,7 @@ namespace app {
 		}
 		bool NoAccel::build(const Scene & scene)
 		{
-			// TODO move default build to accelerator build and call it from here
+			// TODO move default build to accelerator constructor and call it from here
 			std::map<const Texture*, Texture*> mapTexture;
 			//std::map<unsigned int, const prim::Material*> mapMaterials; // TODO implement map
 			m_textures.reserve(scene.textures.size());
@@ -29,7 +29,9 @@ namespace app {
 			{
 				const Texture &texture = scene.textures[iTex];
 				m_textures.push_back(texture);
-				mapTexture.insert(std::make_pair(&texture, &m_textures.back()));
+				Texture &tex = m_textures.back();
+				std::cout << "New tex : " << &tex << " - old to be mapped" << &texture << std::endl;
+				mapTexture.insert(std::make_pair(&texture, &tex));
 			}
 			m_materials.reserve(scene.materials.size());
 			for (size_t iMat = 0; iMat < scene.materials.size(); iMat++)
@@ -55,10 +57,12 @@ namespace app {
 					return false;
 				}
 				newMaterial->setColor(material.color);
+				std::cout << "Old tex : " << material.texture << " - new tex " << &m_textures[0] << std::endl;
 				auto it = mapTexture.find(material.texture);
 				newMaterial->setTexture((it == mapTexture.end()) ? nullptr : it->second);
 				m_materials.push_back(newMaterial);
 			}
+
 			for (size_t iNode = 0; iNode < scene.nodes.size(); iNode++)
 			{
 				const Node &node = scene.nodes[iNode];

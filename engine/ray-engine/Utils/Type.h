@@ -2,7 +2,7 @@
 
 #define CREATE_NEW_INDEX_TYPE(type, name) using name = Utils::IndexType<type, struct name##TagType>;
 
-namespace Utils {
+namespace app {
 
 
 	template <typename Type, typename Tag>
