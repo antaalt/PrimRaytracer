@@ -14,12 +14,12 @@ namespace app {
 		}
 		Pixel WhittedTracer::castRay(const Ray & ray, const Accelerator::Ptr accelerator, unsigned int depth) const
 		{
-			if (depth > 1)// > MAX_DEPTH)
+			if (depth > MAX_DEPTH)
 				return miss(ray);
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
-				return miss(ray);
-
+				return miss(ray); 
+			
 			float pdf = 0;
 			color4 color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color * vec3::dot(info.normal, -ray.direction);
 			switch (info.material->type())
@@ -28,30 +28,27 @@ namespace app {
 				return color;
 			case prim::MaterialType::DIELECTRIC:
 			{
-				vec3 reflectedDirection;
 				vec3 refractedDirection;
-				const bool inside = (vec3::dot(info.normal, ray.direction) > 0.f);
-				float eta = 1.5f; // TODO get from material
-				float cos_theta;
-				if (inside) // going out of the medium
+				vec3 reflectedDirection = prim::reflect(ray.direction, info.normal);
+				float eta = 1.1f;
+				bool inside = (vec3::dot(ray.direction, info.normal) > 0.f);
+				norm3 n;
+				if (inside)
 				{
-					if (prim::refract(refractedDirection, ray.direction, -info.normal, eta))
-						return castRay(Ray(info.point, prim::reflect(ray.direction, -info.normal)), accelerator, ++depth); // TIR
-					cos_theta = vec3::dot(ray.direction, info.normal);
-					reflectedDirection = prim::reflect(ray.direction, -info.normal);
+					eta = 1.f / eta;
+					n = info.normal;
 				}
-				else // going in the medium
+				else
 				{
-					prim::refract(refractedDirection, ray.direction, info.normal, 1.f / eta);
-					cos_theta = vec3::dot(-ray.direction, info.normal);
-					reflectedDirection = prim::reflect(ray.direction, info.normal);
+					n = -info.normal;
 				}
-				float R = physics::fresnel(cos_theta, eta);
+				if (prim::refract(refractedDirection, ray.direction, n, eta))
+					return castRay(Ray(info.point, reflectedDirection), accelerator, ++depth);
+
+				float R = physics::fresnel_schlick(vec3::dot(ray.direction, n));
 				Ray refractedRay(info.point, refractedDirection);
 				Ray reflectedRay(info.point, reflectedDirection);
-				//return Pixel(info.normal.x, info.normal.y, info.normal.z, 1.f);
-				//return Pixel(inside);
-				return/* R * castRay(reflectedRay, accelerator, ++depth) + (1 - R) **/ castRay(refractedRay, accelerator, ++depth);
+				return R * castRay(reflectedRay, accelerator, ++depth) + (1.f - R) * castRay(refractedRay, accelerator, ++depth);
 			}
 			case prim::MaterialType::SPECULAR:
 			{

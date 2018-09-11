@@ -47,15 +47,16 @@ int renderDisplay()
 	options.camera = new app::tracer::PinholeCamera(width, height);
 	options.camera->lookAt(point3(
 		0.f,
-		0.f,
-		1.f
-	), point3(0.f));
-	options.acceleration = app::tracer::Acceleration::NO_ACCEL;
+		0.5f,
+		2.f
+	), point3(0.f, 0.5f, 0.f));
+	options.acceleration = app::tracer::Acceleration::ACCELERATION_OCTREE;
 
 	// Load Scene
 	//app::Scene scene = app::SceneBuilder::buildCustomScene();
+	app::Scene scene = app::Scene::GLTF::load("../data/duck/Duck.gltf");
 	//app::Scene scene = app::Scene::GLTF::load("../data/box/box.gltf");
-	app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
+	//app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
 
 	application.run(scene, options);
 

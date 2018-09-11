@@ -17,14 +17,15 @@ namespace app {
 		{
 			for (unsigned int x = 0; x < width; x++)
 			{
-				const unsigned int index = y * width * components + x * components;
-				m_data[index + 0] = powf(static_cast<float>(data[index + 0]) / 255.f, 2.2f);
-				m_data[index + 1] = powf(static_cast<float>(data[index + 1]) / 255.f, 2.2f);
-				m_data[index + 2] = powf(static_cast<float>(data[index + 2]) / 255.f, 2.2f);
+				const unsigned int inIndex = y * width * components + x * components;
+				const unsigned int outIndex = y * width * 4 + x * 4;
+				m_data[outIndex + 0] = powf(static_cast<float>(data[inIndex + 0]) / 255.f, 2.2f);
+				m_data[outIndex + 1] = powf(static_cast<float>(data[inIndex + 1]) / 255.f, 2.2f);
+				m_data[outIndex + 2] = powf(static_cast<float>(data[inIndex + 2]) / 255.f, 2.2f);
 				if (hasAlpha)
-					m_data[index + 3] = powf(static_cast<float>(data[index + 3]) / 255.f, 2.2f);
+					m_data[outIndex + 3] = powf(static_cast<float>(data[inIndex + 3]) / 255.f, 2.2f);
 				else
-					m_data[index + 3] = 1.f;
+					m_data[outIndex + 3] = 1.f;
 			}
 		}
 	}
@@ -41,14 +42,15 @@ namespace app {
 		{
 			for (unsigned int x = 0; x < width; x++)
 			{
-				const unsigned int index = y * width * components + x * components;
-				m_data[index + 0] = data[index + 0];
-				m_data[index + 1] = data[index + 1];
-				m_data[index + 2] = data[index + 2];
+				const unsigned int inIndex = y * width * components + x * components;
+				const unsigned int outIndex = y * width * 4 + x * 4;
+				m_data[outIndex + 0] = data[inIndex + 0];
+				m_data[outIndex + 1] = data[inIndex + 1];
+				m_data[outIndex + 2] = data[inIndex + 2];
 				if (hasAlpha)
-					m_data[index + 3] = data[index + 3];
+					m_data[outIndex + 3] = data[inIndex + 3];
 				else
-					m_data[index + 3] = 1.f;
+					m_data[outIndex + 3] = 1.f;
 			}
 		}
 	}

@@ -30,7 +30,6 @@ namespace app {
 				const Texture &texture = scene.textures[iTex];
 				m_textures.push_back(texture);
 				Texture &tex = m_textures.back();
-				std::cout << "New tex : " << &tex << " - old to be mapped" << &texture << std::endl;
 				mapTexture.insert(std::make_pair(&texture, &tex));
 			}
 			m_materials.reserve(scene.materials.size());
@@ -57,7 +56,6 @@ namespace app {
 					return false;
 				}
 				newMaterial->setColor(material.color);
-				std::cout << "Old tex : " << material.texture << " - new tex " << &m_textures[0] << std::endl;
 				auto it = mapTexture.find(material.texture);
 				newMaterial->setTexture((it == mapTexture.end()) ? nullptr : it->second);
 				m_materials.push_back(newMaterial);

@@ -1,6 +1,6 @@
 #include "Octree.h"
 #include "Material.h"
-
+#include <map>
 namespace app {
 	namespace tracer {
 
@@ -19,6 +19,18 @@ namespace app {
 
 		bool Octree::build(const Scene & scene)
 		{
+			// TODO move default build to accelerator constructor and call it from here
+			std::map<const Texture*, Texture*> mapTexture;
+			//std::map<unsigned int, const prim::Material*> mapMaterials; // TODO implement map
+			this->textures.reserve(scene.textures.size());
+			for (size_t iTex = 0; iTex < scene.textures.size(); iTex++)
+			{
+				const Texture &texture = scene.textures[iTex];
+				this->textures.push_back(texture);
+				Texture &tex = this->textures.back();
+				mapTexture.insert(std::make_pair(&texture, &tex));
+			}
+			this->materials.reserve(scene.materials.size());
 			for (size_t iMat = 0; iMat < scene.materials.size(); iMat++)
 			{
 				const Material &material = scene.materials[iMat];
@@ -42,6 +54,8 @@ namespace app {
 					return false;
 				}
 				newMaterial->setColor(material.color);
+				auto it = mapTexture.find(material.texture);
+				newMaterial->setTexture((it == mapTexture.end()) ? nullptr : it->second);
 				this->materials.push_back(newMaterial);
 			}
 			for (size_t iNode = 0; iNode < scene.nodes.size(); iNode++)
@@ -56,6 +70,15 @@ namespace app {
 				{
 					const Mesh *mesh = reinterpret_cast<const Mesh*>(shape);
 					const mat4 transform = node.getModel();
+					const mat3 normalTransform = convert::toMat3(transform);
+					float det = transform.det();
+					unsigned int triVert1 = 1;
+					unsigned int triVert2 = 2;
+					if (det < 0.f) // mirror triangle
+					{
+						triVert1 = 2;
+						triVert2 = 1;
+					}
 					for (size_t iPrim = 0; iPrim < mesh->primitives.size(); iPrim++)
 					{
 						const Primitive::Ptr prim = mesh->primitives[iPrim];
@@ -63,19 +86,21 @@ namespace app {
 						for (size_t iTri = 0; iTri < prim->triangles.size(); iTri++)
 						{
 							const Triangle &tri = prim->triangles[iTri];
-							Vertex &vA = prim->vertices[tri.A];
-							Vertex &vB = prim->vertices[tri.B];
-							Vertex &vC = prim->vertices[tri.C];
-							vA.position = transform * vA.position;
-							vB.position = transform * vB.position;
-							vC.position = transform * vC.position;
-							bbox.include(vA.position);
-							bbox.include(vB.position);
-							bbox.include(vC.position);
+							prim::Vertex data[3];
+							for (unsigned int iVert = 0; iVert < 3; iVert++)
+							{
+								Vertex &v = prim->vertices[tri.vertices[iVert]];
+								vec3 p = v.position;
+								norm3 n = v.normal;
+								p = transform * p;
+								n = normalTransform * n;
+								data[iVert] = prim::Vertex(p, n, v.texcoord, v.color);
+								bbox.include(p);
+							}
 							prim::Triangle *newTri = new prim::Triangle(
-								prim::Vertex(vA.position, vA.normal, vA.texcoord, vA.color),
-								prim::Vertex(vB.position, vB.normal, vB.texcoord, vB.color),
-								prim::Vertex(vC.position, vC.normal, vC.texcoord, vC.color)
+								data[0],
+								data[triVert1],
+								data[triVert2]
 							);
 							newTri->material = this->materials[prim->material->index];
 							this->hitables.push_back(newTri);
@@ -90,13 +115,14 @@ namespace app {
 				}
 
 			}
-			initOctree(1);
+			// TODO pass hitable list to octree initialisation and build it from importance
+			initOctree(DEFAULT_DEPTH);
 			for (size_t iHitable = 0; iHitable < this->hitables.size(); iHitable++)
 			{
 				prim::Hitable *hitable = this->hitables[iHitable];
 				// assume all are triangles;
 				prim::Triangle *triangle = static_cast<prim::Triangle*>(hitable);
-				
+				addTriangle(triangle);
 			}
 			return true;
 		}
@@ -104,16 +130,7 @@ namespace app {
 		bool Octree::intersect(const Ray & ray, prim::HitInfo &info) const
 		{
 			prim::Intersection intersection;
-			bool intersect = false;
-			prim::Hitable::Ptr hitObject = nullptr;
-			for (size_t iChild = 0; iChild < 8; iChild++)
-			{
-				OctNode* node = this->childrens[iChild];
-				prim::Intersection localIntersection;
-				if (node->intersect(ray, localIntersection))
-					intersection.isClosestThan(localIntersection);
-			}
-			if (!intersection.hit())
+			if (!root->intersect(ray, intersection))
 				return false;
 			info = intersection.compute(ray);
 			return true;
@@ -121,25 +138,20 @@ namespace app {
 
 		bool Octree::intersect(const Ray & ray) const
 		{
+			// TODO
 			return false;
 		}
 
+
 		void Octree::initOctree(unsigned int maxDepth)
 		{
-			for (int i = 0; i < 8; ++i) {
-				// Compute new bounding box for this child
-				point3 newOrigin = bbox.center();
-				newOrigin.x += halfDimension.x * (i & 4 ? .5f : -.5f);
-				newOrigin.y += halfDimension.y * (i & 2 ? .5f : -.5f);
-				newOrigin.z += halfDimension.z * (i & 1 ? .5f : -.5f);
-				this->childrens[i] = new OctNode(newOrigin, halfDimension*.5f);
-			}
+			this->root = new OctNode(bbox.min, bbox.max);
+			this->root->init(maxDepth);
 		}
 
 		void Octree::addTriangle(const prim::Triangle * tri)
 		{
-			for (unsigned int i = 0; i < 8; i++)
-				this->childrens[i]->addTriangle(tri);
+			root->addTriangle(tri);
 		}
 
 		bool OctNode::isLeafNode() const
@@ -147,16 +159,39 @@ namespace app {
 			return this->childrens[0] == nullptr;
 		}
 
-		OctNode::OctNode() : OctNode(point3(0.f), vec3(0.f))
+		void computeCenter()
+		{
+
+		}
+
+		void OctNode::init(unsigned int maxDepth)
+		{
+			if (maxDepth <= 0)
+				return;
+			for (int iChild = 0; iChild < 8; iChild++)
+			{
+				// Compute new bounding box for this child
+				point3 c = center(); // TODO compute center from an average of all triangles
+				point3 lmin, lmax;
+				lmin.x = (iChild & 4) ? c.x : min.x;
+				lmax.x = (iChild & 4) ? max.x : c.x;
+				lmin.y = (iChild & 2) ? c.y : min.y;
+				lmax.y = (iChild & 2) ? max.y : c.y;
+				lmin.z = (iChild & 1) ? c.z : min.z;
+				lmax.z = (iChild & 1) ? max.z : c.z;
+				this->childrens[iChild] = new OctNode(lmin, lmax);
+				this->childrens[iChild]->init(maxDepth - 1);
+			}
+		}
+
+		OctNode::OctNode() : OctNode(point3(0.f), point3(0.f))
 		{
 		}
 
-		OctNode::OctNode(const point3 & newOrigin, const vec3 & halfDimension)
+		OctNode::OctNode(const point3 & min, const point3 & max) : BoundingBox(min - point3(EPSILON), max + point3(EPSILON))
 		{
 			for (unsigned int i = 0; i < 8; i++)
 				this->childrens[i] = nullptr;
-			this->max = newOrigin + halfDimension;
-			this->min = newOrigin - halfDimension;
 		}
 
 		OctNode::~OctNode()
@@ -180,12 +215,6 @@ namespace app {
 				if (octA != octC)
 					childrens[octC]->addTriangle(triangle);
 			}
-		}
-
-		void OctNode::addTriangles(const prim::Triangle * triangle, unsigned int count)
-		{
-			for (unsigned int i = 0; i < count; i++)
-				addTriangle(&triangle[i]);
 		}
 
 		bool OctNode::intersect(const tracer::Ray & ray, prim::Intersection & intersection) const
@@ -218,6 +247,7 @@ namespace app {
 		unsigned int OctNode::getOctant(const vec3 & point) const
 		{
 			unsigned int oct = 0;
+			point3 origin = center();
 			if (point.x >= origin.x) oct |= (1 << 2);
 			if (point.y >= origin.y) oct |= (1 << 1);
 			if (point.z >= origin.z) oct |= (1 << 0);
