@@ -2,6 +2,8 @@
 #include "Config.h"
 #include "Hitable.h"
 
+//#define BRANCHLESS_INTERSECTION
+
 namespace app {
 
 	namespace prim {
@@ -20,6 +22,9 @@ namespace app {
 
 			void include(const point3 &vec);
 			void include(const BoundingBox &bbox);
+
+			bool contain(const point3 &point) const;
+			bool contain(const BoundingBox &bbox) const;
 
 			void reset();
 

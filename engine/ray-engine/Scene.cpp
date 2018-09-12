@@ -111,6 +111,10 @@ namespace app {
 		}
 		// --- MESHES
 		tinygltf::Buffer &buffer = tinyModel.buffers[0];
+		size_t sizePrim = 0;
+		for (size_t iMesh = 0; iMesh < tinyModel.meshes.size(); iMesh++)
+			sizePrim += tinyModel.meshes[iMesh].primitives.size();
+		scene.primitives.reserve(sizePrim);
 		for (size_t iMesh = 0; iMesh < tinyModel.meshes.size(); iMesh++)
 		{
 			tinygltf::Mesh &tinyMesh = tinyModel.meshes[iMesh];
@@ -120,89 +124,7 @@ namespace app {
 				tinygltf::Primitive &tinyPrimitive = tinyMesh.primitives[iPrimitive];
 				Primitive &newPrim = scene.addPrimitive();
 				newPrim.material = &scene.materials[tinyPrimitive.material];
-				// INDICES
-				{
-					tinygltf::Accessor &accessor = tinyModel.accessors[tinyPrimitive.indices];
-					tinygltf::BufferView &bufferView = tinyModel.bufferViews[accessor.bufferView];
-					tinygltf::Buffer &buffer = tinyModel.buffers[bufferView.buffer];
-					int byteStride = accessor.ByteStride(bufferView);
-					switch (accessor.type)
-					{
-					case TINYGLTF_TYPE_SCALAR:
-						switch (accessor.componentType)
-						{
-						case TINYGLTF_COMPONENT_TYPE_BYTE:
-						{
-							int8_t data[3];
-							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
-							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
-							{
-								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
-								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-							}
-						}
-						break;
-						case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
-						{
-							uint8_t data[3];
-							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
-							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
-							{
-								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
-								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-							}
-						}
-						break;
-						case TINYGLTF_COMPONENT_TYPE_SHORT:
-						{
-							short data[3];
-							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
-							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
-							{
-								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
-								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-							}
-						}
-						break;
-						case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
-						{
-							unsigned short data[3];
-							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
-							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
-							{
-								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
-								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-							}
-						}
-						break;
-						case TINYGLTF_COMPONENT_TYPE_INT:
-						{
-							int data[3];
-							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
-							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
-							{
-								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
-								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-							}
-						}
-						break;
-						case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
-						{
-							unsigned int data[3];
-							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
-							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
-							{
-								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
-								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-							}
-						}
-						}
-						break;
-					default:
-						throw std::runtime_error("TINYGLTF Error : Accessor type not supported");
-					}
-				}
-
+				
 				// ATTRIBUTES
 				{
 					// POSITION
@@ -275,6 +197,7 @@ namespace app {
 									sizeof(point3)
 								);
 							}*/
+							//throw std::runtime_error("Tangents not implemented");
 						}
 					}
 					// TEXCOORD_0
@@ -416,6 +339,106 @@ namespace app {
 								vert.color.w = 1.f;
 							}
 						}
+					}
+				}
+				// INDICES
+				{
+					tinygltf::Accessor &accessor = tinyModel.accessors[tinyPrimitive.indices];
+					tinygltf::BufferView &bufferView = tinyModel.bufferViews[accessor.bufferView];
+					tinygltf::Buffer &buffer = tinyModel.buffers[bufferView.buffer];
+					int byteStride = accessor.ByteStride(bufferView);
+					switch (accessor.type)
+					{
+					case TINYGLTF_TYPE_SCALAR:
+						switch (accessor.componentType)
+						{
+						case TINYGLTF_COMPONENT_TYPE_BYTE:
+						{
+							int8_t data[3];
+							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
+							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
+							{
+								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
+								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
+								ASSERT(data[0] < newPrim.vertices.size(), "what");
+								ASSERT(data[1] < newPrim.vertices.size(), "what");
+								ASSERT(data[2] < newPrim.vertices.size(), "what");
+							}
+						}
+						break;
+						case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+						{
+							uint8_t data[3];
+							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
+							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
+							{
+								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
+								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
+								ASSERT(data[0] < newPrim.vertices.size(), "what");
+								ASSERT(data[1] < newPrim.vertices.size(), "what");
+								ASSERT(data[2] < newPrim.vertices.size(), "what");
+							}
+						}
+						break;
+						case TINYGLTF_COMPONENT_TYPE_SHORT:
+						{
+							short data[3];
+							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
+							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
+							{
+								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
+								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
+								ASSERT(data[0] < newPrim.vertices.size(), "what");
+								ASSERT(data[1] < newPrim.vertices.size(), "what");
+								ASSERT(data[2] < newPrim.vertices.size(), "what");
+							}
+						}
+						break;
+						case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+						{
+							unsigned short data[3];
+							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
+							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
+							{
+								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
+								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
+								ASSERT(data[0] < newPrim.vertices.size(), "what");
+								ASSERT(data[1] < newPrim.vertices.size(), "what");
+								ASSERT(data[2] < newPrim.vertices.size(), "what");
+							}
+						}
+						break;
+						case TINYGLTF_COMPONENT_TYPE_INT:
+						{
+							int data[3];
+							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
+							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
+							{
+								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
+								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
+								ASSERT(data[0] < newPrim.vertices.size(), "what");
+								ASSERT(data[1] < newPrim.vertices.size(), "what");
+								ASSERT(data[2] < newPrim.vertices.size(), "what");
+							}
+						}
+						break;
+						case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+						{
+							unsigned int data[3];
+							ASSERT(accessor.count % 3 == 0, "Not moduloc correct");
+							for (size_t iIndice = 0; iIndice < accessor.count; iIndice += 3)
+							{
+								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
+								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
+								ASSERT(data[0] < newPrim.vertices.size(), "what");
+								ASSERT(data[1] < newPrim.vertices.size(), "what");
+								ASSERT(data[2] < newPrim.vertices.size(), "what");
+							}
+						}
+						}
+						break;
+					default:
+						throw std::runtime_error("TINYGLTF Error : Accessor type not supported");
 					}
 				}
 				// TODO mode

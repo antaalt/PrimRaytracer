@@ -1,5 +1,5 @@
 #include "BoundingBox.h"
-
+#include "Math.h"
 #include <climits>
 
 namespace app {
@@ -21,6 +21,21 @@ namespace app {
 		}
 		bool BoundingBox::intersectBounds(const tracer::Ray & ray) const
 		{
+#if defined(BRANCHLESS_INTERSECTION) // @see https://tavianator.com/fast-branchless-raybounding-box-intersections/
+			double tx1 = (min.x - ray.origin.x) * -ray.direction.x;
+			double tx2 = (max.x - ray.origin.x) * -ray.direction.x;
+
+			double tmin = app::min(tx1, tx2);
+			double tmax = app::max(tx1, tx2);
+
+			double ty1 = (min.y - ray.origin.y) * -ray.direction.y;
+			double ty2 = (max.y - ray.origin.y) * -ray.direction.y;
+
+			tmin = app::max(tmin, app::min(ty1, ty2));
+			tmax = app::min(tmax, app::max(ty1, ty2));
+
+			return tmax >= tmin;
+#else
 			float tmin = (min.x - ray.origin.x) / ray.direction.x;
 			float tmax = (max.x - ray.origin.x) / ray.direction.x;
 
@@ -55,6 +70,7 @@ namespace app {
 				tmax = tzmax;
 
 			return true;
+#endif
 		}
 		float BoundingBox::extent() const
 		{
@@ -77,6 +93,24 @@ namespace app {
 		{
 			include(bbox.max);
 			include(bbox.min);
+		}
+		bool BoundingBox::contain(const point3 & point) const
+		{
+			return (point.x <= max.x &&
+				point.y <= max.y &&
+				point.z <= max.z &&
+				point.x >= min.x &&
+				point.y >= min.y &&
+				point.z >= min.z);
+		}
+		bool BoundingBox::contain(const BoundingBox & bbox) const
+		{
+			return (bbox.max.x <= max.x &&
+				bbox.max.y <= max.y &&
+				bbox.max.z <= max.z &&
+				bbox.min.x >= min.x &&
+				bbox.min.y >= min.y &&
+				bbox.min.z >= min.z);
 		}
 		void BoundingBox::reset()
 		{

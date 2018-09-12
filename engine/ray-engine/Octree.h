@@ -4,9 +4,17 @@
 #include "Triangle.h"
 #include "Material.h"
 
-#define EPSILON 0.01f
-#define DEFAULT_DEPTH 4 // TODO generate depending on triangles count
+#define EPSILON_OCTREE 0.01f	// Force overlap of bounding box to prevent float imprecision
+#define MAX_OCTREE_DEPTH 6		// Max depth of the octree
+#define MAX_OCTREE_CHILD 10	// Max number of child to stop the octree
+#define OCTREE_CHILD_NODE 8
 
+/**
+ *	Octree class for triangles only.
+ *	TODO list :
+ *	- make other types compatibles (sphere...)
+ *	- Fix imprecision of float 
+ **/
 
 namespace app {
 	namespace tracer {
@@ -17,19 +25,24 @@ namespace app {
 			OctNode();
 			OctNode(const point3 &min, const point3 &max);
 			~OctNode();
-			void addTriangle(const prim::Triangle *triangle);
 
+			// Check if the ray hit a triangle from the Octree
 			bool intersect(const tracer::Ray &ray, prim::Intersection &intersection) const;
-
+			
+			// Get the index of the sub-bbox the point is in
 			unsigned int getOctant(const vec3 &point) const;
+
+			// Is the node a leaf ? (has it child ?)
 			bool isLeafNode() const;
 
-			void init(unsigned int maxDepth);
+			// Init the acceleration structure
+			unsigned int init(std::vector<const prim::Triangle*> &triangles, unsigned int depth = 0);
 
 		private:
-			std::vector<const prim::Triangle*> triangles;
-			OctNode* parent;			// Parent of the node
-			OctNode* childrens[8];		// Childrens of the node
+			std::vector<const prim::Triangle*> triangles;	// List of triangles of the node (only if leaf node)
+			OctNode* parent;								// Parent of the node
+			OctNode* childrens[8];							// Childrens of the node
+			point3 origin;									// Center of the octree separating all childs
 		};
 
 
@@ -37,7 +50,6 @@ namespace app {
 		{
 		public:
 			Octree();
-			Octree(unsigned int maxDepth);
 			~Octree();
 
 			virtual bool build(const Scene &scene);
@@ -45,16 +57,7 @@ namespace app {
 			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const;
 			virtual bool intersect(const Ray &ray) const;
 		private:
-			void initOctree(unsigned int maxDepth);
-
-			void addTriangle(const prim::Triangle *tri);
-		private:
-			OctNode *root;								// Childrens of the octree
-			prim::BoundingBox bbox;						// Bounding box of the whole octree
-			std::vector<prim::Hitable::Ptr> hitables;	// Hitable inside the octree
-			std::vector<prim::Material::Ptr> materials;	// materials of the hitables
-			std::vector<Texture> textures;			// Textures of the hitables
-			unsigned int maxDepth;						// Max depth of the Octree
+			OctNode *root; // Root node of the octree
 		};
 
 	}

@@ -87,7 +87,7 @@ namespace app {
 		mat4 transform;
 		Node::Ptr parent;
 		std::vector<Node::Ptr> childrens;
-		Node() : parent(nullptr) {}
+		Node() : parent(nullptr), material(nullptr), shape(nullptr) {}
 
 		mat4 getModel() const;
 	};
@@ -95,7 +95,6 @@ namespace app {
 	struct Scene {
 		std::vector<Primitive> primitives;
 		std::vector<Shape::Ptr> shapes;
-		//std::vector<Mesh> meshes;
 		std::vector<Node> nodes;
 		std::vector<Material> materials;
 		std::vector<Texture> textures;

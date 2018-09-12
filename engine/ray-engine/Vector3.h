@@ -15,6 +15,10 @@ namespace Math {
 		Vector3();
 		Vector3(T x);
 		Vector3(T x, T y, T z);
+		template <typename U>
+		Vector3(U x, U y, U z);
+		template <typename U>
+		Vector3(const Vector3<U> &vec);
 		T &operator[](unsigned int index) { return data[index]; }
 		const T &operator[](unsigned int index) const { return data[index]; }
 
@@ -61,6 +65,19 @@ namespace Math {
 	template<typename T>
 	inline Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z)
 	{
+	}
+
+	template<typename T>
+	template<typename U>
+	inline Vector3<T>::Vector3(U x, U y, U z) : x(static_cast<T>(x)), y(static_cast<T>(y)), z(static_cast<T>(z))
+	{
+	}
+
+	template<typename T>
+	template <typename U>
+	inline Vector3<T>::Vector3(const Vector3<U> &vec) : x(static_cast<T>(vec.x)), y(static_cast<T>(vec.y)), z(static_cast<T>(vec.z))
+	{
+
 	}
 
 	template<typename T>
