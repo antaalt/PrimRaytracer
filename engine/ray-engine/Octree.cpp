@@ -19,17 +19,22 @@ namespace app {
 
 		bool Octree::build(const Scene & scene)
 		{
+			Log::info("Building Octree...");
 			Accelerator::build(scene);
 			this->root = new OctNode(bbox.min, bbox.max);
-			std::vector<const prim::Triangle*> triangles;
+			this->triangleBounded.reserve(this->hitables.size());
+			std::vector<const TriangleBounded*> tris;
 			for (auto it = this->hitables.begin(); it != this->hitables.end(); it++)
 			{
 				// Check if hitable is a triangle
 				const prim::Triangle* tri = dynamic_cast<prim::Triangle*>((*it));
 				if (tri != nullptr)
-					triangles.push_back(tri);
+				{
+					this->triangleBounded.push_back(TriangleBounded(*tri));
+					tris.push_back(&this->triangleBounded.back());
+				}
 			}
-			unsigned int created = this->root->init(triangles);
+			unsigned int created = this->root->init(tris);
 			Log::debug("Octree generated with ", created, " subtrees");
 			return created > 0;
 		}
@@ -57,7 +62,7 @@ namespace app {
 			return true;
 		}
 
-		unsigned int OctNode::init(std::vector<const prim::Triangle*> &parentTri, unsigned int depth)
+		unsigned int OctNode::init(std::vector<const TriangleBounded*> &parentTri, unsigned int depth)
 		{
 			if (depth >= MAX_OCTREE_DEPTH || parentTri.size() <= MAX_OCTREE_CHILD)
 			{
@@ -76,22 +81,8 @@ namespace app {
 			origin = center();
 #endif
 			unsigned int created = 0;
-			std::vector<const prim::Triangle*> childTri[OCTREE_CHILD_NODE];
-			for (auto it = parentTri.begin(); it != parentTri.end(); it++)
-			{
-				unsigned int octA = getOctant((*it)->A.position);
-				unsigned int octB = getOctant((*it)->B.position);
-				unsigned int octC = getOctant((*it)->C.position);
-				childTri[octA].push_back((*it));
-				if (octA != octB)
-					childTri[octB].push_back((*it));
-				if (octA != octC)
-					childTri[octC].push_back((*it));
-			}
 			for (int iChild = 0; iChild < OCTREE_CHILD_NODE; iChild++)
 			{
-				if (childTri[iChild].size() == 0)
-					continue;
 				// Compute new bounding box for this child
 				prim::BoundingBox childBox;
 				childBox.min.x = (iChild & (1 << 2)) ? origin.x : min.x;
@@ -102,9 +93,19 @@ namespace app {
 				childBox.max.z = (iChild & (1 << 0)) ? max.z : origin.z;
 				ASSERT(contain(childBox), "Not inside");
 
-				this->childrens[iChild] = new OctNode(childBox.min, childBox.max);
-				created += this->childrens[iChild]->init(childTri[iChild], depth + 1);
-				created++;
+				std::vector<const TriangleBounded*> childTri;
+				for (auto it = parentTri.begin(); it != parentTri.end(); it++)
+				{
+					const TriangleBounded *tri = (*it);
+					if (childBox.overlap(*tri))
+						childTri.push_back(tri);
+				}
+				if (childTri.size() > 0)
+				{
+					this->childrens[iChild] = new OctNode(childBox.min, childBox.max);
+					created += this->childrens[iChild]->init(childTri, depth + 1);
+					created++;
+				}
 			}
 			return created;
 		}
@@ -131,7 +132,6 @@ namespace app {
 				return false;
 			if (this->isLeafNode())
 			{
-				ASSERT(this->triangles.size() > 0, "what");
 				for (size_t iTri = 0; iTri < this->triangles.size(); iTri++)
 				{
 					prim::Intersection localIntersection;

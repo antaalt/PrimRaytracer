@@ -112,6 +112,15 @@ namespace app {
 				bbox.min.y >= min.y &&
 				bbox.min.z >= min.z);
 		}
+		bool BoundingBox::overlap(const BoundingBox & bbox) const
+		{
+			return (bbox.min.x <= max.x &&
+				bbox.min.y <= max.y &&
+				bbox.min.z <= max.z) &&
+				(bbox.max.x >= min.x &&
+				bbox.max.y >= min.y &&
+				bbox.max.z >= min.z);
+		}
 		void BoundingBox::reset()
 		{
 			min = point3(std::numeric_limits<float>::max());

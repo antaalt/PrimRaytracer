@@ -33,7 +33,7 @@ namespace app {
 			Renderer(unsigned int width, unsigned int height, unsigned int tileSize);
 			~Renderer();
 
-			bool buildScene(Scene &scene, Acceleration acceleration);
+			bool buildScene(Scene &&scene, Acceleration acceleration);
 
 			bool updateRays();
 

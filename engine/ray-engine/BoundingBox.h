@@ -26,6 +26,8 @@ namespace app {
 			bool contain(const point3 &point) const;
 			bool contain(const BoundingBox &bbox) const;
 
+			bool overlap(const BoundingBox &bbox) const;
+
 			void reset();
 
 			point3 min, max;

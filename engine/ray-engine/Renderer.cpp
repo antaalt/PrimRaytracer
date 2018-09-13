@@ -36,7 +36,7 @@ namespace app {
 				delete this->tracer;
 		}
 
-		bool Renderer::buildScene(Scene &scene, Acceleration acceleration)
+		bool Renderer::buildScene(Scene &&scene, Acceleration acceleration)
 		{
 			switch (acceleration)
 			{

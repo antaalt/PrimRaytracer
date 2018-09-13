@@ -258,7 +258,7 @@ namespace app {
 		Utils::Timer timer;
 
 		tracer::Renderer renderer(m_width, m_height, 32);
-		bool init = renderer.buildScene(scene, options.acceleration);
+		bool init = renderer.buildScene(std::move(scene), options.acceleration);
 		renderer.setTracer(options.tracer);
 		renderer.setCamera(options.camera);
 		m_camera = options.camera;
