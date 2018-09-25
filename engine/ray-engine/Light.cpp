@@ -10,9 +10,5 @@ namespace app {
 		Light::~Light()
 		{
 		}
-		bool Light::inShadow(const Ray & shadowRay, Accelerator * acc)
-		{
-			return acc->intersect(shadowRay);
-		}
 	}
 }

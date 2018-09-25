@@ -1,6 +1,6 @@
 #pragma once
 #include "Config.h"
-#include "Hitable.h"
+#include "Ray.h"
 
 //#define BRANCHLESS_INTERSECTION
 

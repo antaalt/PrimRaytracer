@@ -2,14 +2,15 @@
 #include "Hitable.h"
 #include "Scene.h"
 #include "BoundingBox.h"
+#include "Light.h"
 
 namespace app {
 	namespace tracer {
 
 		enum class Acceleration {
-			ACCELERATION_OCTREE,
-			ACCELERATION_BVH,
-			NO_ACCEL
+			OCTREE,
+			BVH,
+			NONE
 		};
 
 		class Accelerator
@@ -23,13 +24,18 @@ namespace app {
 
 			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const = 0;
 
-			virtual bool intersect(const Ray &ray) const = 0;
+			virtual bool isOccluded(const Ray &ray) const = 0;
+
+			const Light *getLight(size_t index) const;
+
+			size_t getLightsCount() const;
 
 		protected:
 			prim::BoundingBox bbox;						// Bounding box of the whole acceleration structure
 			std::vector<prim::Hitable*> hitables;		// Hitable inside the acceleration structure
 			std::vector<prim::Material*> materials;		// materials of the hitables
 			std::vector<Texture> textures;				// Textures of the hitables
+			std::vector<Light*> lights;					// Lights of the scene
 			size_t hitableCount;
 		};
 	}

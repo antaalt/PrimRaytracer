@@ -133,5 +133,13 @@ namespace app {
 			info.material = material;
 			return info;
 		}
+		BoundingBox Triangle::computeBoundingBox() const
+		{
+			BoundingBox bbox;
+			bbox.include(A.position);
+			bbox.include(B.position);
+			bbox.include(C.position);
+			return bbox;
+		}
 	}
 }

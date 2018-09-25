@@ -12,7 +12,7 @@ namespace app {
 		WhittedTracer::~WhittedTracer()
 		{
 		}
-		Pixel WhittedTracer::castRay(const Ray & ray, const Accelerator::Ptr accelerator, unsigned int depth) const
+		Pixel WhittedTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
 		{
 			if (depth > MAX_DEPTH)
 				return miss(ray);
@@ -21,7 +21,17 @@ namespace app {
 				return miss(ray); 
 			
 			float pdf = 0;
-			color4 color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color * vec3::dot(info.normal, -ray.direction);
+			color4 color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
+			/*for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
+			{
+				const Light *l = accelerator->getLight(iLight);
+				LightInfo linfo;
+				if (l->hit(info, linfo))
+				{
+					color4 s = l->sample(linfo);
+					color = color * s * std::abs(vec3::dot(linfo.raySample, info.normal));
+				}
+			}*/
 			switch (info.material->type())
 			{
 			case prim::MaterialType::DIFFUSE:
@@ -60,7 +70,7 @@ namespace app {
 				return miss(ray);
 			}
 		}
-		bool WhittedTracer::trace(const Ray & ray, const Accelerator::Ptr accelerator, prim::HitInfo & info) const
+		bool WhittedTracer::trace(const Ray & ray, const Accelerator* accelerator, prim::HitInfo & info) const
 		{
 			return accelerator->intersect(ray, info);
 		}

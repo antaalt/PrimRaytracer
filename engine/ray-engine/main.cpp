@@ -25,7 +25,7 @@ int renderSingleFrame()
 	app::tracer::Renderer renderer(width, height, 32);
 	renderer.setCamera(camera);
 	renderer.setTracer(tracer);
-	renderer.buildScene(std::move(scene), app::tracer::Acceleration::NO_ACCEL);
+	renderer.buildScene(std::move(scene), app::tracer::Acceleration::NONE);
 	if (renderer.render())
 	{
 		const app::Pixel *data = renderer.image().data();
@@ -47,20 +47,22 @@ int renderDisplay()
 	options.camera = new app::tracer::PinholeCamera(width, height);
 	options.camera->lookAt(point3(
 		0.f,
-		5.f,
-		10.f
-	), point3(0.f, 5.f, 0.f));
-	options.acceleration = app::tracer::Acceleration::ACCELERATION_OCTREE;
+		0.f,
+		1.f
+	), point3(0.f, 0.f, 0.f));
+	options.acceleration = app::tracer::Acceleration::BVH;
 
 	// Load Scene
 	Log::info("Loading scene");
 	//app::Scene scene = app::SceneBuilder::buildCustomScene();
-	app::Scene scene = app::Scene::GLTF::load("../data/lantern/Lantern.gltf");
-	//app::Scene scene = app::Scene::GLTF::load("../data/duck/Duck.gltf");
+	//app::Scene scene = app::Scene::GLTF::load("../data/lantern/Lantern.gltf");
+	app::Scene scene = app::Scene::GLTF::load("../data/duck/Duck.gltf");
 	//app::Scene scene = app::Scene::GLTF::load("../data/box/box.gltf");
 	//app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
 	//app::Scene scene = app::Scene::GLTF::load("../data/sponza/Sponza.gltf");
-
+	app::Light l;
+	l.position = vec3(2.f, 2.f, 2.f);
+	scene.lights.push_back(l);
 	application.run(scene, options);
 
 	system("pause");

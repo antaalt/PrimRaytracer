@@ -1,9 +1,10 @@
 #pragma once
 #include "Ray.h"
+#include "BoundingBox.h"
 
 #include <climits>
 
-#define INVALID_INTERSECTION std::numeric_limits<float>::max()
+#define INFINITE_DISTANCE (std::numeric_limits<float>::max())
 
 
 namespace app {
@@ -24,10 +25,10 @@ namespace app {
 		class Hitable
 		{
 		public:
-			using Ptr = Hitable*;
 			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const = 0;
-
 			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection &intersection) const = 0;
+			virtual BoundingBox computeBoundingBox() const = 0;
+
 			Material *material;
 		};
 
@@ -39,7 +40,7 @@ namespace app {
 			float u;
 			float v;
 		public:
-			Intersection() : distance(INVALID_INTERSECTION), hitable(nullptr)
+			Intersection() : distance(INFINITE_DISTANCE), hitable(nullptr)
 			{
 			}
 

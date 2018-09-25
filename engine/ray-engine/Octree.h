@@ -62,7 +62,7 @@ namespace app {
 			virtual bool build(const Scene &scene);
 
 			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const;
-			virtual bool intersect(const Ray &ray) const;
+			virtual bool isOccluded(const Ray &ray) const;
 		private:
 			OctNode *root; // Root node of the octree
 			std::vector<TriangleBounded> triangleBounded;

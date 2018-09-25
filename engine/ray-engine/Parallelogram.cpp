@@ -47,6 +47,10 @@ namespace app {
 			info.material = material;
 			return info;
 		}
+		BoundingBox Parallelogram::computeBoundingBox() const
+		{
+			return BoundingBox();
+		}
 	}
 }
 

@@ -47,6 +47,7 @@ namespace Math {
 		static T dot(const Vector3<T> &lhs, const Vector3<T> &rhs);
 		static Vector3<T> cross(const Vector3<T> &lhs, const Vector3<T> &rhs);
 		static Vector3<T> normalize(const Vector3<T> &vec);
+		static float distance(const Vector3<T> &lhs, const Vector3<T> &rhs);
 
 		template <typename T>
 		friend std::ostream& operator <<(std::ostream& os, const Vector3<T>& vec);
@@ -130,6 +131,12 @@ namespace Math {
 	inline Vector3<T> Vector3<T>::normalize(const Vector3<T>& vec)
 	{
 		return vec / vec.length();
+	}
+
+	template<typename T>
+	inline float Vector3<T>::distance(const Vector3<T> &lhs, const Vector3<T> &rhs)
+	{
+		return (rhs - lhs).length();
 	}
 
 	template<typename T>

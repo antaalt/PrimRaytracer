@@ -92,12 +92,17 @@ namespace app {
 		mat4 getModel() const;
 	};
 
+	struct Light {
+		vec3 position;
+	};
+
 	struct Scene {
 		std::vector<Primitive> primitives;
 		std::vector<Shape::Ptr> shapes;
 		std::vector<Node> nodes;
 		std::vector<Material> materials;
 		std::vector<Texture> textures;
+		std::vector<Light> lights;
 
 		Primitive &addPrimitive();
 		Mesh &addMesh();
@@ -106,6 +111,7 @@ namespace app {
 		Node &addNode();
 		Material &addMaterial();
 		Texture &addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
+		Light &addLight();
 
 		struct GLTF
 		{

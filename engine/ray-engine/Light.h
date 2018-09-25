@@ -1,18 +1,26 @@
 #pragma once
 #include "Config.h"
 #include "Ray.h"
-#include "Accelerator.h"
+#include "Hitable.h"
 
 namespace app {
 	namespace tracer {
-		class Light
+
+		struct LightInfo {
+			vec3 raySample;
+		};
+
+		class Light : public prim::Hitable
 		{
 		public:
 			Light();
 			~Light();
 
-			virtual color4 sample() = 0;
-			bool inShadow(const Ray &shadowRay, Accelerator *acc);
+			virtual color4 shade(LightInfo &lightInfo, float &pdf) const = 0;
+
+			virtual bool hit(const prim::HitInfo &info, LightInfo &lightInfo) const = 0;
+
+			virtual prim::BoundingBox computeBBox() const { return prim::BoundingBox(); }
 
 			float intensity;
 			color4 albedo;

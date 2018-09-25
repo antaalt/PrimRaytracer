@@ -3,7 +3,6 @@
 
 #include "Material.h"
 #include "BoundingBox.h"
-#include "Hitable.h"
 
 namespace app {
 	namespace tracer {
@@ -16,7 +15,7 @@ namespace app {
 
 			virtual bool intersect(const Ray &ray, prim::HitInfo &intersection) const;
 
-			virtual bool intersect(const Ray &ray) const;
+			virtual bool isOccluded(const Ray &ray) const;
 		};
 	}
 }

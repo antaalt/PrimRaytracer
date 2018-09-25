@@ -102,9 +102,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Hitable.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
@@ -144,7 +141,10 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="Atmosphere.cpp">
+    <ClCompile Include="BVH.cpp">
+      <Filter>Source Files\Scene\Acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
   </ItemGroup>
@@ -263,14 +263,17 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="Atmosphere.h">
-      <Filter>Header Files\Lights</Filter>
-    </ClInclude>
     <ClInclude Include="Time.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Location.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH.h">
+      <Filter>Header Files\Scene\Acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files\Lights</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

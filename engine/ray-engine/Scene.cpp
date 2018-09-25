@@ -53,6 +53,11 @@ namespace app {
 		textures.emplace_back(data, width, height, components);
 		return textures.back();
 	}
+	Light & Scene::addLight()
+	{
+		lights.emplace_back();
+		return lights.back();
+	}
 	Scene Scene::GLTF::load(std::string path)
 	{
 		tinygltf::TinyGLTF ctx;
@@ -360,9 +365,9 @@ namespace app {
 							{
 								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
 								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-								ASSERT(data[0] < newPrim.vertices.size(), "what");
-								ASSERT(data[1] < newPrim.vertices.size(), "what");
-								ASSERT(data[2] < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[0]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[1]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[2]) < newPrim.vertices.size(), "what");
 							}
 						}
 						break;
@@ -374,9 +379,9 @@ namespace app {
 							{
 								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
 								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-								ASSERT(data[0] < newPrim.vertices.size(), "what");
-								ASSERT(data[1] < newPrim.vertices.size(), "what");
-								ASSERT(data[2] < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[0]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[1]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[2]) < newPrim.vertices.size(), "what");
 							}
 						}
 						break;
@@ -388,9 +393,9 @@ namespace app {
 							{
 								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
 								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-								ASSERT(data[0] < newPrim.vertices.size(), "what");
-								ASSERT(data[1] < newPrim.vertices.size(), "what");
-								ASSERT(data[2] < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[0]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[1]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[2]) < newPrim.vertices.size(), "what");
 							}
 						}
 						break;
@@ -402,9 +407,9 @@ namespace app {
 							{
 								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
 								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-								ASSERT(data[0] < newPrim.vertices.size(), "what");
-								ASSERT(data[1] < newPrim.vertices.size(), "what");
-								ASSERT(data[2] < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[0]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[1]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[2]) < newPrim.vertices.size(), "what");
 							}
 						}
 						break;
@@ -416,9 +421,9 @@ namespace app {
 							{
 								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
 								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-								ASSERT(data[0] < newPrim.vertices.size(), "what");
-								ASSERT(data[1] < newPrim.vertices.size(), "what");
-								ASSERT(data[2] < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[0]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[1]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[2]) < newPrim.vertices.size(), "what");
 							}
 						}
 						break;
@@ -430,9 +435,9 @@ namespace app {
 							{
 								memcpy(&data, &buffer.data[bufferView.byteOffset + accessor.byteOffset + iIndice * byteStride], sizeof(data));
 								newPrim.triangles.push_back(Triangle(data[0], data[1], data[2]));
-								ASSERT(data[0] < newPrim.vertices.size(), "what");
-								ASSERT(data[1] < newPrim.vertices.size(), "what");
-								ASSERT(data[2] < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[0]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[1]) < newPrim.vertices.size(), "what");
+								ASSERT(static_cast<size_t>(data[2]) < newPrim.vertices.size(), "what");
 							}
 						}
 						}

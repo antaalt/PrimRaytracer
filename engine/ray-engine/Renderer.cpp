@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Octree.h"
 #include "NoAccel.h"
+#include "BVH.h"
 
 #include "SceneBuilder.h"
 #include "Math.h"
@@ -40,13 +41,15 @@ namespace app {
 		{
 			switch (acceleration)
 			{
-			case Acceleration::ACCELERATION_OCTREE:
+			case Acceleration::OCTREE:
 				this->accelerator = new Octree();
 				break;
-			case Acceleration::NO_ACCEL:
+			case Acceleration::NONE:
 				this->accelerator = new NoAccel();
 				break;
-			case Acceleration::ACCELERATION_BVH:
+			case Acceleration::BVH:
+				this->accelerator = new BVH();
+				break;
 			default:
 				return false;
 			}

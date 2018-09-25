@@ -124,10 +124,9 @@
   <ItemGroup>
     <ClCompile Include="Accelerator.cpp" />
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Atmosphere.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="BVH.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Hitable.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -137,6 +136,7 @@
     <ClCompile Include="PathTracer.cpp" />
     <ClCompile Include="PinholeCamera.cpp" />
     <ClCompile Include="Parallelogram.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -152,8 +152,8 @@
   <ItemGroup>
     <ClInclude Include="Accelerator.h" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Atmosphere.h" />
     <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="BVH.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Hitable.h" />
@@ -170,6 +170,7 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="Parallelogram.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Ray.h" />

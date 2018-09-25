@@ -51,5 +51,13 @@ namespace app {
 			return info;
 		}
 
+		BoundingBox Sphere::computeBoundingBox() const
+		{
+			BoundingBox bbox;
+			bbox.min = m_center - vec3(m_radius);
+			bbox.max = m_center + vec3(m_radius);
+			return bbox;
+		}
+
 	}
 }

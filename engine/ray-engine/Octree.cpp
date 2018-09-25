@@ -48,7 +48,7 @@ namespace app {
 			return true;
 		}
 
-		bool Octree::intersect(const Ray & ray) const
+		bool Octree::isOccluded(const Ray & ray) const
 		{
 			prim::Intersection intersection;
 			return root->intersect(ray, intersection);

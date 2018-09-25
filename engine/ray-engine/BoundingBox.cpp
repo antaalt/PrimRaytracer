@@ -124,7 +124,7 @@ namespace app {
 		void BoundingBox::reset()
 		{
 			min = point3(std::numeric_limits<float>::max());
-			max = point3(std::numeric_limits<float>::min());
+			max = point3(-std::numeric_limits<float>::max());
 		}
 	}
 }

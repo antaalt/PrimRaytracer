@@ -34,7 +34,7 @@ namespace app {
 			info = intersection.compute(ray);
 			return true;
 		}
-		bool NoAccel::intersect(const Ray & ray) const
+		bool NoAccel::isOccluded(const Ray &ray) const
 		{
 			if (!bbox.intersectBounds(ray))
 				return false;

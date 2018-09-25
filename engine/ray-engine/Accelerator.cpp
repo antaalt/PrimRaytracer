@@ -21,6 +21,8 @@ namespace app {
 				delete this->hitables[i];
 			for (size_t i = 0; i < this->materials.size(); i++)
 				delete this->materials[i];
+			for (size_t i = 0; i < this->lights.size(); i++)
+				delete this->lights[i];
 		}
 		bool Accelerator::build(const Scene & scene)
 		{ 
@@ -120,11 +122,10 @@ namespace app {
 				{
 					const Sphere *sphere = reinterpret_cast<const Sphere*>(shape);
 					const mat4 transform = node.getModel();
-					prim::Sphere::Ptr newSphere = new prim::Sphere(sphere->center, sphere->radius);
+					prim::Sphere* newSphere = new prim::Sphere(sphere->center, sphere->radius);
 					newSphere->material = this->materials[sphere->material->index];
 					this->hitables.push_back(newSphere);
-					bbox.include(sphere->center + point3(sphere->radius));
-					bbox.include(sphere->center + point3(-sphere->radius));
+					bbox.include(newSphere->computeBoundingBox());
 				}
 				break;
 				case ShapeType::PARALLELOGRAM:
@@ -145,6 +146,14 @@ namespace app {
 			}
 			this->hitableCount = this->hitables.size();
 			return true;
+		}
+		const Light * Accelerator::getLight(size_t index) const
+		{
+			return lights[index];
+		}
+		size_t Accelerator::getLightsCount() const
+		{
+			return lights.size();
 		}
 	}
 }
