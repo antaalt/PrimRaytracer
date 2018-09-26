@@ -1,9 +1,9 @@
 #pragma once
 
-#ifdef _WIN32
+/*#ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
-#endif
+#endif*/
 #include <SDL.h>
 
 #include "Config.h"
@@ -14,9 +14,9 @@
 namespace app {
 
 	struct options {
-		tracer::Tracer *tracer;
-		tracer::Camera *camera;
-		tracer::Acceleration acceleration;
+		raycore::tracer::Tracer *tracer;
+		raycore::tracer::Camera *camera;
+		raycore::tracer::Acceleration acceleration;
 	};
 
 	enum KeyPosition {
@@ -49,7 +49,7 @@ namespace app {
 		Application(const Application &acc) = delete;
 		Application& operator=(const Application &other) = delete;
 
-		void run(app::Scene &scene, options &options);
+		void run(raycore::Scene &scene, options &options);
 
 	private:
 		bool inputs();
@@ -68,7 +68,7 @@ namespace app {
 		SDL_DisplayMode m_displayMode;
 		SDL_Window *m_window;
 		SDL_GLContext m_glContext;
-		tracer::Camera *m_camera;
+		raycore::tracer::Camera *m_camera;
 		unsigned int m_width, m_height;
 		Inputs m_inputs;
 	};

@@ -1,0 +1,21 @@
+#pragma once
+#include "Tracer.h"
+
+namespace raycore {
+	namespace tracer {
+
+		class WhittedTracer : public Tracer
+		{
+		public:
+			WhittedTracer();
+			~WhittedTracer();
+			virtual Pixel castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = 0) const;
+
+			virtual bool trace(const Ray &ray, const Accelerator* accelerator, prim::HitInfo & info) const;
+			
+			virtual Pixel miss(const Ray &ray) const;
+
+		};
+	}
+}
+
