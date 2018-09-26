@@ -15,6 +15,14 @@ namespace app {
 	Triangle::Triangle(unsigned int v1, unsigned int v2, unsigned int v3): A(v1), B(v2), C(v3)
 	{
 	}
+	Scene::Scene()
+	{
+	}
+	Scene::~Scene()
+	{
+		for (Shape* shape : shapes)
+			delete shape;
+	}
 	Primitive & Scene::addPrimitive()
 	{
 		primitives.emplace_back();
@@ -48,7 +56,7 @@ namespace app {
 		materials.emplace_back();
 		return materials.back();
 	}
-	Texture & Scene::addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components)
+	Texture32 & Scene::addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components)
 	{
 		textures.emplace_back(data, width, height, components);
 		return textures.back();
@@ -58,7 +66,7 @@ namespace app {
 		lights.emplace_back();
 		return lights.back();
 	}
-	Scene Scene::GLTF::load(std::string path)
+	bool Scene::GLTF::load(std::string path, Scene &scene)
 	{
 		tinygltf::TinyGLTF ctx;
 		tinygltf::Model tinyModel;
@@ -72,7 +80,6 @@ namespace app {
 		{
 			throw std::runtime_error(err);
 		}
-		Scene scene;
 		const size_t nbScene = tinyModel.scenes.size();
 		// TODO manage multiple scenes
 		// --- TEXTURES
@@ -81,7 +88,7 @@ namespace app {
 		{
 			tinygltf::Texture &tinyTex = tinyModel.textures[iTex];
 			tinygltf::Image &tinyImage = tinyModel.images[tinyTex.source];
-			Texture &newTex = scene.addTexture(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component);
+			Texture32 &newTex = scene.addTexture(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component);
 		}
 		// --- MATERIALS
 		scene.materials.reserve(tinyModel.materials.size());
@@ -89,18 +96,18 @@ namespace app {
 		{
 			tinygltf::Material &tinyMat = tinyModel.materials[iMaterial];
 			Material &newMat = scene.addMaterial();
-			newMat.index = iMaterial;
+			newMat.index = static_cast<unsigned int>(iMaterial);
 			auto itColor = tinyMat.values.find("baseColorFactor");
 			if (itColor == tinyMat.values.end())
-				newMat.color = color4(1.f);
+				newMat.color = colorHDR(1.f);
 			else
 			{
-				tinygltf::ColorValue color = itColor->second.ColorFactor();
-				newMat.color = color4(
-					static_cast<float>(color[0]),
-					static_cast<float>(color[1]),
-					static_cast<float>(color[2]),
-					static_cast<float>(color[3])
+				tinygltf::ColorValue c = itColor->second.ColorFactor();
+				newMat.color = colorHDR(
+					static_cast<float>(c[0]),
+					static_cast<float>(c[1]),
+					static_cast<float>(c[2]),
+					static_cast<float>(c[3])
 				);
 			}
 			auto itTexture = tinyMat.values.find("baseColorTexture");
@@ -314,7 +321,7 @@ namespace app {
 										memcpy(
 											vert.color.data,
 											&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-											sizeof(color4)
+											sizeof(colorHDR)
 										);
 									}
 									break;
@@ -503,7 +510,7 @@ namespace app {
 				node.childrens.push_back(&childNode);
 			}
 		}
-		return scene;
+		return true;
 	}
 	bool Scene::GLTF::write(const Scene & scene)
 	{

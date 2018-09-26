@@ -8,7 +8,7 @@ namespace app {
 			PointLight();
 			~PointLight();
 
-			virtual color4 sample(LightInfo &lightInfo) const;
+			virtual colorHDR sample(LightInfo &lightInfo) const;
 
 			virtual bool hit(const prim::HitInfo &ray, LightInfo &lightInfo) const;
 

@@ -21,9 +21,9 @@ namespace app {
 			camera(nullptr), 
 			accelerator(nullptr), 
 			tracer(nullptr),
-			tileSize(tileSize)
+			tileSize(tileSize),
+			output(PixelBuffer(width, height))
 		{
-			this->output = PixelBuffer(width, height);
 			this->rays.resize(width *  height);
 		}
 

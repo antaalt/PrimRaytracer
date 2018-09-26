@@ -12,9 +12,9 @@ namespace app {
 		PointLight::~PointLight()
 		{
 		}
-		color4 PointLight::sample(LightInfo &lightInfo) const
+		colorHDR PointLight::sample(LightInfo &lightInfo) const
 		{
-			return color4();
+			return colorHDR();
 		}
 		bool PointLight::hit(const prim::HitInfo & ray, LightInfo &lightInfo) const
 		{

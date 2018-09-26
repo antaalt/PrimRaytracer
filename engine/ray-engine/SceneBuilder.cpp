@@ -12,9 +12,8 @@ namespace app {
 	SceneBuilder::~SceneBuilder()
 	{
 	}
-	Scene SceneBuilder::buildCustomScene()
+	bool SceneBuilder::buildCustomScene(Scene &scene)
 	{
-		Scene scene;
 		scene.materials.reserve(4);
 		scene.shapes.reserve(4);
 		scene.nodes.reserve(4);
@@ -22,19 +21,19 @@ namespace app {
 		// materials
 		Material &mat1 = scene.addMaterial();
 		mat1.index = 0;
-		mat1.color = color4(1.f, 0.f, 0.f, 1.f);
+		mat1.color = colorHDR(1.f, 0.f, 0.f, 1.f);
 		mat1.texture = nullptr;
 		mat1.type = MaterialType::DIELECTRIC;
 
 		Material &mat2 = scene.addMaterial();
 		mat2.index = 1;
-		mat2.color = color4(0.f, 1.f, 0.f, 1.f);
+		mat2.color = colorHDR(0.f, 1.f, 0.f, 1.f);
 		mat2.texture = nullptr;
 		mat2.type = MaterialType::DIFFUSE;
 
 		Material &mat3 = scene.addMaterial();
 		mat3.index = 2;
-		mat3.color = color4(0.f, 0.f, 1.f, 1.f);
+		mat3.color = colorHDR(0.f, 0.f, 1.f, 1.f);
 		mat3.texture = nullptr;
 		mat3.type = MaterialType::DIFFUSE;
 
@@ -85,11 +84,10 @@ namespace app {
 		node4.shape = &para;
 		node4.transform = Matrix4::identity();*/
 
-		return scene;
+		return true;
 	}
-	Scene SceneBuilder::buildCustomSceneTri()
+	bool SceneBuilder::buildCustomSceneTri(Scene &scene)
 	{
-		Scene scene;
 		scene.materials.reserve(2);
 		scene.shapes.reserve(2);
 		scene.primitives.reserve(1);
@@ -98,23 +96,23 @@ namespace app {
 		// materials
 		Material &mat1 = scene.addMaterial();
 		mat1.index = 0;
-		mat1.color = color4(1.f, 1.f, 1.f, 1.f);
+		mat1.color = colorHDR(1.f, 1.f, 1.f, 1.f);
 		mat1.texture = nullptr;
 		mat1.type = MaterialType::DIFFUSE;
 		mat1.index = 0;
 
 		Material &mat2 = scene.addMaterial();
 		mat2.index = 0;
-		mat2.color = color4(0.f, 1.f, 0.f, 1.f);
+		mat2.color = colorHDR(0.f, 1.f, 0.f, 1.f);
 		mat2.texture = nullptr;
 		mat2.type = MaterialType::DIFFUSE;
 		mat2.index = 1;
 
 		Mesh &mesh = scene.addMesh();
 		Primitive &prim = scene.addPrimitive();
-		Vertex vA = Vertex(point3(0.f), norm3(), uv2(0.f), color4(1.f, 0.f, 0.f, 1.f));
-		Vertex vB = Vertex(point3(0.f, 1.f, 0.f), norm3(), uv2(0.f), color4(0.f, 1.f, 0.f, 1.f));
-		Vertex vC = Vertex(point3(1.f, 0.f, 0.f), norm3(), uv2(0.f), color4(0.f, 0.f, 1.f, 1.f));
+		Vertex vA = Vertex(point3(0.f), norm3(), uv2(0.f), colorHDR(1.f, 0.f, 0.f, 1.f));
+		Vertex vB = Vertex(point3(0.f, 1.f, 0.f), norm3(), uv2(0.f), colorHDR(0.f, 1.f, 0.f, 1.f));
+		Vertex vC = Vertex(point3(1.f, 0.f, 0.f), norm3(), uv2(0.f), colorHDR(0.f, 0.f, 1.f, 1.f));
 		prim.vertices.push_back(vA);
 		prim.vertices.push_back(vB);
 		prim.vertices.push_back(vC);
@@ -137,6 +135,6 @@ namespace app {
 		node2.shape = &sphere;
 		node2.transform = mat4::identity();
 
-		return scene;
+		return true;
 	}
 }

@@ -15,7 +15,7 @@ namespace app {
 		void clamp();
 		void applyGamma();
 
-		operator color4();
+		operator colorHDR();
 
 		Pixel operator+(const Pixel &rhs);
 		friend Pixel operator*(float lhs, const Pixel &rhs);
@@ -23,15 +23,13 @@ namespace app {
 
 		Pixel();
 		Pixel(float val);
-		Pixel(const color4 &color);
+		Pixel(const colorHDR &color);
 		Pixel(float r, float g, float b, float a);
 	};
 
 	class PixelBuffer {
 	public:
-		PixelBuffer();
 		PixelBuffer(unsigned int w, unsigned int h);
-		~PixelBuffer();
 		void resize(unsigned int w, unsigned int h);
 
 		Pixel &operator()(unsigned int x, unsigned int y);

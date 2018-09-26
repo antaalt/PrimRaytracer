@@ -18,7 +18,7 @@ namespace app {
 			point3 point;
 			norm3 normal;
 			uv2 texcoord;
-			color4 color;
+			colorHDR color;
 			Material *material;
 		};
 

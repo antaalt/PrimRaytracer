@@ -46,7 +46,7 @@ namespace app {
 			float u = 0.5f + atan2(-info.normal.z, -info.normal.x) / (2.f * M_PIf);
 			float v = 0.5f - asin(-info.normal.y) / M_PIf;
 			info.texcoord = uv2(u, v);
-			info.color = color4(1.f);
+			info.color = colorHDR(1.f);
 			info.material = material;
 			return info;
 		}

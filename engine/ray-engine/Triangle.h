@@ -13,10 +13,10 @@ namespace app {
 			point3 position;
 			norm3 normal;
 			uv2 texcoord;
-			color4 color;
+			colorHDR color;
 
 			Vertex();
-			Vertex(point3 p, norm3 n, uv2 tc, color4 color);
+			Vertex(point3 p, norm3 n, uv2 tc, colorHDR color);
 		};
 
 		class Triangle : public Hitable
@@ -31,7 +31,6 @@ namespace app {
 
 			Triangle();
 			Triangle(const Vertex &vA, const Vertex &vB, const Vertex &vC);
-			~Triangle();
 
 			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const;
 			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection &intersection) const;

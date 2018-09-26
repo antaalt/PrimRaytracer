@@ -46,6 +46,8 @@ namespace app {
 		Application();
 		Application(unsigned int p_width, unsigned int p_height);
 		~Application();
+		Application(const Application &acc) = delete;
+		Application& operator=(const Application &other) = delete;
 
 		void run(app::Scene &scene, options &options);
 

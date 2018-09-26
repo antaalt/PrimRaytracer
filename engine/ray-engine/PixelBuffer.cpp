@@ -12,9 +12,9 @@ namespace app {
 	void Pixel::applyGamma()
 	{
 	}
-	Pixel::operator color4()
+	Pixel::operator colorHDR()
 	{
-		return color4(r, g, b, a);
+		return colorHDR(r, g, b, a);
 	}
 	
 	Pixel Pixel::operator+(const Pixel & rhs)
@@ -32,7 +32,7 @@ namespace app {
 	Pixel::Pixel(float val) : r(val), g(val), b(val), a(val)
 	{
 	}
-	Pixel::Pixel(const color4 & color4)
+	Pixel::Pixel(const colorHDR & color4)
 	{
 		r = color4.x;
 		g = color4.y;
@@ -42,15 +42,9 @@ namespace app {
 	Pixel::Pixel(float r, float g, float b, float a) : r(r), g(g), b(b), a(a)
 	{
 	}
-	PixelBuffer::PixelBuffer()
-	{
-	}
 	PixelBuffer::PixelBuffer(unsigned int w, unsigned int h)
 	{
 		resize(w, h);
-	}
-	PixelBuffer::~PixelBuffer()
-	{
 	}
 	void PixelBuffer::resize(unsigned int w, unsigned int h)
 	{

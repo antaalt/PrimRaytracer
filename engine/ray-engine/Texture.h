@@ -7,18 +7,29 @@
 
 namespace app {
 
-	struct Texture {
-		using Ptr = Texture*;
-		Texture();
-		Texture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
-		Texture(const std::vector<float> &data, unsigned int width, unsigned int height, unsigned int components);
-		color4 texture2D(float u, float v);
+	inline colorHDR ldr2hdr(const color32 &c)
+	{
+		return colorHDR(
+			powf(c.x / 255.f, 2.2f),
+			powf(c.y / 255.f, 2.2f),
+			powf(c.z / 255.f, 2.2f),
+			powf(c.w / 255.f, 2.2f)
+		);
+	}
+
+	template <typename T>
+	struct TTexture {
+		TTexture(const std::vector<T> &data, unsigned int width, unsigned int height, unsigned int components);
+		colorHDR texture2D(float u, float v);
 		unsigned int stride();
 
-		color4 at(unsigned int x, unsigned int y);
+		colorHDR at(unsigned int x, unsigned int y);
 	private:
-		std::vector<float> m_data;
-		unsigned int m_width, m_height;
-		unsigned int m_component;
+		std::vector<T> data;
+		unsigned int width, height;
+		unsigned int components;
 	};
+
+	using Texture = TTexture<float>;
+	using Texture32 = TTexture<unsigned char>;
 }

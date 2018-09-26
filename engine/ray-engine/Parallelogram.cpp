@@ -43,7 +43,7 @@ namespace app {
 			info.point = ray.origin + ray.direction * intersection.getDistance();
 			info.normal = this->normal;
 			info.texcoord = uv2(); // TODO compute texcoord
-			info.color = color4(1.f);
+			info.color = colorHDR(1.f);
 			info.material = material;
 			return info;
 		}

@@ -15,10 +15,10 @@ namespace app {
 	{
 		return a + (b - a) * t;
 	}
-
-	inline color4 lerp(const color4 &a, const color4 &b, float t)
+	template <typename T>
+	inline Math::Vector4<T> lerp(const Math::Vector4<T> &a, const Math::Vector4<T> &b, float t)
 	{
-		return color4(
+		return Math::Vector4<T>(
 			lerp(a.x, b.x, t),
 			lerp(a.y, b.y, t),
 			lerp(a.z, b.z, t),

@@ -16,10 +16,9 @@ namespace app {
 	};
 
 	struct Material {
-		using Ptr = Material*;
 		unsigned int index;
-		Texture::Ptr texture;
-		color4 color;
+		Texture32* texture;
+		colorHDR color;
 		MaterialType type;
 	};
 
@@ -27,10 +26,10 @@ namespace app {
 		point3 position;
 		norm3 normal;
 		uv2 texcoord;
-		color4 color;
+		colorHDR color;
 
 		Vertex() {}
-		Vertex(point3 p, norm3 n, uv2 t, color4 c) : position(p), normal(n), texcoord(t), color(c) {}
+		Vertex(point3 p, norm3 n, uv2 t, colorHDR c) : position(p), normal(n), texcoord(t), color(c) {}
 	};
 
 	struct Triangle {
@@ -46,10 +45,9 @@ namespace app {
 	};
 	// --- Primitive
 	struct Primitive {
-		using Ptr = Primitive*;
 		std::vector<Triangle> triangles;
 		std::vector<Vertex> vertices;
-		Material::Ptr material;
+		Material* material;
 	};
 	// --- Shapes
 	enum class ShapeType {
@@ -58,35 +56,32 @@ namespace app {
 		MESH
 	};
 	struct Shape {
-		using Ptr = Shape*;
 		virtual ShapeType type() const = 0;
 	};
 	struct Parallelogram : public Shape {
 		point3 point[3];
 		norm3 normal;
-		Material::Ptr material;
+		Material* material;
 		virtual ShapeType type() const;
 	};
 	struct Sphere : public Shape {
 		float radius;
 		point3 center;
-		Material::Ptr material;
+		Material* material;
 		virtual ShapeType type() const;
 	};
 	struct Mesh : public Shape {
-		using Ptr = Mesh*;
-		std::vector<Primitive::Ptr> primitives;
+		std::vector<Primitive*> primitives;
 		virtual ShapeType type() const;
 	};
 
 	// --- Nodes
 	struct Node {
-		using Ptr = Node*;
-		Shape::Ptr shape;
-		Material::Ptr material;
+		Shape* shape;
+		Material* material;
 		mat4 transform;
-		Node::Ptr parent;
-		std::vector<Node::Ptr> childrens;
+		Node* parent;
+		std::vector<Node*> childrens;
 		Node() : parent(nullptr), material(nullptr), shape(nullptr) {}
 
 		mat4 getModel() const;
@@ -97,11 +92,16 @@ namespace app {
 	};
 
 	struct Scene {
+		Scene();
+		~Scene();
+		Scene(const Scene& other) = delete;
+		Scene& operator=(const Scene &other) = delete;
+
 		std::vector<Primitive> primitives;
-		std::vector<Shape::Ptr> shapes;
+		std::vector<Shape*> shapes;
 		std::vector<Node> nodes;
 		std::vector<Material> materials;
-		std::vector<Texture> textures;
+		std::vector<Texture32> textures;
 		std::vector<Light> lights;
 
 		Primitive &addPrimitive();
@@ -110,12 +110,12 @@ namespace app {
 		Parallelogram &addParallelogram();
 		Node &addNode();
 		Material &addMaterial();
-		Texture &addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
+		Texture32 &addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
 		Light &addLight();
 
 		struct GLTF
 		{
-			static Scene load(std::string path);
+			static bool load(std::string path, Scene &scene);
 			static bool write(const Scene &scene);
 		};
 	};

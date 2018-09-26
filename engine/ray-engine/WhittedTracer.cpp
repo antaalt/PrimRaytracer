@@ -21,7 +21,7 @@ namespace app {
 				return miss(ray); 
 			
 			float pdf = 0;
-			color4 color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
+			colorHDR color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
 			/*for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
 			{
 				const Light *l = accelerator->getLight(iLight);

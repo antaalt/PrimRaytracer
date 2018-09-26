@@ -17,7 +17,8 @@ using norm3 = Math::Vector3<float>;
 using uv2 = Math::Vector2<float>;
 using vec4 = Math::Vector4<float>;
 #if defined(USE_COLOR)
-using color4 = Math::Vector4<float>;
+using colorHDR = Math::Vector4<float>;
+using color32 = Math::Vector4<unsigned char>;
 #endif
 #endif
 

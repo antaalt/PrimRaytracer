@@ -9,8 +9,8 @@ namespace app {
 		SceneBuilder();
 		~SceneBuilder();
 
-		static Scene buildCustomScene();
-		static Scene buildCustomSceneTri();
+		static bool buildCustomScene(Scene &scene);
+		static bool buildCustomSceneTri(Scene &scene);
 	};
 }
 

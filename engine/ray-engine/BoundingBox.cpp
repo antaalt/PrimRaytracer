@@ -10,13 +10,7 @@ namespace app {
 		{
 			reset();
 		}
-
 		BoundingBox::BoundingBox(const point3 &min, const point3 &max) : min(min), max(max)
-		{
-		}
-
-
-		BoundingBox::~BoundingBox()
 		{
 		}
 		bool BoundingBox::intersectBounds(const tracer::Ray & ray) const

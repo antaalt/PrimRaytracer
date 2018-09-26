@@ -27,14 +27,14 @@ namespace app {
 		bool Accelerator::build(const Scene & scene)
 		{ 
 			// TODO move default build to accelerator constructor and call it from here
-			std::map<const Texture*, Texture*> mapTexture;
+			std::map<const Texture32*, Texture32*> mapTexture;
 			//std::map<unsigned int, const prim::Material*> mapMaterials; // TODO implement map
 			this->textures.reserve(scene.textures.size());
 			for (size_t iTex = 0; iTex < scene.textures.size(); iTex++)
 			{
-				const Texture &texture = scene.textures[iTex];
+				const Texture32 &texture = scene.textures[iTex];
 				this->textures.push_back(texture);
-				Texture &tex = this->textures.back();
+				Texture32 &tex = this->textures.back();
 				mapTexture.insert(std::make_pair(&texture, &tex));
 			}
 			this->materials.reserve(scene.materials.size());

@@ -3,9 +3,9 @@
 #include "BoundingBox.h"
 
 #define CHILD_COUNT 2
-#define MAX_TREE_DEPTH 10
-#define MAX_KMEAN_DEPTH 10
-#define EPSILON_LIMIT 0.01f
+#define MAX_TREE_DEPTH 15
+#define MAX_KMEAN_DEPTH 15
+#define EPSILON_LIMIT 0.001f
 //#define USE_HITABLE_BBOX_INTERSECTION
 
 // @see https://github.com/brandonpelfrey/Fast-BVH/blob/master/BVH.h
@@ -54,10 +54,11 @@ namespace app {
 		public:
 			BVH();
 			~BVH();
+			BVH(const BVH& other) = delete;
+			BVH& operator=(const BVH &other) = delete;
+
 			virtual bool build(const Scene &scene);
-
 			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const;
-
 			virtual bool isOccluded(const Ray &ray) const;
 
 		private:

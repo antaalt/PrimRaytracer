@@ -1,5 +1,5 @@
 #include "BVH.h"
-
+#include <ctime>
 
 
 namespace app {
@@ -24,8 +24,10 @@ namespace app {
 				this->hitableBounded.emplace_back(hitable);
 				pHitableBounded.push_back(&this->hitableBounded.back());
 			}
+			// Init random for picking random centroids for kmean
+			srand(static_cast<unsigned int>(time(NULL)));
 			unsigned int nodeCount = this->root->init(pHitableBounded, 0);
-			Log::debug("BVH generated with ", nodeCount, " nodes for ", this->hitables.size(), " hitables.");
+			Log::debug("BVH generated with ", nodeCount, " nodes (max. of ", (1 << MAX_TREE_DEPTH+1),") for ", this->hitables.size(), " hitables.");
 			return true;
 		}
 		bool BVH::intersect(const Ray & ray, prim::HitInfo & info) const
@@ -55,15 +57,20 @@ namespace app {
 			// 1. check the depth and add element
 			if (hitableParent.size() < 10 || depth > MAX_TREE_DEPTH)
 			{
+				//Log::debug("LEAF created - Depth : ", depth, ", contain ", hitableParent.size(), " hitables.");
 				this->hitableBounded = hitableParent;
 				ASSERT(isLeafNode(), "Should be a leaf");
 				return 0;
 			}
-			// 2. set two extrem points
-			vec3 offset = this->max - this->min / 4.f;
+			// 2. set two random points as centroid
+			size_t index[2];
+			index[0] = rand() % hitableParent.size();
+			do {
+				index[1] = rand() % hitableParent.size();
+			} while (index[1] == index[0]);
 			point3 centroid[CHILD_COUNT] = {
-				this->min + offset,
-				this->max - offset
+				hitableParent[index[0]]->bbox().center(),
+				hitableParent[index[1]]->bbox().center()
 			};
 			unsigned int loop = 0;
 			std::vector<const HitableBounded*> subGroup[CHILD_COUNT];
@@ -85,10 +92,12 @@ namespace app {
 						subGroup[1].push_back(hitable);
 					else if (dist[0] < dist[1])
 						subGroup[0].push_back(hitable);
-					else
+					else // equal, fill an empty node
 					{
-						Log::error("WHORIEPDS");
-						subGroup[0].push_back(hitable);
+						if (subGroup[0].size() == 0)
+							subGroup[0].push_back(hitable);
+						else
+							subGroup[1].push_back(hitable);
 					}
 				}
 				ASSERT(subGroup[0].size() > 0, "Should not be empty");
@@ -105,7 +114,7 @@ namespace app {
 					centroid[iGroup] = newGroupCentroid;
 				}
 				// 5. redo from 3 until difference small enough
-			} while ((epsilon[0] < EPSILON_LIMIT && epsilon[1] < EPSILON_LIMIT) || loop++ > MAX_KMEAN_DEPTH);
+			} while ((epsilon[0] > EPSILON_LIMIT && epsilon[1] > EPSILON_LIMIT) || loop++ > MAX_KMEAN_DEPTH);
 
 			// 6. compute bbox of groups and create childrens
 			for (unsigned int iGroup = 0; iGroup < CHILD_COUNT; iGroup++)

@@ -8,21 +8,15 @@ namespace app {
 		Vertex::Vertex()
 		{
 		}
-		Vertex::Vertex(point3 p, norm3 n, uv2 tc, color4 c) : position(p), normal(n), texcoord(tc), color(c)
+		Vertex::Vertex(point3 p, norm3 n, uv2 tc, colorHDR c) : position(p), normal(n), texcoord(tc), color(c)
 		{
 		}
 
 		Triangle::Triangle()
 		{
 		}
-
 		Triangle::Triangle(const Vertex & vA, const Vertex & vB, const Vertex & vC) :
 			A(vA), B(vB), C(vC)
-		{
-		}
-
-
-		Triangle::~Triangle()
 		{
 		}
 		bool Triangle::intersect(const tracer::Ray & ray, Intersection & intersection) const
@@ -118,7 +112,7 @@ namespace app {
 		{
 			return tB * u + tC * v + tA * (1.f - u - v);
 		}
-		inline color4 interpolateColors(const color4 &cA, const color4 &cB, const color4 &cC, float u, float v)
+		inline colorHDR interpolateColors(const colorHDR &cA, const colorHDR &cB, const colorHDR &cC, float u, float v)
 		{
 			return cB * u + cC * v + cA * (1.f - u - v);
 		}

@@ -13,7 +13,6 @@ namespace app {
 		public:
 			BoundingBox();
 			BoundingBox(const point3 &min, const point3 &max);
-			~BoundingBox();
 
 			bool intersectBounds(const tracer::Ray &ray) const;
 

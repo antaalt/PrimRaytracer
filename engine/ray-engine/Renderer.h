@@ -32,6 +32,8 @@ namespace app {
 		public:
 			Renderer(unsigned int width, unsigned int height, unsigned int tileSize);
 			~Renderer();
+			Renderer(const Renderer& other) = delete;
+			Renderer& operator=(const Renderer &other) = delete;
 
 			bool buildScene(Scene &&scene, Acceleration acceleration);
 

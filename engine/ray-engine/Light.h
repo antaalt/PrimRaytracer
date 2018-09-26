@@ -16,14 +16,14 @@ namespace app {
 			Light();
 			~Light();
 
-			virtual color4 shade(LightInfo &lightInfo, float &pdf) const = 0;
+			virtual colorHDR shade(LightInfo &lightInfo, float &pdf) const = 0;
 
 			virtual bool hit(const prim::HitInfo &info, LightInfo &lightInfo) const = 0;
 
 			virtual prim::BoundingBox computeBBox() const { return prim::BoundingBox(); }
 
 			float intensity;
-			color4 albedo;
+			colorHDR albedo;
 		};
 	}
 }

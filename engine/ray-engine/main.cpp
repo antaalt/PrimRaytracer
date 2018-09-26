@@ -18,7 +18,8 @@ int renderSingleFrame()
 	), point3(0.f));
 
 	// Load Scene
-	app::Scene scene = app::SceneBuilder::buildCustomScene();
+	app::Scene scene;
+	app::SceneBuilder::buildCustomScene(scene);
 	//app::Scene scene = app::Scene::GLTF::load("../data/box/box.gltf");
 	//app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
 
@@ -54,12 +55,13 @@ int renderDisplay()
 
 	// Load Scene
 	Log::info("Loading scene");
-	//app::Scene scene = app::SceneBuilder::buildCustomScene();
-	//app::Scene scene = app::Scene::GLTF::load("../data/lantern/Lantern.gltf");
-	app::Scene scene = app::Scene::GLTF::load("../data/duck/Duck.gltf");
-	//app::Scene scene = app::Scene::GLTF::load("../data/box/box.gltf");
-	//app::Scene scene = app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf");
-	//app::Scene scene = app::Scene::GLTF::load("../data/sponza/Sponza.gltf");
+	app::Scene scene;
+	//app::SceneBuilder::buildCustomScene(scene);
+	//app::Scene::GLTF::load("../data/lantern/Lantern.gltf", scene);
+	//app::Scene::GLTF::load("../data/duck/Duck.gltf", scene);
+	//app::Scene::GLTF::load("../data/box/box.gltf", scene);
+	//app::Scene::GLTF::load("../data/boxTextured/BoxTextured.gltf", scene);
+	app::Scene::GLTF::load("../data/sponza/Sponza.gltf", scene);
 	app::Light l;
 	l.position = vec3(2.f, 2.f, 2.f);
 	scene.lights.push_back(l);

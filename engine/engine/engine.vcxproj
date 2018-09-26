@@ -88,6 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)thirdparty-libs\SDL2-2.0.8\include;$(SolutionDir)thirdparty-libs\glm-0.9.8.5;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -100,6 +101,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)thirdparty-libs\SDL2-2.0.8\include;$(SolutionDir)thirdparty-libs\glm-0.9.8.5;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -114,6 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)thirdparty-libs\SDL2-2.0.8\include;$(SolutionDir)thirdparty-libs\glm-0.9.8.5;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

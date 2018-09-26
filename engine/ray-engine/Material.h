@@ -32,7 +32,7 @@ namespace app {
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const = 0;
 			virtual MaterialType type() const = 0;
 
-			color4 color(float u = 0.f, float v = 0.f) const
+			colorHDR color(float u = 0.f, float v = 0.f) const
 			{
 				if (colorTexture == nullptr)
 					return albedo;
@@ -40,13 +40,13 @@ namespace app {
 					return albedo * colorTexture->texture2D(u, v);
 			}
 
-			void setColor(const color4 &color) { albedo = color; }
-			void setTexture(Texture *texture) { colorTexture = texture; }
+			void setColor(const colorHDR &color) { albedo = color; }
+			void setTexture(Texture32 *texture) { colorTexture = texture; }
 
 			Material() : colorTexture(nullptr) {}
 		protected:
-			color4 albedo;
-			Texture *colorTexture;
+			colorHDR albedo;
+			Texture32 *colorTexture;
 		};
 
 		class Diffuse : public Material {

@@ -31,20 +31,20 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>app</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>app</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>app</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -88,9 +88,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)thirdparty-libs\SDL2-2.0.8\include;$(SolutionDir)thirdparty-libs\glm-0.9.8.5;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty-libs\FreeImage;$(SolutionDir)thirdparty-libs\glew-2.0.0\lib;$(SolutionDir)thirdparty-libs\SDL2-2.0.8\lib;$(SolutionDir)thirdparty-libs\OpenCL1.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;opengl32.lib;x64\glew32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -100,11 +103,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)thirdparty-libs\SDL2-2.0.8\include;$(SolutionDir)thirdparty-libs\glm-0.9.8.5;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty-libs\FreeImage;$(SolutionDir)thirdparty-libs\glew-2.0.0\lib;$(SolutionDir)thirdparty-libs\SDL2-2.0.8\lib;$(SolutionDir)thirdparty-libs\OpenCL1.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>x86\SDL2.lib;x86\SDL2main.lib;opengl32.lib;Win32\glew32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -114,11 +121,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)thirdparty-libs\SDL2-2.0.8\include;$(SolutionDir)thirdparty-libs\glm-0.9.8.5;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty-libs\FreeImage;$(SolutionDir)thirdparty-libs\glew-2.0.0\lib;$(SolutionDir)thirdparty-libs\SDL2-2.0.8\lib;$(SolutionDir)thirdparty-libs\OpenCL1.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;opengl32.lib;x64\glew32.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

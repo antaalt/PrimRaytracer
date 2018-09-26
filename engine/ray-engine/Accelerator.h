@@ -19,6 +19,8 @@ namespace app {
 			using Ptr = Accelerator*;
 			Accelerator();
 			~Accelerator();
+			Accelerator(const Accelerator &acc) = delete;
+			Accelerator& operator=(const Accelerator &other) = delete;
 
 			virtual bool build(const Scene &scene);
 
@@ -34,7 +36,7 @@ namespace app {
 			prim::BoundingBox bbox;						// Bounding box of the whole acceleration structure
 			std::vector<prim::Hitable*> hitables;		// Hitable inside the acceleration structure
 			std::vector<prim::Material*> materials;		// materials of the hitables
-			std::vector<Texture> textures;				// Textures of the hitables
+			std::vector<Texture32> textures;				// Textures of the hitables
 			std::vector<Light*> lights;					// Lights of the scene
 			size_t hitableCount;
 		};
