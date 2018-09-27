@@ -8,12 +8,17 @@ namespace raycore {
 		{
 		public:
 			PathTracer();
-			~PathTracer();
-			virtual Pixel castRay(const Ray &ray, const Accelerator::Ptr accelerator, unsigned int depth = 0) const;
+			virtual void castRay(Pixel &pixel, const Ray &ray, const Accelerator* accelerator) const;
+			virtual void postProcess();
+			virtual void reset();
 
-			virtual bool trace(const Ray &ray, const Accelerator::Ptr accelerator, prim::HitInfo &info) const;
+		private:
+			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = 0) const;
+			virtual bool trace(const Ray &ray, const Accelerator* accelerator, prim::HitInfo &info) const;
+			virtual colorHDR miss(const Ray &ray) const;
 
-			virtual Pixel miss(const Ray &ray) const;
+		private:
+			unsigned int sampleCount;
 		};
 	}
 }

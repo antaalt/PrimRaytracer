@@ -13,7 +13,11 @@ namespace raycore {
 		WhittedTracer::~WhittedTracer()
 		{
 		}
-		Pixel WhittedTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
+		void WhittedTracer::castRay(Pixel & pixel, const Ray & ray, const Accelerator * accelerator) const
+		{
+			pixel = castRay(ray, accelerator, 0);
+		}
+		colorHDR WhittedTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
 		{
 			if (depth > MAX_DEPTH)
 				return miss(ray);
@@ -33,7 +37,7 @@ namespace raycore {
 					radiance = linfo.color * std::abs(vec3::dot(linfo.sample, info.normal));
 				}
 			}
-			reflectance = reflectance + radiance;
+			reflectance = reflectance + reflectance * radiance;
 			switch (info.material->type())
 			{
 			case prim::MaterialType::DIFFUSE:
@@ -76,7 +80,7 @@ namespace raycore {
 		{
 			return accelerator->intersect(ray, info);
 		}
-		Pixel WhittedTracer::miss(const Ray & ray) const
+		colorHDR WhittedTracer::miss(const Ray & ray) const
 		{
 			//return Pixel((ray.direction.x + 1.f) / 2.f, (ray.direction.y + 1.f) / 2.f, (ray.direction.z + 1.f) / 2.f, 1.f);
 			return BACKGROUND_COLOR;

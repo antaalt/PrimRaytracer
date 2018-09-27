@@ -14,16 +14,14 @@ namespace raycore {
 		class Tracer
 		{
 		public:
-			using Ptr = Tracer*;
-			Tracer();
-			virtual ~Tracer();
+			virtual void castRay(Pixel &pixel, const Ray &ray, const Accelerator* accelerator) const = 0;
+			virtual void postProcess() {};
+			virtual void reset() {};
 
-			virtual Pixel castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = 0) const = 0;
-
+		private:
+			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth) const = 0;
 			virtual bool trace(const Ray &ray, const Accelerator* accelerator, prim::HitInfo &info) const = 0;
-
-			virtual Pixel miss(const Ray &ray) const = 0;
-
+			virtual colorHDR miss(const Ray &ray) const = 0;
 
 		};
 	}

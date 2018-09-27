@@ -22,7 +22,6 @@ namespace raycore {
 		class Camera
 		{
 		public:
-			using Ptr = Camera*;
 			Camera(unsigned int width, unsigned int height);
 			~Camera();
 

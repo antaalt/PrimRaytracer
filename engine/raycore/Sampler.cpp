@@ -16,11 +16,16 @@ namespace raycore {
 
 		float Sampler::r1() const
 		{
-			return 1.f;// Random::get(0.f, 1.f);
+			return Random::get(0.f, 1.f);
 		}
 		float Sampler::r2() const
 		{
-			return 1.f; //Random::get(0.f, 1.f);
+			return Random::get(0.f, 1.f);
+		}
+
+		float Sampler::nextFloat() const
+		{
+			return Random::get(0.f, 1.f);
 		}
 
 	}

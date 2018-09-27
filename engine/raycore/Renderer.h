@@ -45,15 +45,15 @@ namespace raycore {
 
 			void buildTiles(unsigned int tileSize);
 
-			void setTracer(tracer::Tracer::Ptr tracer);
-			void setCamera(tracer::Camera::Ptr camera);
+			void setTracer(tracer::Tracer* tracer);
+			void setCamera(tracer::Camera* camera);
 
 			const PixelBuffer &image() const;
 
 		private:
 			//Scene scene;
-			Camera::Ptr camera;
-			Tracer::Ptr tracer;
+			Camera* camera;
+			Tracer* tracer;
 			Accelerator::Ptr accelerator;
 
 			std::vector<Ray> rays;
@@ -61,6 +61,7 @@ namespace raycore {
 			unsigned int tileSize;
 			unsigned int width, height;
 			PixelBuffer output;
+			unsigned int samples;
 		};
 	}
 }

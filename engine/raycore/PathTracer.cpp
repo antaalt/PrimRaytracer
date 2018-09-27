@@ -1,62 +1,77 @@
 #include "PathTracer.h"
 #include "Hitable.h"
 #include "Material.h"
-
+#include "Mathematic.h"
+#include "Sampler.h"
 
 namespace raycore {
 
 	namespace tracer {
 
-		PathTracer::PathTracer()
+		PathTracer::PathTracer() :
+			sampleCount(0)
 		{
 		}
 
-
-		PathTracer::~PathTracer()
+		void PathTracer::castRay(Pixel & pixel, const Ray & ray, const Accelerator * accelerator) const
 		{
+			// sub pixel jitter
+			float r1 = rand::Random::get(0.f, 1.f);
+			float r2 = rand::Random::get(0.f, 1.f);
+			vec3 jittered = ray.direction;
+			Ray jitteredRay(ray.origin, jittered, ray.type, ray.tmin, ray.tmax);
+			colorHDR p = this->castRay(jitteredRay, accelerator, 0);
+			pixel = lerp(colorHDR(pixel), p, 1.f / (sampleCount + 1.f));
 		}
 
-		Pixel PathTracer::castRay(const Ray & ray, const Accelerator::Ptr accelerator, unsigned int depth) const
+		colorHDR PathTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
 		{
 			if (depth > MAX_DEPTH)
-				return BACKGROUND_COLOR;
+				return colorHDR(1.f);
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
 				return miss(ray);
-			prim::Material::Ptr mat = info.material;
+			// 0. fetch material and compute nextRay
 			float pdf;
-			Ray newRay = mat->scatter(ray, info, pdf);
+			Ray nextRay = info.material->scatter(ray, info, pdf);
 
-			Pixel color;
-			colorHDR directLight;
-			colorHDR indirectLight;
-			switch (mat->type())
+			// 1. first add emission
+			// 2. Russian Roulette
+			colorHDR reflectance = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
+			float probability = max(reflectance.x, max(reflectance.y, reflectance.z));
+			if (probability < rand::Random::get(0.f, 1.f))
+				return colorHDR(0.f); // return emission
+			reflectance = reflectance / probability;
+			switch (info.material->type())
 			{
 			case prim::MaterialType::DIFFUSE:
-				// TODO compute direct lighting
-				indirectLight = castRay(newRay, accelerator, depth++);
-				break;
+				// emission
+				return colorHDR(0.f) + reflectance * castRay(nextRay, accelerator, depth+1);
 			case prim::MaterialType::SPECULAR:
-				break;
 			case prim::MaterialType::DIELECTRIC:
-				break;
 			case prim::MaterialType::METAL:
-				break;
 			default:
+				throw std::runtime_error("not supported");
 				break;
 			}
-
-			color = directLight + indirectLight; // TODO pdf & BRDF
-			return color;
+			return reflectance;
 		}
 
-		bool PathTracer::trace(const Ray & ray, const Accelerator::Ptr accelerator, prim::HitInfo &info) const
+		bool PathTracer::trace(const Ray & ray, const Accelerator* accelerator, prim::HitInfo &info) const
 		{
 			return accelerator->intersect(ray, info);
 		}
-		Pixel PathTracer::miss(const Ray & ray) const
+		colorHDR PathTracer::miss(const Ray & ray) const
 		{
-			return Pixel();
+			return colorHDR(20.f);
+		}
+		void PathTracer::postProcess()
+		{
+			sampleCount++;
+		}
+		void PathTracer::reset()
+		{
+			sampleCount = 0;
 		}
 	}
 }

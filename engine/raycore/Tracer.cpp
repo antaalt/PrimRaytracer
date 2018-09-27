@@ -4,15 +4,6 @@
 namespace raycore {
 
 	namespace tracer {
-
-		Tracer::Tracer()
-		{
-		}
-
-
-		Tracer::~Tracer()
-		{
-		}
 	}
 
 }

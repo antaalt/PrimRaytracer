@@ -22,6 +22,7 @@ namespace raycore {
 			accelerator(nullptr), 
 			tracer(nullptr),
 			tileSize(tileSize),
+			samples(0),
 			output(PixelBuffer(width, height))
 		{
 			this->rays.resize(width *  height);
@@ -65,13 +66,13 @@ namespace raycore {
 			for (unsigned int y = 0; y < this->height; y++)
 				for (unsigned int x = 0; x < this->width; x++)
 					this->rays[index++] = this->camera->generateRay(x, y);
+			this->tracer->reset();
+			samples = 0;
 			return true;
 		}
 
 		bool Renderer::renderPreview()
 		{
-			// TODO reduce depth for this render
-
 			Log::debug("Rendering preview");
 
 			Pixel *pixel = this->output.data();
@@ -80,7 +81,8 @@ namespace raycore {
 				Tile &tile = (*it);
 				ivec2 center = tile.min + tile.center();
 				const int index = center.y * this->width + center.x;
-				Pixel p = this->tracer->castRay(this->rays[index], this->accelerator);
+				Pixel p;
+				this->tracer->castRay(p, this->rays[index], this->accelerator);
 				for (int y = tile.min.y; y < tile.max.y; y++)
 					for (int x = tile.min.x; x < tile.max.x; x++)
 						pixel[y * this->width + x] = p;
@@ -90,9 +92,8 @@ namespace raycore {
 
 		bool Renderer::render()
 		{
-			Log::debug("Rendering");
+			Log::debug("Rendering sample ", (samples + 1));
 
-			// TODO add samples
 			Pixel *pixel = this->output.data();
 #if defined(PARALLEL_RENDERING)
 			concurrency::parallel_for(size_t(0), tiles.size(), [&](size_t i)
@@ -104,7 +105,7 @@ namespace raycore {
 					for (int x = tile.min.x; x < tile.max.x; x++)
 					{
 						const int index = y * this->width + x;
-						pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator);
+						this->tracer->castRay(pixel[index], this->rays[index], this->accelerator);
 					}
 				}
 			});
@@ -118,6 +119,8 @@ namespace raycore {
 				}
 			}
 #endif
+			samples++;
+			this->tracer->postProcess();
 			return true;
 		}
 
@@ -139,13 +142,13 @@ namespace raycore {
 			}
 		}
 
-		void Renderer::setTracer(tracer::Tracer::Ptr tracer)
+		void Renderer::setTracer(tracer::Tracer* tracer)
 		{
 			if (this->tracer != nullptr)
 				delete this->tracer;
 			this->tracer = tracer;
 		}
-		void Renderer::setCamera(tracer::Camera::Ptr camera)
+		void Renderer::setCamera(tracer::Camera* camera)
 		{
 			if (this->camera != nullptr)
 				delete this->camera;

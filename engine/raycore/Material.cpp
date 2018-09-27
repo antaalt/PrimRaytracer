@@ -29,14 +29,23 @@ namespace raycore {
 		}
 		vec3 sampleUnitSphere(const rand::Sampler &sampler)
 		{
-			float r1 = sampler.r1();
+			/*float r1 = sampler.r1();
 			float r2 = sampler.r2();
 			
 			float sinTheta = sqrtf(1 - r1 * r1);
 			float phi = 2.f * M_PIf * r2;
 			float x = sinTheta * cosf(phi);
 			float z = sinTheta * sinf(phi);
-			return vec3(x, r1, z);
+			return vec3(x, r1, z);*/
+
+
+			const float phi = 2.f * M_PIf * sampler.r1();
+			const float r = sampler.r2();
+			return vec3(
+				r * cosf(phi),
+				r * sinf(phi),
+				sqrtf(1.f - r * r)
+			);
 		}
 		vec3 sampleMicroFacet(const rand::Sampler &sampler, float roughness)
 		{

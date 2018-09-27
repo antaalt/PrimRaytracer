@@ -15,7 +15,8 @@ namespace raycore {
 
 			float r1() const;
 			float r2() const;
-		};
 
+			float nextFloat() const;
+		};
 	}
 }
