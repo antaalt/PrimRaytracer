@@ -5,15 +5,13 @@ namespace raycore {
 		class PointLight : public Light
 		{
 		public:
-			PointLight();
+			PointLight(colorHDR albedo, float intensity, point3 position);
 			~PointLight();
 
-			virtual colorHDR sample(LightInfo &lightInfo) const;
-
-			virtual bool hit(const prim::HitInfo &ray, LightInfo &lightInfo) const;
+			virtual bool sample(const prim::HitInfo &info, const Accelerator *accelerator, LightInfo &lightInfo) const;
 
 		private:
-			vec3 position;
+			point3 position;
 		};
 	}
 }

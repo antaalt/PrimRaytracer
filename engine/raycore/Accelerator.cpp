@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Triangle.h"
 #include "Sphere.h"
+#include "PointLight.h"
 
 namespace raycore {
 
@@ -29,6 +30,8 @@ namespace raycore {
 			// TODO move default build to accelerator constructor and call it from here
 			std::map<const Texture32*, Texture32*> mapTexture;
 			//std::map<unsigned int, const prim::Material*> mapMaterials; // TODO implement map
+
+			// --- Textures
 			this->textures.reserve(scene.textures.size());
 			for (size_t iTex = 0; iTex < scene.textures.size(); iTex++)
 			{
@@ -37,6 +40,7 @@ namespace raycore {
 				Texture32 &tex = this->textures.back();
 				mapTexture.insert(std::make_pair(&texture, &tex));
 			}
+			// --- Materials
 			this->materials.reserve(scene.materials.size());
 			for (size_t iMat = 0; iMat < scene.materials.size(); iMat++)
 			{
@@ -65,6 +69,7 @@ namespace raycore {
 				newMaterial->setTexture((it == mapTexture.end()) ? nullptr : it->second);
 				this->materials.push_back(newMaterial);
 			}
+			// --- Nodes
 			for (size_t iNode = 0; iNode < scene.nodes.size(); iNode++)
 			{
 				const Node &node = scene.nodes[iNode];
@@ -77,7 +82,7 @@ namespace raycore {
 				case ShapeType::MESH:
 				{
 					const Mesh *mesh = dynamic_cast<const Mesh*>(shape);
-					ASSERT(mesh != nullptr, "should not hraycoreen");
+					ASSERT(mesh != nullptr, "should not happend");
 					const mat4 transform = node.getModel();
 					const mat3 normalTransform = convert::toMat3(transform);
 					float det = transform.det();
@@ -143,6 +148,12 @@ namespace raycore {
 				default:
 					std::runtime_error("Type not supported");
 				}
+			}
+			// --- Lights
+			for (const raycore::Light& l : scene.lights)
+			{
+				PointLight *light = new PointLight(colorHDR(1.f), 1.f, l.position);
+				this->lights.push_back(light);
 			}
 			this->hitableCount = this->hitables.size();
 			return true;

@@ -26,7 +26,8 @@ namespace raycore {
 			// Init random for picking random centroids for kmean
 			srand(static_cast<unsigned int>(time(NULL)));
 			unsigned int nodeCount = this->root->init(pHitableBounded, 0);
-			Log::debug("BVH generated with ", nodeCount, " nodes (max. of ", (1 << (MAX_TREE_DEPTH+1)),") for ", this->hitables.size(), " hitables.");
+			Log::info("BVH generated with ", nodeCount, " nodes (max. of ", (1 << (MAX_TREE_DEPTH+1)),") for ", this->hitables.size(), " hitables.");
+			Log::info("BVH bounds : min: ", bbox.min, " - max: ", bbox.max);
 			return true;
 		}
 		bool BVH::intersect(const Ray & ray, prim::HitInfo & info) const

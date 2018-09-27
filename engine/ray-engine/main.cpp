@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	//app::Scene::GLTF::load("../data/models/boxTextured/BoxTextured.gltf", scene);
 	raycore::Scene::GLTF::load("../data/models/sponza/Sponza.gltf", scene);
 	raycore::Light l;
-	l.position = vec3(2.f, 2.f, 2.f);
+	l.position = vec3(0.f, 20.f, 0.f);
 	scene.lights.push_back(l);
 	application.run(scene, options);
 

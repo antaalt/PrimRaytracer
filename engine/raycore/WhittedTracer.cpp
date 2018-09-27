@@ -1,6 +1,7 @@
 #include "WhittedTracer.h"
 #include "Material.h"
 #include "Mathematic.h"
+#include "Light.h"
 
 namespace raycore {
 	namespace tracer {
@@ -21,21 +22,22 @@ namespace raycore {
 				return miss(ray); 
 			
 			float pdf = 0;
-			colorHDR color = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
-			/*for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
+			colorHDR reflectance = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
+			colorHDR radiance(0.f);
+			for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
 			{
 				const Light *l = accelerator->getLight(iLight);
 				LightInfo linfo;
-				if (l->hit(info, linfo))
+				if (l->sample(info, accelerator, linfo))
 				{
-					color4 s = l->sample(linfo);
-					color = color * s * std::abs(vec3::dot(linfo.raySample, info.normal));
+					radiance = linfo.color * std::abs(vec3::dot(linfo.sample, info.normal));
 				}
-			}*/
+			}
+			reflectance = reflectance + radiance;
 			switch (info.material->type())
 			{
 			case prim::MaterialType::DIFFUSE:
-				return color;
+				return reflectance;
 			case prim::MaterialType::DIELECTRIC:
 			{
 				vec3 refractedDirection;
@@ -63,7 +65,7 @@ namespace raycore {
 			case prim::MaterialType::SPECULAR:
 			{
 				Ray nextRay(info.point, prim::reflect(ray.direction, info.normal));
-				return Pixel(color) + castRay(nextRay, accelerator, ++depth);
+				return Pixel(reflectance) + castRay(nextRay, accelerator, ++depth);
 			}
 			case prim::MaterialType::METAL:
 			default:

@@ -2,25 +2,27 @@
 #include "Config.h"
 #include "Ray.h"
 #include "Hitable.h"
+#include "Accelerator.h"
 
 namespace raycore {
 	namespace tracer {
 
+		class Light;
+
 		struct LightInfo {
-			vec3 raySample;
+			vec3 sample;
+			colorHDR color;
+			float pdf;
+			const Light *light;
 		};
 
-		class Light : public prim::Hitable
+		class Light
 		{
 		public:
-			Light();
+			Light(colorHDR albedo, float intensity);
 			~Light();
 
-			virtual colorHDR shade(LightInfo &lightInfo, float &pdf) const = 0;
-
-			virtual bool hit(const prim::HitInfo &info, LightInfo &lightInfo) const = 0;
-
-			virtual prim::BoundingBox computeBBox() const { return prim::BoundingBox(); }
+			virtual bool sample(const prim::HitInfo &info, const Accelerator *accelerator, LightInfo &lightInfo) const = 0;
 
 			float intensity;
 			colorHDR albedo;

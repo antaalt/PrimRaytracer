@@ -3,7 +3,7 @@
 namespace raycore {
 	namespace tracer {
 
-		Light::Light()
+		Light::Light(colorHDR albedo, float intensity) : albedo(albedo), intensity(intensity)
 		{
 		}
 

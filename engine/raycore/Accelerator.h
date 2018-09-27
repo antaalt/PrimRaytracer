@@ -2,10 +2,11 @@
 #include "Hitable.h"
 #include "Scene.h"
 #include "BoundingBox.h"
-#include "Light.h"
 
 namespace raycore {
 	namespace tracer {
+
+		class Light;
 
 		enum class Acceleration {
 			OCTREE,
