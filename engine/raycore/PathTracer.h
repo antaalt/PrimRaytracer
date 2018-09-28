@@ -8,7 +8,7 @@ namespace raycore {
 		{
 		public:
 			PathTracer();
-			virtual void castRay(Pixel &pixel, const Ray &ray, const Accelerator* accelerator) const;
+			virtual void shade(Pixel &pixel, const Ray &ray, const Accelerator* accelerator, unsigned int depth = MAX_DEPTH) const;
 			virtual void postProcess();
 			virtual void reset();
 

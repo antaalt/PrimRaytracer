@@ -14,7 +14,7 @@ namespace raycore {
 		class Tracer
 		{
 		public:
-			virtual void castRay(Pixel &pixel, const Ray &ray, const Accelerator* accelerator) const = 0;
+			virtual void shade(Pixel &pixel, const Ray &ray, const Accelerator* accelerator, unsigned int depth = MAX_DEPTH) const = 0;
 			virtual void postProcess() {};
 			virtual void reset() {};
 

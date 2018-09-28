@@ -13,7 +13,7 @@ namespace raycore {
 			};
 		};
 		void clamp();
-		void raycorelyGamma();
+		void applyGamma();
 
 		operator colorHDR();
 

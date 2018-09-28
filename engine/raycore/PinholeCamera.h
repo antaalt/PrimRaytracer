@@ -8,10 +8,10 @@ namespace raycore {
 		class PinholeCamera : public Camera
 		{
 		public:
-			PinholeCamera(unsigned int width, unsigned int height);
+			PinholeCamera();
 			~PinholeCamera();
 
-			virtual Ray generateRay(unsigned int x, unsigned int y) const;
+			virtual Ray generateUnitRay(RayIndex x, RayIndex y) const;
 
 			virtual bool computeTransform();
 

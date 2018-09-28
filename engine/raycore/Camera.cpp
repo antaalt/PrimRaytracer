@@ -5,7 +5,7 @@ namespace raycore {
 
 	namespace tracer {
 
-		Camera::Camera(unsigned int width, unsigned int height) : m_transform(mat4::identity()), m_width(width), m_height(height)
+		Camera::Camera() : m_transform(mat4::identity())
 		{
 		}
 

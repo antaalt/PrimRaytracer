@@ -6,17 +6,17 @@ namespace raycore {
 
 	namespace tracer {
 		
-		PinholeCamera::PinholeCamera(unsigned int width, unsigned int height) : Camera(width, height)
+		PinholeCamera::PinholeCamera() : Camera()
 		{
 		}
 
 		PinholeCamera::~PinholeCamera()
 		{
 		}
-		Ray PinholeCamera::generateRay(unsigned int x, unsigned int y) const
+		Ray PinholeCamera::generateUnitRay(RayIndex x, RayIndex y) const
 		{
-			float xt = x / static_cast<float>(m_width) * 2.f - 1.f;
-			float yt = y / static_cast<float>(m_height) * 2.f - 1.f;
+			float xt = x.get();
+			float yt = y.get();
 			vec3 direction = vec3::normalize(vec3(
 				u.x * xt + v.x * yt + w.x,
 				u.y * xt + v.y * yt + w.y,

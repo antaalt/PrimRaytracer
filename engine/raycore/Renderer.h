@@ -51,12 +51,10 @@ namespace raycore {
 			const PixelBuffer &image() const;
 
 		private:
-			//Scene scene;
 			Camera* camera;
-			Tracer* tracer;
+			Tracer* tracer; // TODO add a secondary quick tracer (whitted for example) for display
 			Accelerator::Ptr accelerator;
 
-			std::vector<Ray> rays;
 			std::vector<Tile> tiles;
 			unsigned int tileSize;
 			unsigned int width, height;

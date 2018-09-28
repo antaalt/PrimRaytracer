@@ -19,6 +19,7 @@ Didactic project to learn about OpenGL and raytracing.
 ## TODO RayTracer
 - [x] Load glTF
 - [x] Acceleration structure (Octree, BVH)
+- [ ] Multi sampling antialiasing
 - [ ] Optimizer Texture loading and manage both rgb and rgba, ldr and hdr
 - [ ] Optimize memory (Sponza failing load bad_alloc)
 - [ ] Remove temporary scene 

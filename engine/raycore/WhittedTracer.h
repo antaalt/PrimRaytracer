@@ -10,7 +10,7 @@ namespace raycore {
 			WhittedTracer();
 			~WhittedTracer();
 
-			virtual void castRay(Pixel & pixel, const Ray &ray, const Accelerator* accelerator) const;
+			virtual void shade(Pixel & pixel, const Ray &ray, const Accelerator* accelerator, unsigned int depth = MAX_DEPTH) const;
 
 		private:
 			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = 0) const;

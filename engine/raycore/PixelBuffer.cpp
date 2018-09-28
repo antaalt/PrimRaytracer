@@ -9,7 +9,7 @@ namespace raycore {
 			if (data[i] < 0.f) data[i] = 0.f;
 		}
 	}
-	void Pixel::raycorelyGamma()
+	void Pixel::applyGamma()
 	{
 	}
 	Pixel::operator colorHDR()

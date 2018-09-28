@@ -13,20 +13,15 @@ namespace raycore {
 		{
 		}
 
-		void PathTracer::castRay(Pixel & pixel, const Ray & ray, const Accelerator * accelerator) const
+		void PathTracer::shade(Pixel & pixel, const Ray & ray, const Accelerator * accelerator, unsigned int depth) const
 		{
-			// sub pixel jitter
-			float r1 = rand::Random::get(0.f, 1.f);
-			float r2 = rand::Random::get(0.f, 1.f);
-			vec3 jittered = ray.direction;
-			Ray jitteredRay(ray.origin, jittered, ray.type, ray.tmin, ray.tmax);
-			colorHDR p = this->castRay(jitteredRay, accelerator, 0);
+			colorHDR p = this->castRay(ray, accelerator, depth);
 			pixel = lerp(colorHDR(pixel), p, 1.f / (sampleCount + 1.f));
 		}
 
 		colorHDR PathTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
 		{
-			if (depth > MAX_DEPTH)
+			if (depth == 0)
 				return colorHDR(1.f);
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
@@ -46,7 +41,7 @@ namespace raycore {
 			{
 			case prim::MaterialType::DIFFUSE:
 				// emission
-				return colorHDR(0.f) + reflectance * castRay(nextRay, accelerator, depth+1);
+				return colorHDR(0.f) + reflectance * castRay(nextRay, accelerator, depth-1);
 			case prim::MaterialType::SPECULAR:
 			case prim::MaterialType::DIELECTRIC:
 			case prim::MaterialType::METAL:

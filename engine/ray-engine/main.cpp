@@ -12,8 +12,9 @@ int main(int argc, char *argv[])
 	app::Application application(width, height);
 	// Set options
 	app::options options;
-	options.tracer = new raycore::tracer::PathTracer();
-	options.camera = new raycore::tracer::PinholeCamera(width, height);
+	options.tracer = new raycore::tracer::WhittedTracer();
+	// settings tracer : raysampling
+	options.camera = new raycore::tracer::PinholeCamera();
 	options.camera->lookAt(point3(
 		1.f,
 		1.f,

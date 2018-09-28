@@ -3,6 +3,7 @@
 
 #include "Ray.h"
 #include "Utils/Type.h"
+#include "Sampler.h"
 
 namespace raycore {
 	namespace tracer {
@@ -18,14 +19,41 @@ namespace raycore {
 			
 		};
 
+		enum class RaySampler {
+			LINEAR,
+			RANDOM,
+			RANDOM_TENT_FILTER
+		};
+
+		struct RayIndex {
+			RayIndex(unsigned int index, unsigned int dim, RaySampler s = RaySampler::LINEAR)
+			{
+				switch (s)
+				{
+				case RaySampler::LINEAR:
+					value = (static_cast<float>(index) + 0.5f) / static_cast<float>(dim);
+					break;
+				case RaySampler::RANDOM:
+					value = (static_cast<float>(index) + rand::Random::get(0.f, 1.f)) / static_cast<float>(dim);
+					break;
+				default:
+					break;
+				}
+				value = value * 2.f - 1.f;
+			}
+			float get() { return value; }
+
+		private:
+			float value;
+		};
 
 		class Camera
 		{
 		public:
-			Camera(unsigned int width, unsigned int height);
+			Camera();
 			~Camera();
 
-			virtual Ray generateRay(unsigned int x, unsigned int y) const = 0;
+			virtual Ray generateUnitRay(RayIndex x, RayIndex y) const = 0;
 
 			virtual bool computeTransform() = 0;
 
@@ -35,7 +63,6 @@ namespace raycore {
 
 		protected:
 			mat4 m_transform;
-			unsigned int m_width, m_height;
 			float m_fov;
 			bool m_changed;
 		};

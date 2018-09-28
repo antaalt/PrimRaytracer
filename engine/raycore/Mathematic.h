@@ -11,6 +11,17 @@ namespace raycore {
 		return value;
 	}
 
+	template <typename T>
+	inline Math::Vector4<T> clamp(const Math::Vector4<T> &a, float min, float max)
+	{
+		return Math::Vector4<T>(
+			clamp(a.x, min, max),
+			clamp(a.y, min, max),
+			clamp(a.z, min, max),
+			clamp(a.w, min, max)
+		);
+	}
+
 	inline float lerp(float a, float b, float t)
 	{
 		return a + (b - a) * t;

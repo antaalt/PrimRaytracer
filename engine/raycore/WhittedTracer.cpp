@@ -13,13 +13,13 @@ namespace raycore {
 		WhittedTracer::~WhittedTracer()
 		{
 		}
-		void WhittedTracer::castRay(Pixel & pixel, const Ray & ray, const Accelerator * accelerator) const
+		void WhittedTracer::shade(Pixel & pixel, const Ray & ray, const Accelerator * accelerator, unsigned int depth) const
 		{
-			pixel = castRay(ray, accelerator, 0);
+			pixel = castRay(ray, accelerator, depth);
 		}
 		colorHDR WhittedTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
 		{
-			if (depth > MAX_DEPTH)
+			if (depth == 0)
 				return miss(ray);
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
@@ -59,17 +59,17 @@ namespace raycore {
 					n = -info.normal;
 				}
 				if (prim::refract(refractedDirection, ray.direction, n, eta))
-					return castRay(Ray(info.point, reflectedDirection), accelerator, ++depth);
+					return castRay(Ray(info.point, reflectedDirection), accelerator, depth - 1);
 
 				float R = physics::fresnel_schlick(vec3::dot(ray.direction, n));
 				Ray refractedRay(info.point, refractedDirection);
 				Ray reflectedRay(info.point, reflectedDirection);
-				return R * castRay(reflectedRay, accelerator, ++depth) + (1.f - R) * castRay(refractedRay, accelerator, ++depth);
+				return R * castRay(reflectedRay, accelerator, depth - 1) + (1.f - R) * castRay(refractedRay, accelerator, depth - 1);
 			}
 			case prim::MaterialType::SPECULAR:
 			{
 				Ray nextRay(info.point, prim::reflect(ray.direction, info.normal));
-				return Pixel(reflectance) + castRay(nextRay, accelerator, ++depth);
+				return Pixel(reflectance) + castRay(nextRay, accelerator, depth - 1);
 			}
 			case prim::MaterialType::METAL:
 			default:
