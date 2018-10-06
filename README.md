@@ -3,30 +3,18 @@
 ## Description
 Didactic project to learn about OpenGL and raytracing.
 
-## TODO
-- [ ] merge common files into single lib
-- [ ] separate game engine and ray engine
-
-## TODO Engine
-- [x] Load glTF / ASSIMP
-- [ ] Light uniforms / time uniforms
-- [ ] PBR shader
-- [ ] Realistic camera movement (depending on time rather than frame)
-- [ ] Vulkan
-- [ ] Physic engine
-- [ ] [...]
-
 ## TODO RayTracer
-- [x] Load glTF
+- [x] Load and display glTF
 - [x] Acceleration structure (Octree, BVH)
-- [ ] Multi sampling antialiasing
-- [ ] Optimizer Texture loading and manage both rgb and rgba, ldr and hdr
-- [ ] Optimize memory (Sponza failing load bad_alloc)
-- [ ] Remove temporary scene 
+- [x] Multi sampling antialiasing
+- [x] Optimizer Texture loading and manage both rgb and rgba, ldr and hdr
+- [ ] Ray sampling
+- [ ] Sampler functions for random number
 - [ ] Customise glTF for ray tracing
 - [ ] Light implementation
+- [ ] Correct camera implementation
+- [ ] Depth of field
 - [ ] Correct whitted tracer implementation
 - [ ] Correct path tracer implementation
-- [ ] Sampler functions for random number
 - [ ] Atmosphere simulation
 - [ ] [...]
