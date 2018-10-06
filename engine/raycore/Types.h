@@ -10,6 +10,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 using ivec2 = Math::Vector2<int>;
+using uivec2 = Math::Vector2<unsigned int>;
 using vec2 = Math::Vector2<float>;
 using vec3 = Math::Vector3<float>;
 using point3 = Math::Vector3<float>;

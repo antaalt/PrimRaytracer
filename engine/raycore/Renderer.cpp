@@ -15,7 +15,7 @@
 namespace raycore {
 	namespace tracer {
 
-		Renderer::Renderer(unsigned int width, unsigned int height, unsigned int tileSize) :
+		Renderer::Renderer(unsigned int width, unsigned int height, unsigned int tileSize, const Settings &settings) :
 			width(width), 
 			height(height), 
 			camera(nullptr), 
@@ -23,7 +23,11 @@ namespace raycore {
 			tracer(nullptr),
 			tileSize(tileSize),
 			samples(0),
-			output(PixelBuffer(width, height))
+			output(PixelBuffer(width, height)),
+			subSamplesX(settings.samplesX),
+			subSamplesY(settings.samplesY),
+			raySamplerX(settings.raySamplerX),
+			raySamplerY(settings.raySamplerY)
 		{
 		}
 
@@ -81,15 +85,14 @@ namespace raycore {
 			for (auto it = tiles.begin(); it != tiles.end(); it++)
 			{
 				Tile &tile = (*it);
-				ivec2 center = tile.min + tile.center();
-				Ray ray = this->camera->generateUnitRay(
+				uivec2 center = tile.min + tile.center();
+				Ray ray = this->camera->generateRay(
 					RayIndex(center.x, this->width, RaySampler::LINEAR),
 					RayIndex(center.y, this->height, RaySampler::LINEAR)
 				);
-				Pixel p;
-				this->tracer->shade(p, ray, this->accelerator, 5);
-				for (int y = tile.min.y; y < tile.max.y; y++)
-					for (int x = tile.min.x; x < tile.max.x; x++)
+				Pixel p = this->tracer->castRay(ray, this->accelerator, 5);
+				for (unsigned int y = tile.min.y; y < tile.max.y; y++)
+					for (unsigned int x = tile.min.x; x < tile.max.x; x++)
 						pixel[y * this->width + x] = p;
 			}
 			return true;
@@ -98,32 +101,30 @@ namespace raycore {
 		bool Renderer::render()
 		{
 			Log::debug("Rendering sample ", (samples + 1));
-			const int subPixelX = 2;
-			const int subPixelY = 2;
 			Pixel *pixel = this->output.data();
 #if defined(PARALLEL_RENDERING)
-			concurrency::parallel_for(size_t(0), tiles.size(), [&](size_t i)
+			concurrency::parallel_for(size_t(0), tiles.size(), [&](size_t iTile)
 			{
 				Pixel *pixel = this->output.data();
-				Tile &tile = this->tiles[i];
-				for (int y = tile.min.y; y < tile.max.y; y++)
+				Tile &tile = this->tiles[iTile];
+				const float c = (1.f / (this->subSamplesX * this->subSamplesY));
+				for (unsigned int y = tile.min.y; y < tile.max.y; y++)
 				{
-					for (int x = tile.min.x; x < tile.max.x; x++)
+					for (unsigned int x = tile.min.x; x < tile.max.x; x++)
 					{
-						const int index = y * this->width + x;
-						Pixel p;
-						for (int sy = 0; sy < subPixelY; sy++)
+						Pixel p(0.f);
+						for (unsigned int sy = 0; sy < this->subSamplesY; sy++)
 						{
-							for (int sx = 0; sx < subPixelX; sx++)
+							for (unsigned int sx = 0; sx < this->subSamplesX; sx++)
 							{
-								Ray ray = this->camera->generateUnitRay(
-									RayIndex(x * subPixelX + sx, this->width * subPixelX, RaySampler::LINEAR),
-									RayIndex(y * subPixelY + sy, this->height * subPixelY, RaySampler::LINEAR)
+								Ray ray = this->camera->generateRay(
+									RayIndex(x * this->subSamplesX + sx, this->width * this->subSamplesX, this->raySamplerX),
+									RayIndex(y * this->subSamplesY + sy, this->height * this->subSamplesY, this->raySamplerY)
 								);
-								this->tracer->shade(p, ray, this->accelerator, 10);
-								pixel[index] = pixel[index] + p * 0.25f;
+								p = p + this->tracer->castRay(ray, this->accelerator, 10) * c;
 							}
 						}
+						pixel[y * this->width + x].accumulate(p, samples);
 					}
 				}
 			});
@@ -143,18 +144,18 @@ namespace raycore {
 		}
 
 		void Renderer::buildTiles(unsigned int tileSize) {
-			ivec2 nTiles(
+			uivec2 nTiles(
 				static_cast<int>(std::ceil(this->width / static_cast<float>(tileSize))),
 				static_cast<int>(std::ceil(this->height / static_cast<float>(tileSize)))
 			);
 			tiles.clear();
-			for (int y = 0; y < nTiles.y; y++)
+			for (unsigned int y = 0; y < nTiles.y; y++)
 			{
-				for (int x = 0; x < nTiles.x; x++)
+				for (unsigned int x = 0; x < nTiles.x; x++)
 				{
 					this->tiles.push_back(Tile(
-						ivec2(x * tileSize, y * tileSize),
-						ivec2(min((x + 1) * tileSize, this->width), min((y + 1) * tileSize, this->height))
+						uivec2(x * tileSize, y * tileSize),
+						uivec2(min((x + 1) * tileSize, this->width), min((y + 1) * tileSize, this->height))
 					));
 				}
 			}

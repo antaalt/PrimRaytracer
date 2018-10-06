@@ -46,11 +46,10 @@ namespace raycore {
 			{
 				const Material &material = scene.materials[iMat];
 				prim::Material::Ptr newMaterial;
-				rand::Sampler sampler;
 				switch (material.type)
 				{
 				case MaterialType::DIFFUSE:
-					newMaterial = new prim::Diffuse(sampler);
+					newMaterial = new prim::Diffuse();
 					break;
 				case MaterialType::SPECULAR:
 					newMaterial = new prim::Specular();
@@ -59,7 +58,7 @@ namespace raycore {
 					newMaterial = new prim::Dielectric(1.5f);
 					break;
 				case MaterialType::METAL:
-					newMaterial = new prim::Metal(0.f, sampler);
+					newMaterial = new prim::Metal(0.f);
 					break;
 				default:
 					return false;

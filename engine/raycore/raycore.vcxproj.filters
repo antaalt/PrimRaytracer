@@ -120,12 +120,6 @@
     <ClInclude Include="Triangle.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Random.h">
-      <Filter>Header Files\Sampler</Filter>
-    </ClInclude>
-    <ClInclude Include="Sampler.h">
-      <Filter>Header Files\Sampler</Filter>
-    </ClInclude>
     <ClInclude Include="PixelBuffer.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
@@ -189,6 +183,12 @@
     <ClInclude Include="Mathematic.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="RandomLib.h">
+      <Filter>Header Files\Sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Header Files\Sampler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -217,9 +217,6 @@
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Sampler.cpp">
-      <Filter>Source Files\Sampler</Filter>
     </ClCompile>
     <ClCompile Include="PixelBuffer.cpp">
       <Filter>Source Files\Scene</Filter>
@@ -259,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source Files\Sampler</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

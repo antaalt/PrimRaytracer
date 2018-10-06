@@ -3,7 +3,7 @@
 
 #include "Ray.h"
 #include "Utils/Type.h"
-#include "Sampler.h"
+#include "Random.h"
 
 namespace raycore {
 	namespace tracer {
@@ -34,7 +34,7 @@ namespace raycore {
 					value = (static_cast<float>(index) + 0.5f) / static_cast<float>(dim);
 					break;
 				case RaySampler::RANDOM:
-					value = (static_cast<float>(index) + rand::Random::get(0.f, 1.f)) / static_cast<float>(dim);
+					value = (static_cast<float>(index) + rand::rnd()) / static_cast<float>(dim);
 					break;
 				default:
 					break;
@@ -53,7 +53,7 @@ namespace raycore {
 			Camera();
 			~Camera();
 
-			virtual Ray generateUnitRay(RayIndex x, RayIndex y) const = 0;
+			virtual Ray generateRay(RayIndex x, RayIndex y) const = 0;
 
 			virtual bool computeTransform() = 0;
 

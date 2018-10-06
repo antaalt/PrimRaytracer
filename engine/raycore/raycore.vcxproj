@@ -156,10 +156,10 @@
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Quaternion.h" />
-    <ClInclude Include="Random.h" />
+    <ClInclude Include="RandomLib.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Sampler.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneBuilder.h" />
     <ClInclude Include="Sphere.h" />
@@ -191,7 +191,7 @@
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneBuilder.cpp" />
     <ClCompile Include="Sphere.cpp" />

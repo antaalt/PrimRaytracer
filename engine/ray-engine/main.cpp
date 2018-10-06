@@ -13,14 +13,22 @@ int main(int argc, char *argv[])
 	// Set options
 	app::options options;
 	options.tracer = new raycore::tracer::WhittedTracer();
-	// settings tracer : raysampling
 	options.camera = new raycore::tracer::PinholeCamera();
 	options.camera->lookAt(point3(
 		1.f,
 		1.f,
 		0.f
 	), point3(0.f, 2.f, 0.f));
+	/*options.camera->lookAt(point3(
+		0.8f,
+		0.f,
+		0.f
+	), point3(0.f, 0.f, 0.f));*/
 	options.acceleration = raycore::tracer::Acceleration::BVH;
+	options.settings.raySamplerX = raycore::tracer::RaySampler::RANDOM;
+	options.settings.raySamplerY = raycore::tracer::RaySampler::RANDOM;
+	options.settings.samplesX = 1;
+	options.settings.samplesY = 1;
 
 	// Load Scene
 	Log::info("Loading scene");

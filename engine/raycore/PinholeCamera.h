@@ -11,7 +11,7 @@ namespace raycore {
 			PinholeCamera();
 			~PinholeCamera();
 
-			virtual Ray generateUnitRay(RayIndex x, RayIndex y) const;
+			virtual Ray generateRay(RayIndex x, RayIndex y) const;
 
 			virtual bool computeTransform();
 

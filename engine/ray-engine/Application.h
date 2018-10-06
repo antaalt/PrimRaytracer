@@ -17,6 +17,7 @@ namespace app {
 		raycore::tracer::Tracer *tracer;
 		raycore::tracer::Camera *camera;
 		raycore::tracer::Acceleration acceleration;
+		raycore::tracer::Settings settings;
 	};
 
 	enum KeyPosition {
@@ -68,6 +69,7 @@ namespace app {
 		SDL_DisplayMode m_displayMode;
 		SDL_Window *m_window;
 		SDL_GLContext m_glContext;
+		raycore::tracer::Renderer *m_renderer;
 		raycore::tracer::Camera *m_camera;
 		unsigned int m_width, m_height;
 		Inputs m_inputs;

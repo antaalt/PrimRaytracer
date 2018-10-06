@@ -121,9 +121,11 @@ namespace raycore {
 		{
 			HitInfo info;
 			info.point = ray.origin + ray.direction * intersection.getDistance();
-			info.normal = interpolatenormal(A.normal, B.normal, C.normal, intersection.getU(), intersection.getV());
-			info.texcoord = interpolateTexCoord(A.texcoord, B.texcoord, C.texcoord, intersection.getU(), intersection.getV());
-			info.color = interpolateColors(A.color, B.color, C.color, intersection.getU(), intersection.getV());
+			float u = intersection.getU();
+			float v = intersection.getV();
+			info.normal = interpolatenormal(A.normal, B.normal, C.normal, u, v);
+			info.texcoord = interpolateTexCoord(A.texcoord, B.texcoord, C.texcoord, u, v);
+			info.color = interpolateColors(A.color, B.color, C.color, u, v);
 			info.material = material;
 			return info;
 		}

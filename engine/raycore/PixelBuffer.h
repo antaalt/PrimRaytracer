@@ -14,6 +14,7 @@ namespace raycore {
 		};
 		void clamp();
 		void applyGamma();
+		void accumulate(const Pixel &pixel, unsigned int samples);
 
 		operator colorHDR();
 

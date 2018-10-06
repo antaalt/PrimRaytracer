@@ -6,7 +6,6 @@
 #define MAX_TREE_DEPTH 15
 #define MAX_KMEAN_DEPTH 15
 #define EPSILON_LIMIT 0.001f
-//#define USE_HITABLE_BBOX_INTERSECTION
 
 // @see https://github.com/brandonpelfrey/Fast-BVH/blob/master/BVH.h
 
@@ -18,14 +17,7 @@ namespace raycore {
 				this->boundingBox = hitable->computeBoundingBox();
 			}
 			const prim::BoundingBox &bbox() const { return boundingBox; }
-			bool intersect(const Ray &ray, prim::Intersection &intersection) const
-			{ 
-#if defined(USE_HITABLE_BBOX_INTERSECTION)
-				if (!boundingBox.intersectBounds(ray))
-					return false;
-#endif
-				return hitable->intersect(ray, intersection);
-			}
+			const prim::Hitable *getHitable() const { return hitable; }
 		private:
 			prim::Hitable *hitable;
 			prim::BoundingBox boundingBox;
@@ -44,7 +36,8 @@ namespace raycore {
 			bool isLeafNode();
 		private:
 			BVHNode *childrens[CHILD_COUNT];
-			std::vector<const HitableBounded*> hitableBounded; // TODO stock hitable directly
+			std::vector<const prim::Hitable*> hitable;
+			size_t hitableCount;
 		};
 
 

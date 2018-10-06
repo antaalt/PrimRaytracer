@@ -1,4 +1,5 @@
 #include "PixelBuffer.h"
+#include "Mathematic.h"
 
 namespace raycore {
 	void Pixel::clamp()
@@ -11,6 +12,13 @@ namespace raycore {
 	}
 	void Pixel::applyGamma()
 	{
+	}
+	void Pixel::accumulate(const Pixel & pixel, unsigned int samples)
+	{
+		r = lerp(r, pixel.r, 1.f / (samples + 1.f));
+		g = lerp(g, pixel.g, 1.f / (samples + 1.f));
+		b = lerp(b, pixel.b, 1.f / (samples + 1.f));
+		a = lerp(a, pixel.a, 1.f / (samples + 1.f));
 	}
 	Pixel::operator colorHDR()
 	{

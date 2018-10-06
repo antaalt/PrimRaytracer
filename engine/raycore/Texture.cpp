@@ -23,6 +23,14 @@ namespace raycore {
 #if defined(BILINEAR_FILTER_TEXTURE)
 		float uf = ui - floorf(ui);
 		float vf = vi - floorf(vi);
+
+		/*colorHDR c1 = at(uPixel, vPixel);
+		colorHDR c2 = at(uPixel + 1, vPixel);
+		colorHDR c3 = at(uPixel, vPixel + 1);
+		colorHDR c4 = at(uPixel + 1, vPixel + 1);
+		float ufvf = uf * vf; // 3088
+		return c1 * (1 - uf - vf + ufvf) + c2 * (uf - ufvf) + c3 * (vf - ufvf) + c4 * (ufvf);
+		//return c1 + uf * (c2 - c1) + vf * (c3 - c1) + uf * vf * (c1 - c2 - c3 + c4);*/
 		return lerp(
 			lerp(
 				at(uPixel, vPixel),
@@ -51,7 +59,7 @@ namespace raycore {
 	template <typename T>
 	colorHDR TTexture<T>::at(unsigned int x, unsigned int y)
 	{
-		return color(0.f);
+		return colorHDR(0.f);
 	}
 	
 	template <>

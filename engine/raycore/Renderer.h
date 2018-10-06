@@ -17,20 +17,27 @@ namespace raycore {
 	namespace tracer {
 
 		struct Tile {
-			Tile(const ivec2 &min, const ivec2 &max): min(min), max(max) {}
+			Tile(const uivec2 &min, const uivec2 &max): min(min), max(max) {}
 
-			int width() { return max.x - min.x; }
-			int height() { return max.y - min.y; }
-			ivec2 center() { return (max - min) * 0.5f; }
+			unsigned int width() { return max.x - min.x; }
+			unsigned int height() { return max.y - min.y; }
+			uivec2 center() { return (max - min) * 0.5f; }
 
-			ivec2 min;
-			ivec2 max;
+			uivec2 min;
+			uivec2 max;
+		};
+
+		struct Settings {
+			unsigned int samplesX;
+			unsigned int samplesY;
+			RaySampler raySamplerX;
+			RaySampler raySamplerY;
 		};
 
 		class Renderer
 		{
 		public:
-			Renderer(unsigned int width, unsigned int height, unsigned int tileSize);
+			Renderer(unsigned int width, unsigned int height, unsigned int tileSize, const Settings &settings);
 			~Renderer();
 			Renderer(const Renderer& other) = delete;
 			Renderer& operator=(const Renderer &other) = delete;
@@ -53,13 +60,15 @@ namespace raycore {
 		private:
 			Camera* camera;
 			Tracer* tracer; // TODO add a secondary quick tracer (whitted for example) for display
-			Accelerator::Ptr accelerator;
+			Accelerator* accelerator;
 
 			std::vector<Tile> tiles;
 			unsigned int tileSize;
 			unsigned int width, height;
-			PixelBuffer output;
 			unsigned int samples;
+			unsigned int subSamplesX, subSamplesY;
+			RaySampler raySamplerX, raySamplerY;
+			PixelBuffer output;
 		};
 	}
 }

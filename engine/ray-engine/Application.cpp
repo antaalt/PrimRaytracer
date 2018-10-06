@@ -5,7 +5,7 @@
 #include "PathTracer.h"
 #include "WhittedTracer.h"
 #include "PinholeCamera.h"
-
+#include "stb_image_write.h"
 
 namespace app {
 
@@ -13,7 +13,8 @@ namespace app {
 	{
 	}
 
-	Application::Application(unsigned int p_width, unsigned int p_height)
+	Application::Application(unsigned int p_width, unsigned int p_height) :
+		m_renderer(nullptr)
 	{
 		m_width = p_width;
 		m_height = p_height;
@@ -21,6 +22,8 @@ namespace app {
 
 	Application::~Application()
 	{
+		if (m_renderer != nullptr)
+			delete m_renderer;
 	}
 
 	bool Application::init()
@@ -135,6 +138,13 @@ namespace app {
 			}
 		}
 		return inputs();
+	}
+
+	bool Application::save(std::string path)
+	{
+		const float* data = this->m_renderer->image().data()->data;
+		Log::info("Render saved at '", path, "'");
+		return (stbi_write_hdr(path.c_str(), m_width, m_height, 4, data) == 0);
 	}
 
 	void Application::onMouseButtonUp(SDL_MouseButtonEvent & e)
@@ -257,10 +267,10 @@ namespace app {
 		}
 		Utils::Timer timer;
 
-		raycore::tracer::Renderer renderer(m_width, m_height, 32);
-		bool init = renderer.buildScene(std::move(scene), options.acceleration);
-		renderer.setTracer(options.tracer);
-		renderer.setCamera(options.camera);
+		m_renderer = new raycore::tracer::Renderer(m_width, m_height, 32, options.settings);
+		bool init = m_renderer->buildScene(std::move(scene), options.acceleration);
+		m_renderer->setTracer(options.tracer);
+		m_renderer->setCamera(options.camera);
 		m_camera = options.camera;
 		// This makes our buffer swap synchronized with the monitor's vertical refresh
 		SDL_GL_SetSwapInterval(1);
@@ -270,12 +280,12 @@ namespace app {
 			glClearColor(1.f, 1.f, 1.f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			timer.tick();
-			bool update = renderer.updateRays();
+			bool update = m_renderer->updateRays();
 			if (update)
-				renderer.renderPreview();
+				m_renderer->renderPreview();
 			else
-				renderer.render();
-			glDrawPixels(this->m_width, this->m_height, GL_RGBA, GL_FLOAT, renderer.image().data());
+				m_renderer->render();
+			glDrawPixels(this->m_width, this->m_height, GL_RGBA, GL_FLOAT, m_renderer->image().data());
 			Log::info("Duration : ", timer.elapsedTime<Utils::Timer::milliseconds>(), "ms");
 			SDL_GL_SwapWindow(m_window);
 			// Free the processor
@@ -296,15 +306,15 @@ namespace app {
 			this->m_camera->rotate(static_cast<float>(-m_inputs.mouse.pos[1]), vec3(1.f, 0.f, 0.f));
 		}
 		if (m_inputs.mouse.mouse[RIGHT])
-		{
 			this->m_camera->translate(vec3(-m_inputs.mouse.pos[0] * 0.01f, m_inputs.mouse.pos[1] * 0.01f, 0.f));
-		}
 		if (m_inputs.mouse.wheel[1] != 0)
 			this->m_camera->translate(vec3(0.f, 0.f, static_cast<float>(m_inputs.mouse.wheel[1])* 0.1f));
 		m_inputs.mouse.pos[0] = 0;
 		m_inputs.mouse.pos[1] = 0;
 		m_inputs.mouse.wheel[0] = 0;
 		m_inputs.mouse.wheel[1] = 0;
+		if (m_inputs.keyboard.printScreen)
+			this->save("output.jpg");
 		return m_inputs.keyboard.escape || m_inputs.keyboard.space;
 	}
 

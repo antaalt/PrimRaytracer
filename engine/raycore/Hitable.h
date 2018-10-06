@@ -75,7 +75,6 @@ namespace raycore {
 			float getDistance() const { return distance; }
 			float getU() const { return u; }
 			float getV() const { return v; }
-			//const Hitable *getHitable() const;
 		};
 	}
 }

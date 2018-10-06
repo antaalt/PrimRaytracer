@@ -4,7 +4,7 @@
 #include "Hitable.h"
 #include "Onb.h"
 #include "Types.h"
-#include "Sampler.h"
+#include "Random.h"
 #include "Texture.h"
 
 namespace raycore {
@@ -13,8 +13,8 @@ namespace raycore {
 		
 		vec3 reflect(const vec3 &wi, const norm3 &normal);
 		bool refract(vec3 &out, const vec3 &wi, const norm3 &normal, float eta);
-		vec3 sampleUnitSphere(const rand::Sampler &sampler);
-		vec3 sampleMicroFacet(const rand::Sampler &sampler, float roughness);
+		vec3 sampleUnitSphere();
+		vec3 sampleMicroFacet(float roughness);
 
 		enum class MaterialType {
 			DIFFUSE,
@@ -51,11 +51,10 @@ namespace raycore {
 
 		class Diffuse : public Material {
 		public:
-			Diffuse(rand::Sampler sampler) : sampler(sampler) {}
-			rand::Sampler sampler;
+			Diffuse() {}
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
 			{
-				vec3 randomDirection = sampleUnitSphere(sampler);
+				vec3 randomDirection = sampleUnitSphere();
 				transform::Onb onb(intersection.normal);
 				vec3 direction = onb.transform(randomDirection);
 				//pdf = 1.f / M_PI;
@@ -104,13 +103,12 @@ namespace raycore {
 
 		class Metal : public Material {
 		public:
-			Metal(float roughness, rand::Sampler sampler) : roughness(roughness), sampler(sampler) {}
+			Metal(float roughness) : roughness(roughness) {}
 			float roughness;
-			rand::Sampler sampler;
 
 			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
 			{
-				vec3 randomDirection = sampleMicroFacet(sampler, roughness);
+				vec3 randomDirection = sampleMicroFacet(roughness);
 				transform::Onb onb(intersection.normal);
 				vec3 direction = onb.transform(randomDirection);
 				pdf = 1.f; // TODO calculate pdf

@@ -17,7 +17,6 @@ namespace raycore {
 		class Accelerator
 		{
 		public:
-			using Ptr = Accelerator*;
 			Accelerator();
 			~Accelerator();
 			Accelerator(const Accelerator &acc) = delete;

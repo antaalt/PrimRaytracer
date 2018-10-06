@@ -13,10 +13,6 @@ namespace raycore {
 		WhittedTracer::~WhittedTracer()
 		{
 		}
-		void WhittedTracer::shade(Pixel & pixel, const Ray & ray, const Accelerator * accelerator, unsigned int depth) const
-		{
-			pixel = castRay(ray, accelerator, depth);
-		}
 		colorHDR WhittedTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
 		{
 			if (depth == 0)

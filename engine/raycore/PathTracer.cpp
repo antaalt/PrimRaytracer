@@ -2,21 +2,15 @@
 #include "Hitable.h"
 #include "Material.h"
 #include "Mathematic.h"
-#include "Sampler.h"
+#include "Random.h"
+#include "Light.h"
 
 namespace raycore {
 
 	namespace tracer {
 
-		PathTracer::PathTracer() :
-			sampleCount(0)
+		PathTracer::PathTracer()
 		{
-		}
-
-		void PathTracer::shade(Pixel & pixel, const Ray & ray, const Accelerator * accelerator, unsigned int depth) const
-		{
-			colorHDR p = this->castRay(ray, accelerator, depth);
-			pixel = lerp(colorHDR(pixel), p, 1.f / (sampleCount + 1.f));
 		}
 
 		colorHDR PathTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
@@ -29,19 +23,31 @@ namespace raycore {
 			// 0. fetch material and compute nextRay
 			float pdf;
 			Ray nextRay = info.material->scatter(ray, info, pdf);
+			colorHDR emission(0.f);
 
 			// 1. first add emission
 			// 2. Russian Roulette
 			colorHDR reflectance = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
 			float probability = max(reflectance.x, max(reflectance.y, reflectance.z));
-			if (probability < rand::Random::get(0.f, 1.f))
-				return colorHDR(0.f); // return emission
+			if (probability < rand::rnd())
+				return emission;
 			reflectance = reflectance / probability;
 			switch (info.material->type())
 			{
 			case prim::MaterialType::DIFFUSE:
-				// emission
-				return colorHDR(0.f) + reflectance * castRay(nextRay, accelerator, depth-1);
+			{
+				colorHDR radiance(0.f);
+				for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
+				{
+					const Light *l = accelerator->getLight(iLight);
+					LightInfo linfo;
+					if (l->sample(info, accelerator, linfo))
+					{
+						radiance = radiance + reflectance * linfo.color * std::abs(vec3::dot(linfo.sample, info.normal));
+					}
+				}
+				return emission + radiance + reflectance * castRay(nextRay, accelerator, depth - 1);
+			}
 			case prim::MaterialType::SPECULAR:
 			case prim::MaterialType::DIELECTRIC:
 			case prim::MaterialType::METAL:
@@ -58,15 +64,7 @@ namespace raycore {
 		}
 		colorHDR PathTracer::miss(const Ray & ray) const
 		{
-			return colorHDR(20.f);
-		}
-		void PathTracer::postProcess()
-		{
-			sampleCount++;
-		}
-		void PathTracer::reset()
-		{
-			sampleCount = 0;
+			return colorHDR(1.f);
 		}
 	}
 }

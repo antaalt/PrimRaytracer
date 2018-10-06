@@ -13,7 +13,7 @@ namespace raycore {
 		PinholeCamera::~PinholeCamera()
 		{
 		}
-		Ray PinholeCamera::generateUnitRay(RayIndex x, RayIndex y) const
+		Ray PinholeCamera::generateRay(RayIndex x, RayIndex y) const
 		{
 			float xt = x.get();
 			float yt = y.get();
