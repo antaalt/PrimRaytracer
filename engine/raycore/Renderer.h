@@ -13,7 +13,6 @@
 
 namespace raycore {
 
-
 	namespace tracer {
 
 		struct Tile {
@@ -28,6 +27,7 @@ namespace raycore {
 		};
 
 		struct Settings {
+			unsigned int tileSize;
 			unsigned int samplesX;
 			unsigned int samplesY;
 			RaySampler raySamplerX;
@@ -37,7 +37,7 @@ namespace raycore {
 		class Renderer
 		{
 		public:
-			Renderer(unsigned int width, unsigned int height, unsigned int tileSize, const Settings &settings);
+			Renderer(unsigned int width, unsigned int height, const Settings &settings);
 			~Renderer();
 			Renderer(const Renderer& other) = delete;
 			Renderer& operator=(const Renderer &other) = delete;
@@ -49,6 +49,8 @@ namespace raycore {
 			bool renderPreview();
 
 			bool render();
+
+			void resize(unsigned int width, unsigned int height);
 
 			void buildTiles(unsigned int tileSize);
 

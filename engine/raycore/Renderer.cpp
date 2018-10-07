@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Config.h"
 #include "Ray.h"
 #include "Tracer.h"
 #include "Camera.h"
@@ -15,13 +16,13 @@
 namespace raycore {
 	namespace tracer {
 
-		Renderer::Renderer(unsigned int width, unsigned int height, unsigned int tileSize, const Settings &settings) :
+		Renderer::Renderer(unsigned int width, unsigned int height, const Settings &settings) :
 			width(width), 
 			height(height), 
 			camera(nullptr), 
 			accelerator(nullptr), 
 			tracer(nullptr),
-			tileSize(tileSize),
+			tileSize(settings.tileSize),
 			samples(0),
 			output(PixelBuffer(width, height)),
 			subSamplesX(settings.samplesX),
@@ -29,6 +30,7 @@ namespace raycore {
 			raySamplerX(settings.raySamplerX),
 			raySamplerY(settings.raySamplerY)
 		{
+			this->buildTiles(tileSize);
 		}
 
 		Renderer::~Renderer()
@@ -43,6 +45,8 @@ namespace raycore {
 
 		bool Renderer::buildScene(Scene &&scene, Acceleration acceleration)
 		{
+			if (this->accelerator != nullptr)
+				delete this->accelerator;
 			switch (acceleration)
 			{
 			case Acceleration::OCTREE:
@@ -57,7 +61,6 @@ namespace raycore {
 			default:
 				return false;
 			}
-			this->buildTiles(tileSize);
 			return this->accelerator->build(scene);
 		}
 
@@ -65,13 +68,6 @@ namespace raycore {
 		{
 			if (!this->camera->computeTransform())
 				return false;
-			/*unsigned int index = 0;
-			for (unsigned int y = 0; y < this->height; y++)
-				for (unsigned int x = 0; x < this->width; x++)
-					this->rays[index++] = this->camera->generateUnitRay(
-						RayIndex(x, this->width, RaySampler::LINEAR), 
-						RayIndex(y, this->height, RaySampler::LINEAR)
-					);*/
 			this->tracer->reset();
 			samples = 0;
 			return true;
@@ -79,7 +75,7 @@ namespace raycore {
 
 		bool Renderer::renderPreview()
 		{
-			Log::debug("Rendering preview");
+			Log::info("Rendering preview");
 
 			Pixel *pixel = this->output.data();
 			for (auto it = tiles.begin(); it != tiles.end(); it++)
@@ -100,7 +96,7 @@ namespace raycore {
 
 		bool Renderer::render()
 		{
-			Log::debug("Rendering sample ", (samples + 1));
+			Log::info("Rendering sample ", (samples + 1));
 			Pixel *pixel = this->output.data();
 #if defined(PARALLEL_RENDERING)
 			concurrency::parallel_for(size_t(0), tiles.size(), [&](size_t iTile)
@@ -121,7 +117,7 @@ namespace raycore {
 									RayIndex(x * this->subSamplesX + sx, this->width * this->subSamplesX, this->raySamplerX),
 									RayIndex(y * this->subSamplesY + sy, this->height * this->subSamplesY, this->raySamplerY)
 								);
-								p = p + this->tracer->castRay(ray, this->accelerator, 10) * c;
+								p = p + this->tracer->castRay(ray, this->accelerator, Config::maxDepth) * c;
 							}
 						}
 						pixel[y * this->width + x].accumulate(p, samples);
@@ -141,6 +137,12 @@ namespace raycore {
 			samples++;
 			this->tracer->postProcess();
 			return true;
+		}
+
+
+		void Renderer::resize(unsigned int width, unsigned int height)
+		{
+			throw std::runtime_error("Not implemented");
 		}
 
 		void Renderer::buildTiles(unsigned int tileSize) {

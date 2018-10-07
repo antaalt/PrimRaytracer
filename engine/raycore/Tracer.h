@@ -4,7 +4,7 @@
 #include "Accelerator.h"
 #include "PixelBuffer.h"
 
-#define MAX_DEPTH 10
+//#define MAX_DEPTH 10
 #define BACKGROUND_COLOR colorHDR(0.1f)
 
 namespace raycore {
@@ -14,7 +14,7 @@ namespace raycore {
 		class Tracer
 		{
 		public:
-			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = MAX_DEPTH) const = 0;
+			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = Config::maxDepth) const = 0;
 			virtual void postProcess() {};
 			virtual void reset() {};
 

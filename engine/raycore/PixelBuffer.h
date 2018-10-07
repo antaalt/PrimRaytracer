@@ -40,6 +40,7 @@ namespace raycore {
 		const Pixel *data() const;
 		unsigned int width() const;
 		unsigned int height() const;
+		unsigned int size() const;
 	private:
 
 		std::vector<Pixel> m_data;

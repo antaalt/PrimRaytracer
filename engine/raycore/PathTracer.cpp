@@ -16,7 +16,7 @@ namespace raycore {
 		colorHDR PathTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
 		{
 			if (depth == 0)
-				return colorHDR(1.f);
+				return colorHDR(0.f);
 			prim::HitInfo info;
 			if (!trace(ray, accelerator, info))
 				return miss(ray);

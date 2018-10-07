@@ -9,15 +9,14 @@
 // Math
 //#include "Types.h"
 #include "Utils\Log.h"
-
+#include "../raycore/Config.h"
 
 #include <cassert>
 // ------- DEFINES -------
 #define PROJECT_NAME		"RayEngine"
-#define OPENGL_MAJOR		3
-#define OPENGL_MINOR		2
 #define DEFAULT_WIDTH		800
 #define DEFAULT_HEIGHT		600
+#define GLOBAL_MAX_DEPTH	15
 
 
 #ifdef NDEBUG

@@ -84,6 +84,10 @@ namespace raycore {
 	{
 		return m_height;
 	}
+	unsigned int PixelBuffer::size() const
+	{
+		return m_width * m_height * sizeof(Pixel);
+	}
 	Pixel operator*(float lhs, const Pixel & rhs)
 	{
 		return Pixel(lhs * rhs.r, lhs * rhs.g, lhs * rhs.b, lhs * rhs.a);

@@ -8,7 +8,7 @@
 
 #include "Config.h"
 #include "Renderer.h"
-
+#include "GUI.h"
 
 
 namespace app {
@@ -20,31 +20,9 @@ namespace app {
 		raycore::tracer::Settings settings;
 	};
 
-	enum KeyPosition {
-		RIGHT,
-		LEFT,
-		MIDDLE
-	};
-	struct Inputs {
-		struct Mouse {
-			bool mouse[3];
-			int pos[2];
-			int wheel[2];
-		} mouse;
-		struct KeyBoard {
-			bool ctrl[2];
-			bool alt[2];
-			bool shift[2];
-			bool space;
-			bool escape;
-			bool printScreen;
-		} keyboard;
-	};
-
 	class Application
 	{
 	public:
-		Application();
 		Application(unsigned int p_width, unsigned int p_height);
 		~Application();
 		Application(const Application &acc) = delete;
@@ -53,17 +31,11 @@ namespace app {
 		void run(raycore::Scene &scene, options &options);
 
 	private:
-		bool inputs();
-		void destroy();
-		bool init();
-		bool events();
+		// Application loop
+		bool inputs(const Inputs &inputs);
+		// Utils
 		bool save(std::string path);
-		void onKeyDown(SDL_KeyboardEvent &e);
-		void onKeyUp(SDL_KeyboardEvent &e);
-		void onMouseButtonDown(SDL_MouseButtonEvent &e);
-		void onMouseButtonUp(SDL_MouseButtonEvent &e);
-		void onMouseMotion(SDL_MouseMotionEvent &e);
-		void onMouseWheel(SDL_MouseWheelEvent &e);
+		void resize(unsigned int width, unsigned int height);
 
 	private:
 		SDL_DisplayMode m_displayMode;
@@ -72,7 +44,7 @@ namespace app {
 		raycore::tracer::Renderer *m_renderer;
 		raycore::tracer::Camera *m_camera;
 		unsigned int m_width, m_height;
-		Inputs m_inputs;
+		GUI m_gui;
 	};
 
 }

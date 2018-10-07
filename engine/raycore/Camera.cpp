@@ -5,7 +5,7 @@ namespace raycore {
 
 	namespace tracer {
 
-		Camera::Camera() : m_transform(mat4::identity())
+		Camera::Camera() : m_transform(mat4::identity()), m_fov(DEFAULT_FOV)
 		{
 		}
 
@@ -66,6 +66,10 @@ namespace raycore {
 			m[3].z = translation.z;
 			m_transform = m_transform * m;
 			m_changed = true;
+		}
+		void Camera::setFov(float fov)
+		{
+			m_fov = fov;
 		}
 	}
 }

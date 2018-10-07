@@ -17,10 +17,11 @@ namespace raycore {
 		{
 			float xt = x.get();
 			float yt = y.get();
+			float dist = 1.f / tanf(Config::fov * 0.5f * M_PIf / 180.f);
 			vec3 direction = vec3::normalize(vec3(
-				u.x * xt + v.x * yt + w.x,
-				u.y * xt + v.y * yt + w.y,
-				u.z * xt + v.z * yt + w.z
+				u.x * xt + v.x * yt + dist * w.x,
+				u.y * xt + v.y * yt + dist * w.y,
+				u.z * xt + v.z * yt + dist * w.z
 			));
 			return Ray(eye, direction);
 		}
