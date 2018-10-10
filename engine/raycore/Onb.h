@@ -17,11 +17,11 @@ namespace raycore {
 				tangent = vec3::cross(binormal, normal);
 			}
 
-			inline vec3 transform(const norm3 &p)
+			inline vec3 transform(const norm3 &n)
 			{
-				return p.x * tangent + p.y * binormal + p.z * normal;
+				return n.x * tangent + n.y * binormal + n.z * normal;
 			}
-
+		private:
 			vec3 normal;
 			vec3 binormal;
 			vec3 tangent;

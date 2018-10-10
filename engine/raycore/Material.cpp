@@ -27,20 +27,18 @@ namespace raycore {
 			wt = (eta * (wi + IdotN * n) - n * sqrt(k));
 			return false;
 		}
-		vec3 sampleUnitSphere()
+		vec3 sampleUnitSphere(float r1, float r2)
 		{
-			const float phi = 2.f * M_PIf * rand::rnd();
-			const float r = rand::rnd();
+			const float phi = 2.f * M_PIf * r1;
+			const float r = r2;
 			return vec3(
 				r * cosf(phi),
 				r * sinf(phi),
 				sqrtf(1.f - r * r)
 			);
 		}
-		vec3 sampleMicroFacet(float roughness)
+		vec3 sampleMicroFacet(float roughness, float r1, float r2)
 		{
-			float r1 = rand::rnd();
-			float r2 = rand::rnd();
 			float phi = std::atanf(roughness * std::sqrtf(r1) / std::sqrtf(1 - r1));
 			float theta = 2 * M_PIf * r2;
 			vec3 p;

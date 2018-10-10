@@ -59,7 +59,10 @@ namespace raycore {
 					newMaterial = new prim::Diffuse((it == mapTexture.end()) ? nullptr : it->second, material.color); //new prim::Dielectric(1.5f);
 					break;
 				case MaterialType::METAL:
-					newMaterial = new prim::Diffuse((it == mapTexture.end()) ? nullptr : it->second,material.color); //new prim::Metal(0.f);
+					if (it == mapTexture.end())
+						newMaterial = new prim::Metal(material.color, 0.1f);
+					else
+						newMaterial = new prim::Metal(it->second, 0.1f);
 					break;
 				default:
 					return false;

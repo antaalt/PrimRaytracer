@@ -21,9 +21,9 @@ namespace raycore {
 		// materials
 		Material &mat1 = scene.addMaterial();
 		mat1.index = 0;
-		mat1.color = colorHDR(1.f, 0.5f, 0.5f, 1.f);
+		mat1.color = colorHDR(0.82f, 0.62f, 0.19f, 1.f);
 		mat1.texture = nullptr;
-		mat1.type = MaterialType::DIELECTRIC;
+		mat1.type = MaterialType::METAL;
 
 		Material &mat2 = scene.addMaterial();
 		mat2.index = 1;
