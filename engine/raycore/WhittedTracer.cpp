@@ -22,7 +22,8 @@ namespace raycore {
 				return miss(ray); 
 			
 			float pdf = 0;
-			colorHDR reflectance = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
+			return colorHDR();
+			/*colorHDR reflectance = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
 			colorHDR radiance(0.f);
 			for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
 			{
@@ -70,7 +71,7 @@ namespace raycore {
 			case prim::MaterialType::METAL:
 			default:
 				return miss(ray);
-			}
+			}*/
 		}
 		bool WhittedTracer::trace(const Ray & ray, const Accelerator* accelerator, prim::HitInfo & info) const
 		{

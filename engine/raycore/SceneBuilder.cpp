@@ -21,27 +21,27 @@ namespace raycore {
 		// materials
 		Material &mat1 = scene.addMaterial();
 		mat1.index = 0;
-		mat1.color = colorHDR(1.f, 0.f, 0.f, 1.f);
+		mat1.color = colorHDR(1.f, 0.5f, 0.5f, 1.f);
 		mat1.texture = nullptr;
 		mat1.type = MaterialType::DIELECTRIC;
 
 		Material &mat2 = scene.addMaterial();
 		mat2.index = 1;
-		mat2.color = colorHDR(0.f, 1.f, 0.f, 1.f);
+		mat2.color = colorHDR(0.5f, 1.f, 0.5f, 1.f);
 		mat2.texture = nullptr;
 		mat2.type = MaterialType::DIFFUSE;
 
 		Material &mat3 = scene.addMaterial();
 		mat3.index = 2;
-		mat3.color = colorHDR(0.f, 0.f, 1.f, 1.f);
+		mat3.color = colorHDR(0.5f, 0.5f, 1.f, 1.f);
 		mat3.texture = nullptr;
 		mat3.type = MaterialType::DIFFUSE;
 
-		/*Material &mat4 = scene.addMaterial();
+		Material &mat4 = scene.addMaterial();
 		mat4.index = 3;
-		mat4.color4 = color4(1.f, 1.f, 1.f, 1.f);
+		mat4.color = colorHDR(0.7f, 0.7f, 0.7f, 1.f);
 		mat4.texture = nullptr;
-		mat4.type = MaterialType::DIFFUSE;*/
+		mat4.type = MaterialType::DIFFUSE;
 
 		// spheres
 		Sphere &sphere1 = scene.addSphere();
@@ -59,13 +59,10 @@ namespace raycore {
 		sphere3.radius = 0.7f;
 		sphere3.material = &mat3;
 
-		// Planes
-		/*Parallelogram &para = scene.addParallelogram();
-		para.material = &mat4;
-		para.point[0] = point3(-10.f, 0.f, 0.f);
-		para.point[1] = point3();
-		para.point[2] = point3();
-		para.normal = normal(1.f, 0.f, 0.f);*/
+		Sphere &sphere4 = scene.addSphere();
+		sphere4.center = point3(0.f, -30.f, 0.f);
+		sphere4.radius = 29.f;
+		sphere4.material = &mat4;
 
 		// nodes
 		Node &node1 = scene.addNode();
@@ -80,9 +77,9 @@ namespace raycore {
 		node3.shape = &sphere3;
 		node3.transform = mat4::identity();
 
-		/*Node &node4 = scene.addNode();
-		node4.shape = &para;
-		node4.transform = Matrix4::identity();*/
+		Node &node4 = scene.addNode();
+		node4.shape = &sphere4;
+		node4.transform = mat4::identity();
 
 		return true;
 	}

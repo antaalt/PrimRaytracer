@@ -45,27 +45,25 @@ namespace raycore {
 			for (size_t iMat = 0; iMat < scene.materials.size(); iMat++)
 			{
 				const Material &material = scene.materials[iMat];
-				prim::Material::Ptr newMaterial;
+				prim::Material* newMaterial;
+				auto it = mapTexture.find(material.texture);
 				switch (material.type)
 				{
 				case MaterialType::DIFFUSE:
-					newMaterial = new prim::Diffuse();
+					newMaterial = new prim::Diffuse((it == mapTexture.end()) ? nullptr : it->second, material.color);
 					break;
 				case MaterialType::SPECULAR:
-					newMaterial = new prim::Specular();
+					newMaterial = new prim::Diffuse((it == mapTexture.end()) ? nullptr : it->second, material.color); //new prim::Specular();
 					break;
 				case MaterialType::DIELECTRIC:
-					newMaterial = new prim::Dielectric(1.5f);
+					newMaterial = new prim::Diffuse((it == mapTexture.end()) ? nullptr : it->second, material.color); //new prim::Dielectric(1.5f);
 					break;
 				case MaterialType::METAL:
-					newMaterial = new prim::Metal(0.f);
+					newMaterial = new prim::Diffuse((it == mapTexture.end()) ? nullptr : it->second,material.color); //new prim::Metal(0.f);
 					break;
 				default:
 					return false;
 				}
-				newMaterial->setColor(material.color);
-				auto it = mapTexture.find(material.texture);
-				newMaterial->setTexture((it == mapTexture.end()) ? nullptr : it->second);
 				this->materials.push_back(newMaterial);
 			}
 			// --- Nodes
@@ -151,7 +149,7 @@ namespace raycore {
 			// --- Lights
 			for (const raycore::Light& l : scene.lights)
 			{
-				PointLight *light = new PointLight(colorHDR(1.f), 1.f, l.position);
+				PointLight *light = new PointLight(colorHDR(0.9f, 0.8f, 1.f, 1.f), 1.f, l.position);
 				this->lights.push_back(light);
 			}
 			this->hitableCount = this->hitables.size();

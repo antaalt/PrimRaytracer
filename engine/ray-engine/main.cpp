@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	app::Application application(width, height);
 	// Set options
 	app::options options;
-	options.tracer = new raycore::tracer::WhittedTracer();
+	options.tracer = new raycore::tracer::PathTracer();
 	options.camera = new raycore::tracer::PinholeCamera();
 	/*options.camera->lookAt(point3(
 		1.f,
@@ -20,13 +20,13 @@ int main(int argc, char *argv[])
 		0.f
 	), point3(0.f, 2.f, 0.f));*/
 	options.camera->lookAt(point3(
-		0.8f,
 		0.f,
-		0.f
+		4.f,
+		4.f
 	), point3(0.f, 0.f, 0.f));
 	options.acceleration = raycore::tracer::Acceleration::BVH;
-	options.settings.raySamplerX = raycore::tracer::RaySampler::LINEAR;
-	options.settings.raySamplerY = raycore::tracer::RaySampler::LINEAR;
+	options.settings.raySamplerX = raycore::tracer::RaySampler::RANDOM;
+	options.settings.raySamplerY = raycore::tracer::RaySampler::RANDOM;
 	options.settings.samplesX = 1;
 	options.settings.samplesY = 1;
 	options.settings.tileSize = 32;
@@ -34,9 +34,9 @@ int main(int argc, char *argv[])
 	// Load Scene
 	Log::info("Loading scene");
 	raycore::Scene scene;
-	//raycore::SceneBuilder::buildCustomScene(scene);
+	raycore::SceneBuilder::buildCustomScene(scene);
 	//raycore::Scene::GLTF::load("../data/models/milkTruck/CesiumMilkTruck.gltf", scene);
-	raycore::Scene::GLTF::load("../data/models/lantern/Lantern.gltf", scene);
+	//raycore::Scene::GLTF::load("../data/models/lantern/Lantern.gltf", scene);
 	//raycore::Scene::GLTF::load("../data/models/duck/Duck.gltf", scene);
 	//raycore::Scene::GLTF::load("../data/models/box/box.gltf", scene);
 	//raycore::Scene::GLTF::load("../data/models/boxTextured/BoxTextured.gltf", scene);

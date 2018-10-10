@@ -16,72 +16,118 @@ namespace raycore {
 		vec3 sampleUnitSphere();
 		vec3 sampleMicroFacet(float roughness);
 
-		enum class MaterialType {
-			DIFFUSE,
-			SPECULAR,
-			DIELECTRIC,
-			METAL,
-			UNDEFINED_TYPE
+		enum BxDFType {
+			BSDF_REFLECTION,
+			BSDF_DIFFUSE,
+			BSDF_SPECULAR,
+			BSDF_TRANSMISSION,
+			BSDF_GLOSSY,
+			NB_BSDF
+		};
+
+		enum TextureType {
+			COLOR_TEXTURE,
+			NORMAL_TEXTURE,
+			BUMP_TEXTURE,
+			NB_TEXTURES_TYPE
 		};
 
 		class Material
 		{
 		public:
-			using Ptr = Material*;
+			Material() {}
 
-			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const = 0;
-			virtual MaterialType type() const = 0;
+			//virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const = 0;
+			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const = 0;
 
-			colorHDR color(float u = 0.f, float v = 0.f) const
-			{
-				if (colorTexture == nullptr)
-					return albedo;
-				else
-					return albedo * colorTexture->texture2D(u, v);
-			}
-
-			void setColor(const colorHDR &color) { albedo = color; }
-			void setTexture(Texture32 *texture) { colorTexture = texture; }
-
-			Material() : colorTexture(nullptr) {}
 		protected:
-			colorHDR albedo;
-			Texture32 *colorTexture;
+			virtual float pdf(const vec3 &wi, const vec3 &wo, const prim::HitInfo &info) const = 0;
+			virtual colorHDR brdf(float u, float v) const = 0;
+			Texture32 *texture[NB_TEXTURES_TYPE];
 		};
 
 		class Diffuse : public Material {
 		public:
-			Diffuse() {}
-			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
+			Diffuse(Texture32 *colorTexture, colorHDR color) : color(color) { texture[COLOR_TEXTURE] = colorTexture; }
+
+			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const
 			{
 				vec3 randomDirection = sampleUnitSphere();
-				transform::Onb onb(intersection.normal);
-				vec3 direction = onb.transform(randomDirection);
-				//pdf = 1.f / M_PI;
-				return tracer::Ray(intersection.point, direction);
+				transform::Onb onb(info.normal);
+				wo = onb.transform(randomDirection);
+				pdf = this->pdf(in.direction, wo, info);
+				return this->brdf(info.texcoord.x, info.texcoord.y);
 			}
-			virtual MaterialType type() const
+		private:
+			virtual float pdf(const vec3 &wi, const vec3 &wo, const prim::HitInfo &intersection) const
 			{
-				return MaterialType::DIFFUSE;
+				return vec3::dot(wo, intersection.normal) / M_PIf;
 			}
+			virtual colorHDR brdf(float u, float v) const
+			{
+				if (texture[COLOR_TEXTURE] != nullptr)
+					return (color * texture[COLOR_TEXTURE]->texture2D(u, v)) / M_PIf;
+				else
+					return color / M_PIf;
+			}
+		private:
+			colorHDR color;
 		};
+
+		class Glossy : public Material {
+		public:
+			Glossy(Texture32 *colorTexture, colorHDR color) : color(color) { texture[COLOR_TEXTURE] = colorTexture; }
+
+			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const
+			{
+				wo = reflect(in.direction, info.normal);
+				pdf = this->pdf(in.direction, wo, info);
+				return this->brdf(info.texcoord.x, info.texcoord.y);
+			}
+		private:
+			virtual float pdf(const vec3 &wi, const vec3 &wo, const prim::HitInfo &intersection) const
+			{
+				return 1.f;
+			}
+			virtual colorHDR brdf(float u, float v) const
+			{
+				if (texture[COLOR_TEXTURE] != nullptr)
+					return (color * texture[COLOR_TEXTURE]->texture2D(u, v)) / M_PIf;
+				else
+					return color;
+			}
+		private:
+			colorHDR color;
+		};
+
 
 		class Specular : public Material {
 		public:
-			Specular() {}
-			virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const
+			Specular(Texture32 *colorTexture, colorHDR color) : color(color) { texture[COLOR_TEXTURE] = colorTexture; }
+
+			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const
 			{
-				vec3 reflected = reflect(in.direction, intersection.normal);
-				//pdf = 1.f;
-				return tracer::Ray(intersection.point, reflected);
+				wo = reflect(in.direction, info.normal);
+				pdf = this->pdf(in.direction, wo, info);
+				return this->brdf(info.texcoord.x, info.texcoord.y);
 			}
-			virtual MaterialType type() const
+		private:
+			virtual float pdf(const vec3 &wi, const vec3 &wo, const prim::HitInfo &intersection) const
 			{
-				return MaterialType::SPECULAR;
+				return 1.f;
 			}
+			virtual colorHDR brdf(float u, float v) const
+			{
+				if (texture[COLOR_TEXTURE] != nullptr)
+					return (color * texture[COLOR_TEXTURE]->texture2D(u, v)) / M_PIf;
+				else
+					return color;
+			}
+		private:
+			colorHDR color;
 		};
 
-		class Dielectric : public Material {
+		/*class Dielectric : public Material {
 		public:
 			Dielectric(float eta) : eta(eta) {}
 			float eta;
@@ -118,6 +164,6 @@ namespace raycore {
 			{
 				return MaterialType::METAL;
 			}
-		};
+		};*/
 	}
 }
