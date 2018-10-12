@@ -117,8 +117,6 @@ namespace app {
 
 	void GUI::draw()
 	{
-		
-
 		// Rendering
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -176,13 +174,6 @@ namespace app {
 		prepare();
 		return m_inputs;
 	}
-
-	/*const GUISettings & GUI::settings(bool &updated)
-	{
-		updated = changed;
-		changed = false;
-		return m_settings;
-	}*/
 
 	void GUI::onKeyDown(SDL_KeyboardEvent & e)
 	{

@@ -3,6 +3,9 @@
 #include <vector>
 #include "Types.h"
 #include "Texture.h"
+#include "TextureMap.h"
+#include "ConstantTexture.h"
+#include "Checker.h"
 
 namespace raycore {
 
@@ -16,7 +19,7 @@ namespace raycore {
 
 	struct Material {
 		unsigned int index;
-		Texture32* texture;
+		Texture* texture;
 		colorHDR color;
 		MaterialType type;
 	};
@@ -100,7 +103,7 @@ namespace raycore {
 		std::vector<Shape*> shapes;
 		std::vector<Node> nodes;
 		std::vector<Material> materials;
-		std::vector<Texture32> textures;
+		std::vector<Texture*> textures;
 		std::vector<Light> lights;
 
 		Primitive &addPrimitive();
@@ -109,7 +112,7 @@ namespace raycore {
 		Parallelogram &addParallelogram();
 		Node &addNode();
 		Material &addMaterial();
-		Texture32 &addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components);
+		Texture *addTexture(Texture * texture);
 		Light &addLight();
 
 		struct GLTF

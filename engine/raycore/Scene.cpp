@@ -22,6 +22,8 @@ namespace raycore {
 	{
 		for (Shape* shape : shapes)
 			delete shape;
+		for (Texture* texture : textures)
+			delete texture;
 	}
 	Primitive & Scene::addPrimitive()
 	{
@@ -56,9 +58,9 @@ namespace raycore {
 		materials.emplace_back();
 		return materials.back();
 	}
-	Texture32 & Scene::addTexture(const std::vector<unsigned char> &data, unsigned int width, unsigned int height, unsigned int components)
+	Texture * Scene::addTexture(Texture* texture)
 	{
-		textures.emplace_back(data, width, height, components);
+		textures.push_back(texture);
 		return textures.back();
 	}
 	Light & Scene::addLight()
@@ -88,7 +90,7 @@ namespace raycore {
 		{
 			tinygltf::Texture &tinyTex = tinyModel.textures[iTex];
 			tinygltf::Image &tinyImage = tinyModel.images[tinyTex.source];
-			Texture32 &newTex = scene.addTexture(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component);
+			Texture *newTex = scene.addTexture(new TextureMap32(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component));
 		}
 		// --- MATERIALS
 		scene.materials.reserve(tinyModel.materials.size());
@@ -118,7 +120,7 @@ namespace raycore {
 				auto itIndex = itTexture->second.json_double_value.find("index");
 				ASSERT(itIndex != itTexture->second.json_double_value.end(), "Index not defined");
 				const unsigned int index = static_cast<unsigned int>(itIndex->second);
-				newMat.texture = &scene.textures[index];
+				newMat.texture = scene.textures[index];
 			}
 		}
 		// --- MESHES

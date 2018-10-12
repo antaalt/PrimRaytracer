@@ -36,11 +36,12 @@ namespace raycore {
 		mat3.color = colorHDR(0.5f, 0.5f, 1.f, 1.f);
 		mat3.texture = nullptr;
 		mat3.type = MaterialType::DIFFUSE;
-
+		
+		Texture *texture = scene.addTexture(new Checker(colorHDR(0.f), colorHDR(1.f), 10, 10));
 		Material &mat4 = scene.addMaterial();
 		mat4.index = 3;
 		mat4.color = colorHDR(0.7f, 0.7f, 0.7f, 1.f);
-		mat4.texture = nullptr;
+		mat4.texture = texture;
 		mat4.type = MaterialType::DIFFUSE;
 
 		// spheres

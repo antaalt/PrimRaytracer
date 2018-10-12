@@ -137,9 +137,12 @@
   <ItemGroup>
     <ClInclude Include="Accelerator.h" />
     <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="BSDF.h" />
     <ClInclude Include="BVH.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Checker.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="ConstantTexture.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Location.h" />
@@ -164,6 +167,7 @@
     <ClInclude Include="SceneBuilder.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureMap.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Tracer.h" />
     <ClInclude Include="Triangle.h" />
@@ -179,9 +183,12 @@
   <ItemGroup>
     <ClCompile Include="Accelerator.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="BSDF.cpp" />
     <ClCompile Include="BVH.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Checker.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="ConstantTexture.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="NoAccel.cpp" />
@@ -196,7 +203,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneBuilder.cpp" />
     <ClCompile Include="Sphere.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureMap.cpp" />
     <ClCompile Include="Tracer.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Utils\Timer.cpp" />

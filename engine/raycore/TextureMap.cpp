@@ -1,11 +1,10 @@
-#include "Texture.h"
-#include "Config.h"
-#include "Mathematic.h"
+#include "TextureMap.h"
+
 
 namespace raycore {
 
 	template <typename T>
-	TTexture<T>::TTexture(const std::vector<T> &bytes, unsigned int width, unsigned int height, unsigned int components) :
+	TTextureMap<T>::TTextureMap(const std::vector<T> &bytes, unsigned int width, unsigned int height, unsigned int components) :
 		width(width),
 		height(height),
 		components(components),
@@ -14,7 +13,7 @@ namespace raycore {
 	}
 
 	template <typename T>
-	colorHDR TTexture<T>::texture2D(float u, float v)
+	colorHDR TTextureMap<T>::texture2D(float u, float v) const
 	{
 		float ui = u * this->width;
 		float vi = v * this->height;
@@ -51,19 +50,25 @@ namespace raycore {
 	}
 
 	template <typename T>
-	unsigned int TTexture<T>::stride()
+	unsigned int TTextureMap<T>::stride() const
 	{
 		return sizeof(float) * this->components;
 	}
 
 	template <typename T>
-	colorHDR TTexture<T>::at(unsigned int x, unsigned int y)
+	colorHDR TTextureMap<T>::at(unsigned int x, unsigned int y) const
 	{
 		return colorHDR(0.f);
 	}
-	
+
+	template<typename T>
+	Texture * TTextureMap<T>::clone() const
+	{
+		return new TTextureMap<T>(*this);
+	}
+
 	template <>
-	colorHDR TTexture<float>::at(unsigned int x, unsigned int y)
+	colorHDR TTextureMap<float>::at(unsigned int x, unsigned int y) const
 	{
 #if defined(TEXTURE_REPEAT)
 		x = x % this->width;
@@ -82,7 +87,7 @@ namespace raycore {
 	}
 
 	template <>
-	colorHDR TTexture<unsigned char>::at(unsigned int x, unsigned int y)
+	colorHDR TTextureMap<unsigned char>::at(unsigned int x, unsigned int y) const
 	{
 #if defined(TEXTURE_REPEAT)
 		x = x % this->width;
@@ -100,7 +105,7 @@ namespace raycore {
 		));
 	}
 
-	template struct TTexture<float>;
-	template struct TTexture<unsigned char>;
+	template struct TTextureMap<float>;
+	template struct TTextureMap<unsigned char>;
 
 }

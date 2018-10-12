@@ -17,39 +17,28 @@ namespace raycore {
 		vec3 sampleUnitSphere(float r1, float r2);
 		vec3 sampleMicroFacet(float roughness, float r1, float r2);
 
-		enum BxDFType {
-			BSDF_REFLECTION,
-			BSDF_DIFFUSE,
-			BSDF_SPECULAR,
-			BSDF_TRANSMISSION,
-			BSDF_GLOSSY,
-			NB_BSDF
-		};
-
 		enum TextureType {
 			COLOR_TEXTURE,
 			NORMAL_TEXTURE,
 			BUMP_TEXTURE,
+			ROUGHNESS_TEXTURE,
+			EMISSION_TEXTURE,
 			NB_TEXTURES_TYPE
 		};
 
 		class Material
 		{
 		public:
-			Material() {}
-
-			//virtual tracer::Ray scatter(const tracer::Ray &in, const prim::HitInfo &intersection, float &pdf) const = 0;
 			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const = 0;
-
 		protected:
 			virtual float pdf(const vec3 &wi, const vec3 &wo, const prim::HitInfo &info) const = 0;
 			virtual colorHDR brdf(float u, float v) const = 0;
-			Texture32 *texture[NB_TEXTURES_TYPE];
+			Texture *texture[NB_TEXTURES_TYPE];
 		};
 
 		class Diffuse : public Material {
 		public:
-			Diffuse(Texture32 *colorTexture, colorHDR color) : color(color) { texture[COLOR_TEXTURE] = colorTexture; }
+			Diffuse(Texture *colorTexture) { texture[COLOR_TEXTURE] = colorTexture; }
 
 			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const
 			{
@@ -69,18 +58,14 @@ namespace raycore {
 			virtual colorHDR brdf(float u, float v) const
 			{
 				if (texture[COLOR_TEXTURE] != nullptr)
-					return (color * texture[COLOR_TEXTURE]->texture2D(u, v)) / M_PIf;
-				else
-					return color / M_PIf;
+					return texture[COLOR_TEXTURE]->texture2D(u, v) / M_PIf;
+				return colorHDR(0.f);
 			}
-		private:
-			colorHDR color;
 		};
 
 		class Metal : public Material {
 		public:
-			Metal(Texture32 *colorTexture, float roughness) : roughness(roughness)  { texture[COLOR_TEXTURE] = colorTexture; }
-			Metal(colorHDR color, float roughness) : color(color), roughness(roughness) { texture[COLOR_TEXTURE] = nullptr; }
+			Metal(Texture *colorTexture, float roughness) : roughness(roughness)  { texture[COLOR_TEXTURE] = colorTexture; }
 
 			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const
 			{
@@ -108,19 +93,17 @@ namespace raycore {
 			virtual colorHDR brdf(float u, float v) const
 			{
 				if (texture[COLOR_TEXTURE] != nullptr)
-					return (color * texture[COLOR_TEXTURE]->texture2D(u, v)) / M_PIf;
-				else
-					return color / M_PIf;
+					return texture[COLOR_TEXTURE]->texture2D(u, v) / M_PIf;
+				return colorHDR(0.f);
 			}
 		private:
-			colorHDR color;
 			float roughness;
 		};
 
 
 		class Specular : public Material {
 		public:
-			Specular(Texture32 *colorTexture, colorHDR color) : color(color) { texture[COLOR_TEXTURE] = colorTexture; }
+			Specular(Texture *colorTexture) { texture[COLOR_TEXTURE] = colorTexture; }
 
 			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf) const
 			{
@@ -136,12 +119,9 @@ namespace raycore {
 			virtual colorHDR brdf(float u, float v) const
 			{
 				if (texture[COLOR_TEXTURE] != nullptr)
-					return (color * texture[COLOR_TEXTURE]->texture2D(u, v)) / M_PIf;
-				else
-					return color;
+					return texture[COLOR_TEXTURE]->texture2D(u, v) / M_PIf;
+				return colorHDR(0.f);
 			}
-		private:
-			colorHDR color;
 		};
 
 		/*class Dielectric : public Material {

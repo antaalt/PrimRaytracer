@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Types.h"
+#include "Mathematic.h"
 
 #define BILINEAR_FILTER_TEXTURE
 #define TEXTURE_REPEAT
@@ -17,19 +18,20 @@ namespace raycore {
 		);
 	}
 
-	template <typename T>
-	struct TTexture {
-		TTexture(const std::vector<T> &data, unsigned int width, unsigned int height, unsigned int components);
-		colorHDR texture2D(float u, float v);
-		unsigned int stride();
+	inline color32 hdr2ldr(const colorHDR &c)
+	{
+		return color32(
+			static_cast<unsigned char>(clamp(powf(c.x, 1 / 2.2f) * 255.f, 0.f, 255.f)),
+			static_cast<unsigned char>(clamp(powf(c.y, 1 / 2.2f) * 255.f, 0.f, 255.f)),
+			static_cast<unsigned char>(clamp(powf(c.z, 1 / 2.2f) * 255.f, 0.f, 255.f)),
+			static_cast<unsigned char>(clamp(c.w * 255.f, 0.f, 255.f))
+		);
+	}
 
-		colorHDR at(unsigned int x, unsigned int y);
-	private:
-		std::vector<T> data;
-		unsigned int width, height;
-		unsigned int components;
+	class Texture
+	{
+	public:
+		virtual colorHDR texture2D(float u = 0.f, float v = 0.f) const = 0;
+		virtual Texture* clone() const = 0;
 	};
-
-	using Texture = TTexture<float>;
-	using Texture32 = TTexture<unsigned char>;
 }
