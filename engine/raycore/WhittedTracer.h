@@ -10,7 +10,7 @@ namespace raycore {
 			WhittedTracer();
 			~WhittedTracer();
 
-			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = Config::maxDepth) const;
+			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = RAY_DEFAULT_DEPTH) const;
 
 		private:
 			virtual bool trace(const Ray &ray, const Accelerator* accelerator, prim::HitInfo & info) const;

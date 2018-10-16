@@ -7,7 +7,7 @@
 #include "WhittedTracer.h"
 #include "PinholeCamera.h"
 #include "stb_image_write.h"
-
+#include "Mathematic.h"
 
 namespace app {
 
@@ -103,8 +103,15 @@ namespace app {
 	bool Application::save(std::string path)
 	{
 		const float* data = this->m_renderer->image().data()->data;
+		std::vector<unsigned char> output(m_width * m_height * 3);
+		for (unsigned int y = 0; y < m_height; y++)
+			for (unsigned int x = 0; x < m_width; x++)
+				for (unsigned int i = 0; i < 3; i++)
+					output[y * m_width * 3 + x * 3 + i] = static_cast<unsigned char>(raycore::clamp(data[y * m_width * 4 + x * 4 + i], 0.f, 1.f) * 255.f);
+		stbi_flip_vertically_on_write(true);
+		int save = stbi_write_jpg(path.c_str(), m_width, m_height, 3, output.data(), 100);
 		Log::info("Render saved at '", path, "'");
-		return (stbi_write_hdr(path.c_str(), m_width, m_height, 4, data) == 0);
+		return save == 0;
 	}
 
 	void Application::resize(unsigned int width, unsigned int height)
@@ -128,12 +135,6 @@ namespace app {
 			glClearColor(1.f, 1.f, 1.f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			/*bool updated;
-			const GUISettings &gui = m_gui.settings(updated);
-			if (updated)
-			{
-				raycore::Config::maxDepth = gui.depth;
-			}*/
 			timer.tick();
 			bool update = m_renderer->updateRays();
 			Log::info("Ray updated : ", timer.elapsedTime<Utils::Timer::milliseconds>(), "ms");
@@ -157,13 +158,12 @@ namespace app {
 			// Free the processor
 			SDL_Delay(0);
 		}
+		save("output.jpg");
 		m_camera = nullptr; // Application do not own the pointer
 	}
 
 	bool Application::inputs(const Inputs &inputs)
 	{
-		/*if(inputs.resized)
-			resize()*/
 		if (m_camera == nullptr)
 			return true;
 		const float scaleFactor = 0.01f;

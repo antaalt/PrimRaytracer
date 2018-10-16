@@ -12,15 +12,17 @@ namespace raycore {
 	namespace prim {
 
 		class Material;
-		struct Intersection;
 
 		struct HitInfo {
+			vec3 direction;
 			point3 point;
 			norm3 normal;
 			uv2 texcoord;
 			colorHDR color;
 			Material *material;
 		};
+
+		struct Intersection;
 
 		class Hitable
 		{

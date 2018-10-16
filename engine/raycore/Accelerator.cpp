@@ -52,13 +52,13 @@ namespace raycore {
 				switch (material.type)
 				{
 				case MaterialType::DIFFUSE:
-					newMaterial = new prim::Diffuse(tex);
+					newMaterial = new prim::Matte(tex);
 					break;
 				case MaterialType::SPECULAR:
-					newMaterial = new prim::Diffuse(tex); //new prim::Specular();
+					newMaterial = new prim::Matte(tex); //new prim::Specular();
 					break;
 				case MaterialType::DIELECTRIC:
-					newMaterial = new prim::Diffuse(tex); //new prim::Dielectric(1.5f);
+					newMaterial = new prim::Glass(tex, 1.1f);
 					break;
 				case MaterialType::METAL:
 					newMaterial = new prim::Metal(tex, 0.1f);
@@ -126,7 +126,7 @@ namespace raycore {
 				{
 					const Sphere *sphere = reinterpret_cast<const Sphere*>(shape);
 					const mat4 transform = node.getModel();
-					prim::Sphere* newSphere = new prim::Sphere(sphere->center, sphere->radius);
+					prim::Sphere* newSphere = new prim::Sphere(sphere->center, sphere->radius, sphere->up);
 					newSphere->material = this->materials[sphere->material->index];
 					this->hitables.push_back(newSphere);
 					bbox.include(newSphere->computeBoundingBox());

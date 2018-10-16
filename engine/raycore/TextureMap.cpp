@@ -105,7 +105,7 @@ namespace raycore {
 		));
 	}
 
-	template struct TTextureMap<float>;
-	template struct TTextureMap<unsigned char>;
+	template class TTextureMap<float>;
+	template class TTextureMap<unsigned char>;
 
 }

@@ -8,7 +8,7 @@ namespace raycore {
 		class PinholeCamera : public Camera
 		{
 		public:
-			PinholeCamera();
+			PinholeCamera(float aperture, float focalDist);
 			~PinholeCamera();
 
 			virtual Ray generateRay(RayIndex x, RayIndex y) const;
@@ -17,6 +17,7 @@ namespace raycore {
 
 		private:
 			vec3 u, v, w, eye;
+			float aperture, focalDist;
 		};
 	}
 }

@@ -10,16 +10,16 @@ namespace raycore {
 			Onb(const norm3 &n)
 			{
 				normal = n;
-				if (std::fabs(n.x) > std::fabs(n.z))
-					binormal = vec3::normalize(vec3(-n.y, n.x, 0.f));
+				if (std::fabs(n.x) > std::fabs(n.y))
+					tangent = vec3::normalize(vec3(n.z, 0, -n.x));
 				else
-					binormal = vec3::normalize(vec3(0, -n.z, n.y));
-				tangent = vec3::cross(binormal, normal);
+					tangent = vec3::normalize(vec3(0, -n.z, n.y));
+				binormal = vec3::cross(n, tangent);
 			}
 
-			inline vec3 transform(const norm3 &n)
+			vec3 operator()(const norm3 &n)
 			{
-				return n.x * tangent + n.y * binormal + n.z * normal;
+				return n.x * binormal + n.y * normal + n.z * tangent;
 			}
 		private:
 			vec3 normal;

@@ -40,6 +40,7 @@ namespace raycore {
 		HitInfo Parallelogram::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
 		{
 			HitInfo info;
+			info.direction = ray.direction;
 			info.point = ray.origin + ray.direction * intersection.getDistance();
 			info.normal = this->normal;
 			info.texcoord = uv2(); // TODO compute texcoord

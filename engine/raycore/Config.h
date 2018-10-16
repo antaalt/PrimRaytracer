@@ -15,6 +15,7 @@
 #endif
 #define M_PIf				3.14159265358979323846f
 #define DEFAULT_FOV			60.f
+#define RAY_DEFAULT_DEPTH		10
 
 #ifdef NDEBUG
 #define ASSERT(condition, message)

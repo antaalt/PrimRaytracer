@@ -6,6 +6,9 @@
 #include "TextureMap.h"
 #include "ConstantTexture.h"
 #include "Checker.h"
+#include "Matte.h"
+#include "Metal.h"
+#include "Glass.h"
 
 namespace raycore {
 
@@ -69,6 +72,7 @@ namespace raycore {
 	struct Sphere : public Shape {
 		float radius;
 		point3 center;
+		vec3 up;
 		Material* material;
 		virtual ShapeType type() const;
 	};

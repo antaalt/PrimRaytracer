@@ -7,13 +7,13 @@
 
 int main(int argc, char *argv[])
 {
-	unsigned int width = 480;
-	unsigned int height = 360;
+	unsigned int width = 800;
+	unsigned int height = 600;
 	app::Application application(width, height);
 	// Set options
 	app::options options;
 	options.tracer = new raycore::tracer::PathTracer();
-	options.camera = new raycore::tracer::PinholeCamera();
+	options.camera = new raycore::tracer::PinholeCamera(0.f, 0.f);
 	/*options.camera->lookAt(point3(
 		1.f,
 		1.f,

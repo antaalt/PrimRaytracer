@@ -1,5 +1,5 @@
 #include "Sphere.h"
-
+#include "Onb.h"
 
 namespace raycore {
 	namespace prim {
@@ -8,10 +8,9 @@ namespace raycore {
 		{
 		}
 
-		Sphere::Sphere(const point3 & center, float radius) : m_center(center), m_radius(radius)
+		Sphere::Sphere(const point3 & center, float radius, const vec3 up) : center(center), radius(radius), up(up)
 		{
 		}
-
 
 		Sphere::~Sphere()
 		{
@@ -19,9 +18,9 @@ namespace raycore {
 
 		bool Sphere::intersect(const tracer::Ray & ray, Intersection & intersection) const
 		{
-			vec3 eyeDirection = m_center - ray.origin;
+			vec3 eyeDirection = this->center - ray.origin;
 			float b = vec3::dot(eyeDirection, ray.direction); // a is always 1 because dot of same normalized vector
-			float det = b * b - vec3::dot(eyeDirection, eyeDirection) + m_radius * m_radius;
+			float det = b * b - vec3::dot(eyeDirection, eyeDirection) + this->radius * this->radius;
 			if (det < 0)
 				return false;
 			else
@@ -40,11 +39,14 @@ namespace raycore {
 		HitInfo Sphere::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
 		{
 			HitInfo info;
+			info.direction = ray.direction;
 			info.point = ray.origin + ray.direction * intersection.getDistance();
-			info.normal = vec3::normalize(info.point - m_center);
+			info.normal = vec3::normalize(info.point - this->center);
 			// https://en.wikipedia.org/wiki/UV_mraycoreing
-			float u = 0.5f + atan2(-info.normal.z, -info.normal.x) / (2.f * M_PIf);
-			float v = 0.5f - asin(-info.normal.y) / M_PIf;
+			transform::Onb onb(this->up);
+			norm3 n = onb(info.normal);
+			float u = 0.5f + atan2(-n.z, -n.x) / (2.f * M_PIf);
+			float v = 0.5f - asin(-n.y) / M_PIf;
 			info.texcoord = uv2(u, v);
 			info.color = colorHDR(1.f);
 			info.material = material;
@@ -54,8 +56,8 @@ namespace raycore {
 		BoundingBox Sphere::computeBoundingBox() const
 		{
 			BoundingBox bbox;
-			bbox.min = m_center - vec3(m_radius);
-			bbox.max = m_center + vec3(m_radius);
+			bbox.min = this->center - vec3(this->radius);
+			bbox.max = this->center + vec3(this->radius);
 			return bbox;
 		}
 

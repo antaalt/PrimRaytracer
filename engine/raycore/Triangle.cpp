@@ -120,6 +120,7 @@ namespace raycore {
 		HitInfo Triangle::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
 		{
 			HitInfo info;
+			info.direction = ray.direction;
 			info.point = ray.origin + ray.direction * intersection.getDistance();
 			float u = intersection.getU();
 			float v = intersection.getV();

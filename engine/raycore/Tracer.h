@@ -14,7 +14,7 @@ namespace raycore {
 		class Tracer
 		{
 		public:
-			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = Config::maxDepth) const = 0;
+			virtual colorHDR castRay(const Ray &ray, const Accelerator* accelerator, unsigned int depth = RAY_DEFAULT_DEPTH) const = 0;
 			virtual void postProcess() {};
 			virtual void reset() {};
 

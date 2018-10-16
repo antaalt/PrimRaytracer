@@ -6,7 +6,7 @@ namespace raycore {
 
 	namespace tracer {
 		
-		PinholeCamera::PinholeCamera() : Camera()
+		PinholeCamera::PinholeCamera(float aperture, float focalDist) : Camera(), aperture(aperture), focalDist(focalDist)
 		{
 		}
 
@@ -33,6 +33,7 @@ namespace raycore {
 			v = convert::toVec3(m_transform[1]);
 			w = convert::toVec3(m_transform[2]);
 			eye = convert::toVec3(m_transform[3]);
+
 			m_changed = false;
 			return true;
 		}

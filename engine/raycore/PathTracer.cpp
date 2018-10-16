@@ -42,17 +42,25 @@ namespace raycore {
 			// Scatter ray
 			float pdf;
 			vec3 wo;
-			colorHDR brdf = info.material->sample(ray, info, wo, pdf);
+			prim::BSDFType type;
+			colorHDR brdf = info.material->sample(ray, info, wo, pdf, type) * info.color;
 			colorHDR reflectance = brdf * vec3::dot(wo, info.normal) / pdf;
 
 			// Sample light (depending on type)
-			colorHDR lightRadiance = reflectance * sampleLights(info, accelerator);
+			colorHDR lightRadiance(0.f);
+			if (!(type & prim::BSDF_SPECULAR))
+			{
+				lightRadiance = reflectance * sampleLights(info, accelerator);
+			}
 
 			// Russian roulette
-			float probability = max(reflectance.x, max(reflectance.y, reflectance.z));
-			if (probability < rand::rnd())
-				return colorHDR(0.f);
-			reflectance = reflectance / probability;
+			if (depth < (RAY_DEFAULT_DEPTH / 2))
+			{
+				float probability = max(reflectance.x, max(reflectance.y, reflectance.z));
+				if (probability < rand::rnd())
+					return colorHDR(0.f);
+				reflectance = reflectance / probability;
+			}
 
 			return lightRadiance + reflectance * castRay(Ray(info.point, wo), accelerator, depth - 1);
 		}
@@ -63,7 +71,7 @@ namespace raycore {
 		}
 		colorHDR PathTracer::miss(const Ray & ray) const
 		{
-			return colorHDR(1.f);
+			return colorHDR(0.9f);
 		}
 	}
 }

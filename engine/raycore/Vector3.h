@@ -43,6 +43,7 @@ namespace Math {
 
 		// Functions
 		float length() const;
+		bool isZero() const;
 			
 		static T dot(const Vector3<T> &lhs, const Vector3<T> &rhs);
 		static Vector3<T> cross(const Vector3<T> &lhs, const Vector3<T> &rhs);
@@ -106,6 +107,12 @@ namespace Math {
 	inline float Vector3<T>::length() const
 	{
 		return std::sqrtf(x*x + y*y + z*z);
+	}
+
+	template<typename T>
+	inline bool Vector3<T>::isZero() const
+	{
+		return x == 0.f && y == 0.f && z == 0.f;
 	}
 
 	template<typename T>

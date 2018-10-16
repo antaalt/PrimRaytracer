@@ -7,7 +7,7 @@ namespace raycore {
 		{
 		public:
 			Sphere();
-			Sphere(const point3 &center, float radius);
+			Sphere(const point3 &center, float radius, const vec3 up = vec3(0.f, 1.f, 0.f));
 			~Sphere();
 
 			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const;
@@ -15,8 +15,9 @@ namespace raycore {
 			virtual BoundingBox computeBoundingBox() const;
 
 		protected:
-			float m_radius;
-			point3 m_center;
+			float radius;
+			point3 center;
+			vec3 up;
 		};
 	}
 }

@@ -21,9 +21,9 @@ namespace raycore {
 		// materials
 		Material &mat1 = scene.addMaterial();
 		mat1.index = 0;
-		mat1.color = colorHDR(0.82f, 0.62f, 0.19f, 1.f);
+		mat1.color = colorHDR(0.9f);
 		mat1.texture = nullptr;
-		mat1.type = MaterialType::METAL;
+		mat1.type = MaterialType::DIELECTRIC;
 
 		Material &mat2 = scene.addMaterial();
 		mat2.index = 1;
@@ -33,11 +33,11 @@ namespace raycore {
 
 		Material &mat3 = scene.addMaterial();
 		mat3.index = 2;
-		mat3.color = colorHDR(0.5f, 0.5f, 1.f, 1.f);
+		mat3.color = colorHDR(0.82f, 0.62f, 0.19f, 1.f);
 		mat3.texture = nullptr;
-		mat3.type = MaterialType::DIFFUSE;
+		mat3.type = MaterialType::METAL;
 		
-		Texture *texture = scene.addTexture(new Checker(colorHDR(0.f), colorHDR(1.f), 10, 10));
+		Texture *texture = scene.addTexture(new Checker(colorHDR(0.1f), colorHDR(1.f), 40, 40));
 		Material &mat4 = scene.addMaterial();
 		mat4.index = 3;
 		mat4.color = colorHDR(0.7f, 0.7f, 0.7f, 1.f);
@@ -48,21 +48,25 @@ namespace raycore {
 		Sphere &sphere1 = scene.addSphere();
 		sphere1.center = point3(0.f);
 		sphere1.radius = 0.4f;
+		sphere1.up = vec3(0.f, 1.f, 0.f);
 		sphere1.material = &mat1;
 
 		Sphere &sphere2 = scene.addSphere();
 		sphere2.center = point3(0.f, 0.1f, -1.0f);
-		sphere2.radius = 0.6f;
+		sphere2.radius = 0.5f;
+		sphere2.up = vec3(0.f, 1.f, 0.f);
 		sphere2.material = &mat2;
 
 		Sphere &sphere3 = scene.addSphere();
 		sphere3.center = point3(1.5f, 0.2f, -0.5f);
 		sphere3.radius = 0.7f;
+		sphere3.up = vec3(0.f, 1.f, 0.f);
 		sphere3.material = &mat3;
 
 		Sphere &sphere4 = scene.addSphere();
 		sphere4.center = point3(0.f, -30.f, 0.f);
 		sphere4.radius = 29.f;
+		sphere4.up = vec3(1.f, 0.f, 0.f);
 		sphere4.material = &mat4;
 
 		// nodes
