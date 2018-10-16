@@ -6,7 +6,7 @@ namespace raycore {
 
 		class Matte : public Material {
 		public:
-			Matte(Texture *color);
+			Matte(Texture<colorHDR> *color);
 			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf, BSDFType &type) const;
 		};
 	}

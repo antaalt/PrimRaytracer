@@ -2,13 +2,14 @@
 #include "Texture.h"
 
 namespace raycore {
-	class ConstantTexture : public Texture {
+	template <typename T>
+	class ConstantTexture : public Texture<T> {
 	public:
-		ConstantTexture(colorHDR albedo);
-		virtual colorHDR texture2D(float u = 0.f, float v = 0.f) const;
+		ConstantTexture(T albedo);
+		virtual T evaluate(const uv2 &uv = uv2(0.f)) const;
 		virtual Texture* clone() const;
 	private:
-		colorHDR albedo;
+		T albedo;
 	};
 }
 

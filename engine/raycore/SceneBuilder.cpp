@@ -14,9 +14,10 @@ namespace raycore {
 	}
 	bool SceneBuilder::buildCustomScene(Scene &scene)
 	{
-		scene.materials.reserve(4);
-		scene.shapes.reserve(4);
-		scene.nodes.reserve(4);
+		scene.textures.reserve(2);
+		scene.materials.reserve(5);
+		scene.shapes.reserve(5);
+		scene.nodes.reserve(5);
 
 		// materials
 		Material &mat1 = scene.addMaterial();
@@ -37,12 +38,19 @@ namespace raycore {
 		mat3.texture = nullptr;
 		mat3.type = MaterialType::METAL;
 		
-		Texture *texture = scene.addTexture(new Checker(colorHDR(0.1f), colorHDR(1.f), 40, 40));
+		Texture<colorHDR> *texture1 = scene.addTexture(new Checker<colorHDR>(colorHDR(0.1f), colorHDR(1.f), 40, 40));
 		Material &mat4 = scene.addMaterial();
 		mat4.index = 3;
 		mat4.color = colorHDR(0.7f, 0.7f, 0.7f, 1.f);
-		mat4.texture = texture;
+		mat4.texture = texture1;
 		mat4.type = MaterialType::DIFFUSE;
+
+		Texture<colorHDR> *texture2 = scene.addTexture(new Checker<colorHDR>(colorHDR(0.5f, 0.5f, 1.f, 1.f), colorHDR(1.f, 0.5f, 0.5f, 1.f), 1, 1));
+		Material &mat5 = scene.addMaterial();
+		mat5.index = 4;
+		mat5.color = colorHDR(0.5f, 0.8f, 0.3f, 1.f);
+		mat5.texture = texture2;
+		mat5.type = MaterialType::DIFFUSE;
 
 		// spheres
 		Sphere &sphere1 = scene.addSphere();
@@ -69,6 +77,12 @@ namespace raycore {
 		sphere4.up = vec3(1.f, 0.f, 0.f);
 		sphere4.material = &mat4;
 
+		Sphere &sphere5 = scene.addSphere();
+		sphere5.center = point3(-1.5f, 0.2f, 0.f);
+		sphere5.radius = 0.6f;
+		sphere5.up = vec3::normalize(vec3(1.f));
+		sphere5.material = &mat5;
+
 		// nodes
 		Node &node1 = scene.addNode();
 		node1.shape = &sphere1;
@@ -85,6 +99,10 @@ namespace raycore {
 		Node &node4 = scene.addNode();
 		node4.shape = &sphere4;
 		node4.transform = mat4::identity();
+
+		Node &node5 = scene.addNode();
+		node5.shape = &sphere5;
+		node5.transform = mat4::identity();
 
 		return true;
 	}

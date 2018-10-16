@@ -22,19 +22,10 @@ namespace raycore {
 		);
 	}
 
-	inline float lerp(float a, float b, float t)
+	template <typename T>
+	inline T lerp(T a, T b, T t)
 	{
 		return a + (b - a) * t;
-	}
-	template <typename T>
-	inline Math::Vector4<T> lerp(const Math::Vector4<T> &a, const Math::Vector4<T> &b, float t)
-	{
-		return Math::Vector4<T>(
-			lerp(a.x, b.x, t),
-			lerp(a.y, b.y, t),
-			lerp(a.z, b.z, t),
-			lerp(a.w, b.w, t)
-		);
 	}
 	template <typename T>
 	inline T max(T a, T b)

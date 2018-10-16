@@ -29,16 +29,16 @@ namespace raycore {
 		bool Accelerator::build(const Scene & scene)
 		{ 
 			// TODO move default build to accelerator constructor and call it from here
-			std::map<const Texture*, Texture*> mapTexture;
+			std::map<const Texture<colorHDR>*, Texture<colorHDR>*> mapTexture;
 			//std::map<unsigned int, const prim::Material*> mapMaterials; // TODO implement map
 
 			// --- Textures
 			this->textures.reserve(scene.textures.size());
 			for (size_t iTex = 0; iTex < scene.textures.size(); iTex++)
 			{
-				const Texture *texture = scene.textures[iTex];
+				const Texture<colorHDR> *texture = scene.textures[iTex];
 				this->textures.push_back(texture->clone()); // TODO clone to prevent empty node deleted by scene
-				Texture *tex = this->textures.back();
+				Texture<colorHDR> *tex = this->textures.back();
 				mapTexture.insert(std::make_pair(texture, tex));
 			}
 			// --- Materials
@@ -48,7 +48,7 @@ namespace raycore {
 				const Material &material = scene.materials[iMat];
 				prim::Material* newMaterial;
 				auto it = mapTexture.find(material.texture);
-				Texture *tex = (it == mapTexture.end() ? new ConstantTexture(material.color) : it->second);
+				Texture<colorHDR> *tex = (it == mapTexture.end() ? new ConstantTexture<colorHDR>(material.color) : it->second);
 				switch (material.type)
 				{
 				case MaterialType::DIFFUSE:
@@ -61,7 +61,7 @@ namespace raycore {
 					newMaterial = new prim::Glass(tex, 1.1f);
 					break;
 				case MaterialType::METAL:
-					newMaterial = new prim::Metal(tex, 0.1f);
+					newMaterial = new prim::Metal(tex, new ConstantTexture<float>(0.1f));
 					break;
 				default:
 					return false;

@@ -222,6 +222,9 @@
     <ClInclude Include="Glass.h">
       <Filter>Header Files\Materials</Filter>
     </ClInclude>
+    <ClInclude Include="Fresnel.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">

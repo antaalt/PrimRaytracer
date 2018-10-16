@@ -22,7 +22,7 @@ namespace raycore {
 	{
 		for (Shape* shape : shapes)
 			delete shape;
-		for (Texture* texture : textures)
+		for (Texture<colorHDR>* texture : textures)
 			delete texture;
 	}
 	Primitive & Scene::addPrimitive()
@@ -58,7 +58,7 @@ namespace raycore {
 		materials.emplace_back();
 		return materials.back();
 	}
-	Texture * Scene::addTexture(Texture* texture)
+	Texture<colorHDR> * Scene::addTexture(Texture<colorHDR>* texture)
 	{
 		textures.push_back(texture);
 		return textures.back();
@@ -90,7 +90,7 @@ namespace raycore {
 		{
 			tinygltf::Texture &tinyTex = tinyModel.textures[iTex];
 			tinygltf::Image &tinyImage = tinyModel.images[tinyTex.source];
-			Texture *newTex = scene.addTexture(new TextureMap32(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component));
+			Texture<colorHDR> *newTex = scene.addTexture(new TextureMap32(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component));
 		}
 		// --- MATERIALS
 		scene.materials.reserve(tinyModel.materials.size());

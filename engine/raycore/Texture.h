@@ -28,10 +28,11 @@ namespace raycore {
 		);
 	}
 
+	template <typename T>
 	class Texture
 	{
 	public:
-		virtual colorHDR texture2D(float u = 0.f, float v = 0.f) const = 0;
+		virtual T evaluate(const uv2 &uv = uv2(0.f)) const = 0;
 		virtual Texture* clone() const = 0;
 	};
 }

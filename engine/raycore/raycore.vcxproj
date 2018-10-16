@@ -143,6 +143,7 @@
     <ClInclude Include="Checker.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConstantTexture.h" />
+    <ClInclude Include="Fresnel.h" />
     <ClInclude Include="Glass.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Light.h" />

@@ -36,7 +36,7 @@ namespace raycore {
 			prim::BoundingBox bbox;						// Bounding box of the whole acceleration structure
 			std::vector<prim::Hitable*> hitables;		// Hitable inside the acceleration structure
 			std::vector<prim::Material*> materials;		// materials of the hitables
-			std::vector<Texture*> textures;				// Textures of the hitables
+			std::vector<Texture<colorHDR>*> textures;	// Textures of the hitables
 			std::vector<Light*> lights;					// Lights of the scene
 			size_t hitableCount;
 		};

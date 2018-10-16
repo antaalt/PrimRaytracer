@@ -22,7 +22,7 @@ namespace raycore {
 
 	struct Material {
 		unsigned int index;
-		Texture* texture;
+		Texture<colorHDR>* texture;
 		colorHDR color;
 		MaterialType type;
 	};
@@ -107,7 +107,7 @@ namespace raycore {
 		std::vector<Shape*> shapes;
 		std::vector<Node> nodes;
 		std::vector<Material> materials;
-		std::vector<Texture*> textures;
+		std::vector<Texture<colorHDR>*> textures;
 		std::vector<Light> lights;
 
 		Primitive &addPrimitive();
@@ -116,7 +116,7 @@ namespace raycore {
 		Parallelogram &addParallelogram();
 		Node &addNode();
 		Material &addMaterial();
-		Texture *addTexture(Texture * texture);
+		Texture<colorHDR> *addTexture(Texture<colorHDR> * texture);
 		Light &addLight();
 
 		struct GLTF

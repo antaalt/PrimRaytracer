@@ -34,10 +34,10 @@ namespace raycore {
 		class Material
 		{
 		public:
-			Material(Texture *color, BSDFType type) : type(type) { texture[COLOR_TEXTURE] = color; }
+			Material(Texture<colorHDR> *color, BSDFType type) : type(type), colorTexture(color) {}
 			virtual colorHDR sample(const tracer::Ray &in, const prim::HitInfo &info, vec3 &wo, float &pdf, BSDFType &type) const = 0;
 		protected:
-			Texture *texture[NB_TEXTURES_TYPE];
+			Texture<colorHDR> *colorTexture;
 			BSDFType type;
 		};
 	}
