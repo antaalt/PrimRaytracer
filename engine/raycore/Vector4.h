@@ -13,8 +13,8 @@ namespace Math {
 			};
 		};
 		Vector4();
-		Vector4(T x);
-		Vector4(T* data);
+		explicit Vector4(T x);
+		explicit Vector4(T* data);
 		Vector4(T x, T y, T z, T w);
 		T &operator[](unsigned int index) { return data[index]; }
 		const T &operator[](unsigned int index) const { return data[index]; }

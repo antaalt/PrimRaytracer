@@ -94,16 +94,15 @@ namespace raycore {
 					}
 					for (size_t iPrim = 0; iPrim < mesh->primitives.size(); iPrim++)
 					{
-						const Primitive *prim = mesh->primitives[iPrim];
-						ASSERT(prim != nullptr, "primitive should not be null");
-						ASSERT(prim->material != nullptr, "material should not be null");
-						for (size_t iTri = 0; iTri < prim->triangles.size(); iTri++)
+						const Primitive &prim = mesh->primitives[iPrim];
+						ASSERT(prim.material != nullptr, "material should not be null");
+						for (size_t iTri = 0; iTri < prim.triangles.size(); iTri++)
 						{
-							const Triangle &tri = prim->triangles[iTri];
+							const Triangle &tri = prim.triangles[iTri];
 							prim::Vertex data[3];
 							for (unsigned int iVert = 0; iVert < 3; iVert++)
 							{
-								const Vertex &v = prim->vertices[tri.vertices[iVert]];
+								const Vertex &v = prim.vertices[tri.vertices[iVert]];
 								vec3 p = v.position;
 								norm3 n = v.normal;
 								p = transform * p;
@@ -116,7 +115,7 @@ namespace raycore {
 								data[triVert1],
 								data[triVert2]
 							);
-							newTri->material = this->materials[prim->material->index];
+							newTri->material = this->materials[prim.material->index];
 							this->hitables.push_back(newTri);
 						}
 					}

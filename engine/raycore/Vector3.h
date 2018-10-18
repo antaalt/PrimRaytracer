@@ -13,7 +13,7 @@ namespace Math {
 			};
 		};
 		Vector3();
-		Vector3(T x);
+		explicit Vector3(T x);
 		Vector3(T x, T y, T z);
 		template <typename U>
 		Vector3(U x, U y, U z);

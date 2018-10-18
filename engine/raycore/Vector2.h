@@ -13,7 +13,7 @@ namespace Math {
 			};
 		};
 		Vector2();
-		Vector2(T x);
+		explicit Vector2(T x);
 		Vector2(T x, T y);
 		template <typename U>
 		Vector2(U x, U y);

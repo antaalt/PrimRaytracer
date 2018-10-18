@@ -147,6 +147,7 @@
     <ClInclude Include="Glass.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Loader.h" />
     <ClInclude Include="Location.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mathematic.h" />
@@ -168,7 +169,6 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneBuilder.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMap.h" />
@@ -195,6 +195,7 @@
     <ClCompile Include="ConstantTexture.cpp" />
     <ClCompile Include="Glass.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Matte.cpp" />
     <ClCompile Include="Metal.cpp" />
     <ClCompile Include="NoAccel.cpp" />
@@ -207,7 +208,6 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneBuilder.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="TextureMap.cpp" />
     <ClCompile Include="Tracer.cpp" />

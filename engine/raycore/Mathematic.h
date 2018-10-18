@@ -23,7 +23,7 @@ namespace raycore {
 	}
 
 	template <typename T>
-	inline T lerp(T a, T b, T t)
+	inline T lerp(T a, T b, float t)
 	{
 		return a + (b - a) * t;
 	}

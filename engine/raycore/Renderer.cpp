@@ -7,7 +7,6 @@
 #include "NoAccel.h"
 #include "BVH.h"
 
-#include "SceneBuilder.h"
 #include "Mathematic.h"
 
 #include <ppl.h>

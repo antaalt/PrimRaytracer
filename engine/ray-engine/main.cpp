@@ -2,8 +2,7 @@
 #include "WhittedTracer.h"
 #include "PathTracer.h"
 #include "PinholeCamera.h"
-#include "SceneBuilder.h"
-#include "stb_image_write.h"
+#include "Loader.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,13 +33,13 @@ int main(int argc, char *argv[])
 	// Load Scene
 	Log::info("Loading scene");
 	raycore::Scene scene;
-	raycore::SceneBuilder::buildCustomScene(scene);
-	//raycore::Scene::GLTF::load("../data/models/milkTruck/CesiumMilkTruck.gltf", scene);
-	//raycore::Scene::GLTF::load("../data/models/lantern/Lantern.gltf", scene);
-	//raycore::Scene::GLTF::load("../data/models/duck/Duck.gltf", scene);
-	//raycore::Scene::GLTF::load("../data/models/box/box.gltf", scene);
-	//raycore::Scene::GLTF::load("../data/models/boxTextured/BoxTextured.gltf", scene);
-	//raycore::Scene::GLTF::load("../data/models/sponza/Sponza.gltf", scene);
+	raycore::builder::build(scene);
+	//raycore::GLTF::load("../data/models/milkTruck/CesiumMilkTruck.gltf", scene);
+	//raycore::GLTF::load("../data/models/lantern/Lantern.gltf", scene);
+	//raycore::GLTF::load("../data/models/duck/Duck.gltf", scene);
+	//raycore::GLTF::load("../data/models/box/box.gltf", scene);
+	//raycore::GLTF::load("../data/models/boxTextured/BoxTextured.gltf", scene);
+	//raycore::GLTF::load("../data/models/sponza/Sponza.gltf", scene);
 	raycore::Light l;
 	l.position = vec3(0.f, 20.f, 0.f);
 	scene.lights.push_back(l);

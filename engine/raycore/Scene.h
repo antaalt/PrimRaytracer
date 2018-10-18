@@ -77,7 +77,7 @@ namespace raycore {
 		virtual ShapeType type() const;
 	};
 	struct Mesh : public Shape {
-		std::vector<Primitive*> primitives;
+		std::vector<Primitive> primitives;
 		virtual ShapeType type() const;
 	};
 
@@ -103,14 +103,12 @@ namespace raycore {
 		Scene(const Scene& other) = delete;
 		Scene& operator=(const Scene &other) = delete;
 
-		std::vector<Primitive> primitives;
 		std::vector<Shape*> shapes;
 		std::vector<Node> nodes;
 		std::vector<Material> materials;
 		std::vector<Texture<colorHDR>*> textures;
 		std::vector<Light> lights;
 
-		Primitive &addPrimitive();
 		Mesh &addMesh();
 		Sphere &addSphere();
 		Parallelogram &addParallelogram();
@@ -118,12 +116,6 @@ namespace raycore {
 		Material &addMaterial();
 		Texture<colorHDR> *addTexture(Texture<colorHDR> * texture);
 		Light &addLight();
-
-		struct GLTF
-		{
-			static bool load(std::string path, Scene &scene);
-			static bool write(const Scene &scene);
-		};
 	};
 }
 
