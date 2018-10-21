@@ -10,6 +10,11 @@ namespace raycore {
 	}
 
 	namespace OBJ {
+		struct Face {
+			Triangle posID;
+			Triangle normID;
+			Triangle uvID;
+		};
 		bool load(std::string path, Mesh &scene);
 		bool write(std::string path, const Mesh &scene);
 	}

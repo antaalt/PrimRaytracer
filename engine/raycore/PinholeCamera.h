@@ -16,7 +16,8 @@ namespace raycore {
 			virtual bool computeTransform();
 
 		private:
-			vec3 u, v, w, eye;
+			norm3 u, v, w;
+			point3 eye;
 			float aperture, focalDist;
 		};
 	}

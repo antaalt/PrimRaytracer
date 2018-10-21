@@ -4,15 +4,15 @@
 namespace raycore {
 	vec3 reflect(const vec3 & incident, const norm3 & normal)
 	{
-		return incident - 2.f * vec3::dot(incident, normal) * normal;
+		return incident - 2.f * dot(incident, normal) * normal;
 	}
 	bool refract(vec3 &wt, const vec3 & wi, const norm3 & n, float eta)
 	{
-		float NdotV = vec3::dot(n, wi);
+		float NdotV = dot(wi, n);
 		float k = 1.f - eta * eta * (1.f - NdotV * NdotV);
 		if (k < 0.f)
 			return true;
-		wt = vec3::normalize(eta * wi - (eta*NdotV + sqrtf(k)) * n);
+		wt = normalize(eta * wi - (eta*NdotV + sqrtf(k)) * n);
 		return false;
 	}
 	vec3 sampleUnitSphere(float r1, float r2)

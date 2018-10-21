@@ -7,8 +7,6 @@
 #include "NoAccel.h"
 #include "BVH.h"
 
-#include "Mathematic.h"
-
 #include <ppl.h>
 
 
@@ -80,7 +78,7 @@ namespace raycore {
 			for (auto it = tiles.begin(); it != tiles.end(); it++)
 			{
 				Tile &tile = (*it);
-				uivec2 center = tile.min + tile.center();
+				index2D center = tile.min + tile.center();
 				Ray ray = this->camera->generateRay(
 					RayIndex(center.x, this->width, RaySampler::LINEAR),
 					RayIndex(center.y, this->height, RaySampler::LINEAR)
@@ -107,7 +105,7 @@ namespace raycore {
 				{
 					for (unsigned int x = tile.min.x; x < tile.max.x; x++)
 					{
-						Pixel p(0.f);
+						colorHDR p(0.f);
 						for (unsigned int sy = 0; sy < this->subSamplesY; sy++)
 						{
 							for (unsigned int sx = 0; sx < this->subSamplesX; sx++)
@@ -116,7 +114,7 @@ namespace raycore {
 									RayIndex(x * this->subSamplesX + sx, this->width * this->subSamplesX, this->raySamplerX),
 									RayIndex(y * this->subSamplesY + sy, this->height * this->subSamplesY, this->raySamplerY)
 								);
-								p = p + this->tracer->castRay(ray, this->accelerator, Config::maxDepth) * c;
+								p += this->tracer->castRay(ray, this->accelerator, Config::maxDepth) * c;
 							}
 						}
 						pixel[y * this->width + x].accumulate(p, samples);
@@ -145,7 +143,7 @@ namespace raycore {
 		}
 
 		void Renderer::buildTiles(unsigned int tileSize) {
-			uivec2 nTiles(
+			index2D nTiles(
 				static_cast<int>(std::ceil(this->width / static_cast<float>(tileSize))),
 				static_cast<int>(std::ceil(this->height / static_cast<float>(tileSize)))
 			);
@@ -155,8 +153,8 @@ namespace raycore {
 				for (unsigned int x = 0; x < nTiles.x; x++)
 				{
 					this->tiles.push_back(Tile(
-						uivec2(x * tileSize, y * tileSize),
-						uivec2(min((x + 1) * tileSize, this->width), min((y + 1) * tileSize, this->height))
+						index2D(x * tileSize, y * tileSize),
+						index2D(min((x + 1) * tileSize, this->width), min((y + 1) * tileSize, this->height))
 					));
 				}
 			}

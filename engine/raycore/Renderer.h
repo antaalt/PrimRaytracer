@@ -15,15 +15,23 @@ namespace raycore {
 
 	namespace tracer {
 
+		struct index2D {
+			index2D(unsigned int x, unsigned int y) : x(x), y(y) {}
+			index2D operator-(const index2D &rhs) { return index2D(x - rhs.x, y - rhs.y); }
+			index2D operator+(const index2D &rhs) { return index2D(x + rhs.x, y + rhs.y); }
+			index2D operator*(float scalar) { return index2D(static_cast<unsigned int>(x * scalar), static_cast<unsigned int>(y * scalar)); }
+			unsigned int x, y;
+		};
+
 		struct Tile {
-			Tile(const uivec2 &min, const uivec2 &max): min(min), max(max) {}
+			Tile(const index2D &min, const index2D &max): min(min), max(max) {}
 
 			unsigned int width() { return max.x - min.x; }
 			unsigned int height() { return max.y - min.y; }
-			uivec2 center() { return (max - min) * 0.5f; }
+			index2D center() { return (max - min) * 0.5f; }
 
-			uivec2 min;
-			uivec2 max;
+			index2D min;
+			index2D max;
 		};
 
 		struct Settings {

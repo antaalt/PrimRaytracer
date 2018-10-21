@@ -1,7 +1,6 @@
 #pragma once
+#include "Config.h"
 #include <vector>
-
-#include "Types.h"
 
 namespace raycore {
 

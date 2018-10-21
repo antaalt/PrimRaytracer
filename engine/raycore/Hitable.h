@@ -1,6 +1,7 @@
 #pragma once
 #include "Ray.h"
 #include "BoundingBox.h"
+#include "Config.h"
 
 #include <climits>
 
@@ -39,8 +40,8 @@ namespace raycore {
 			float distance;
 			const Hitable * hitable;
 			// Interpolation
-			float u;
-			float v;
+			float alpha;
+			float beta;
 		public:
 			Intersection() : distance(INFINITE_DISTANCE), hitable(nullptr)
 			{
@@ -51,8 +52,8 @@ namespace raycore {
 				if (distance < intersection.distance)
 					return true;
 				this->distance = intersection.distance;
-				this->u = intersection.u;
-				this->v = intersection.v;
+				this->alpha = intersection.alpha;
+				this->beta = intersection.beta;
 				this->hitable = intersection.hitable;
 				return false;
 			}
@@ -65,18 +66,18 @@ namespace raycore {
 				return (this->hitable != nullptr);
 			}
 
-			bool set(float distance, const Hitable* hitable, float u = 0.f, float v = 0.f)
+			bool set(float distance, const Hitable* hitable, float alpha = 0.f, float beta = 0.f)
 			{
 				this->distance = distance;
 				this->hitable = hitable;
-				this->u = u;
-				this->v = v;
+				this->alpha = alpha;
+				this->beta = beta;
 				return true;
 			}
 
 			float getDistance() const { return distance; }
-			float getU() const { return u; }
-			float getV() const { return v; }
+			float getAlpha() const { return alpha; }
+			float getBeta() const { return beta; }
 		};
 	}
 }

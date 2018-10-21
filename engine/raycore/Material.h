@@ -3,7 +3,7 @@
 #include "Ray.h"
 #include "Hitable.h"
 #include "Onb.h"
-#include "Types.h"
+#include "Config.h"
 #include "Random.h"
 #include "Texture.h"
 #include "Random.h"

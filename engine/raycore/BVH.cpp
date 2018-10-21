@@ -41,7 +41,7 @@ namespace raycore {
 			prim::HitInfo info;
 			return intersect(ray, info);
 		}
-		BVHNode::BVHNode(const vec3 & min, const vec3 & max) : BoundingBox(min, max), hitableCount(0)
+		BVHNode::BVHNode(const point3 & min, const point3 & max) : BoundingBox(min, max), hitableCount(0)
 		{
 		}
 		BVHNode::~BVHNode()
@@ -85,8 +85,8 @@ namespace raycore {
 					const point3 c = bbox.center();
 					ASSERT(contain(c), "Should be inside");
 					const float dist[2] = {
-						vec3::distance(c, centroid[0]),
-						vec3::distance(c, centroid[1])
+						distance(c, centroid[0]),
+						distance(c, centroid[1])
 					};
 					if (dist[0] > dist[1])
 						subGroup[1].push_back(hitableParent);
@@ -104,12 +104,12 @@ namespace raycore {
 				for (unsigned int iGroup = 0; iGroup < CHILD_COUNT; iGroup++)
 				{
 					ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
-					point3 newGroupCentroid = point3(0.f);
+					point3 newGroupCentroid(0.f);
 					for (const HitableBounded* &hitable : subGroup[iGroup])
 						newGroupCentroid = newGroupCentroid + hitable->bbox().center();
 					newGroupCentroid = newGroupCentroid / static_cast<float>(subGroup[iGroup].size());
 					// Check weights
-					epsilon[iGroup] = vec3::distance(newGroupCentroid, centroid[iGroup]);
+					epsilon[iGroup] = distance(newGroupCentroid, centroid[iGroup]);
 					centroid[iGroup] = newGroupCentroid;
 				}
 				// 5. redo from 3 until difference small enough

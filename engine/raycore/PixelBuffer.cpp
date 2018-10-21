@@ -1,5 +1,4 @@
 #include "PixelBuffer.h"
-#include "Mathematic.h"
 
 namespace raycore {
 	void Pixel::clamp()
@@ -40,12 +39,8 @@ namespace raycore {
 	Pixel::Pixel(float val) : r(val), g(val), b(val), a(val)
 	{
 	}
-	Pixel::Pixel(const colorHDR & color4)
+	Pixel::Pixel(const colorHDR & color) : r(color.r), g(color.g), b(color.b), a(color.a)
 	{
-		r = color4.x;
-		g = color4.y;
-		b = color4.z;
-		a = color4.w;
 	}
 	Pixel::Pixel(float r, float g, float b, float a) : r(r), g(g), b(b), a(a)
 	{

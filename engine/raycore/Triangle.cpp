@@ -24,10 +24,10 @@ namespace raycore {
 #if defined(MOLLER_TRUMBORE)
 			// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 			const float epsilon = 0.0000001f;
-			vec3 AB = B.position - A.position;
-			vec3 AC = C.position - A.position;
-			vec3 h = vec3::cross(ray.direction, AC);
-			float a = vec3::dot(AB, h);
+			vec3 AB(B.position - A.position);
+			vec3 AC(C.position - A.position);
+			vec3 h = cross(ray.direction, AC);
+			float a = dot(AB, h);
 #if defined(BACKFACE_CULLING)
 			if (a < epsilon) 
 				return false;
@@ -37,15 +37,15 @@ namespace raycore {
 #endif 
 			float f = 1.f / a;
 			
-			vec3 s = ray.origin - A.position;
-			float u = f * (vec3::dot(s, h));
+			vec3 s(ray.origin - A.position);
+			float u = f * dot(s, h);
 			if (u < 0.f || u > 1.f)
 				return false;
-			vec3 q = vec3::cross(s, AB);
-			float v = f * vec3::dot(ray.direction, q);
+			vec3 q = cross(s, AB);
+			float v = f * dot(ray.direction, q);
 			if (v < 0.f || u + v > 1.f)
 				return false;
-			float t = f * vec3::dot(AC, q);
+			float t = f * dot(AC, q);
 			if (t > epsilon && t > ray.tmin && t < ray.tmax)
 				return intersection.set(t, this, u, v);
 			else
@@ -104,29 +104,29 @@ namespace raycore {
 #endif
 		}
 
-		inline norm3 interpolatenormal(const norm3 &nA, const norm3 &nB, const norm3 &nC, float u, float v)
+		inline norm3 interpolatenormal(const norm3 &nA, const norm3 &nB, const norm3 &nC, float alpha, float beta)
 		{
-			return norm3::normalize(nB * u + nC * v + nA * (1.f - u - v));
+			return normalize(norm3(nB * alpha + nC * beta + nA * (1.f - alpha - beta)));
 		}
-		inline uv2 interpolateTexCoord(const uv2 &tA, const uv2 &tB, const uv2 &tC, float u, float v)
+		inline uv2 interpolateTexCoord(const uv2 &tA, const uv2 &tB, const uv2 &tC, float alpha, float beta)
 		{
-			return tB * u + tC * v + tA * (1.f - u - v);
+			return tB * alpha + tC * beta + tA * (1.f - alpha - beta);
 		}
-		inline colorHDR interpolateColors(const colorHDR &cA, const colorHDR &cB, const colorHDR &cC, float u, float v)
+		inline colorHDR interpolateColors(const colorHDR &cA, const colorHDR &cB, const colorHDR &cC, float alpha, float beta)
 		{
-			return cB * u + cC * v + cA * (1.f - u - v);
+			return cB * alpha + cC * beta + cA * (1.f - alpha - beta);
 		}
 
 		HitInfo Triangle::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
 		{
 			HitInfo info;
 			info.direction = ray.direction;
-			info.point = ray.origin + ray.direction * intersection.getDistance();
-			float u = intersection.getU();
-			float v = intersection.getV();
-			info.normal = interpolatenormal(A.normal, B.normal, C.normal, u, v);
-			info.texcoord = interpolateTexCoord(A.texcoord, B.texcoord, C.texcoord, u, v);
-			info.color = interpolateColors(A.color, B.color, C.color, u, v);
+			info.point = point3(ray.origin + ray.direction * intersection.getDistance());
+			float alpha = intersection.getAlpha();
+			float beta = intersection.getBeta();
+			info.normal = interpolatenormal(A.normal, B.normal, C.normal, alpha, beta);
+			info.texcoord = interpolateTexCoord(A.texcoord, B.texcoord, C.texcoord, alpha, beta);
+			info.color = interpolateColors(A.color, B.color, C.color, alpha, beta);
 			info.material = material;
 			return info;
 		}

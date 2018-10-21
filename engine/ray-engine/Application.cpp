@@ -7,7 +7,6 @@
 #include "WhittedTracer.h"
 #include "PinholeCamera.h"
 #include "stb_image_write.h"
-#include "Mathematic.h"
 
 namespace app {
 
@@ -107,7 +106,7 @@ namespace app {
 		for (unsigned int y = 0; y < m_height; y++)
 			for (unsigned int x = 0; x < m_width; x++)
 				for (unsigned int i = 0; i < 3; i++)
-					output[y * m_width * 3 + x * 3 + i] = static_cast<unsigned char>(raycore::clamp(data[y * m_width * 4 + x * 4 + i], 0.f, 1.f) * 255.f);
+					output[y * m_width * 3 + x * 3 + i] = static_cast<unsigned char>(clamp(data[y * m_width * 4 + x * 4 + i], 0.f, 1.f) * 255.f);
 		stbi_flip_vertically_on_write(true);
 		int save = stbi_write_jpg(path.c_str(), m_width, m_height, 3, output.data(), 100);
 		Log::info("Render saved at '", path, "'");

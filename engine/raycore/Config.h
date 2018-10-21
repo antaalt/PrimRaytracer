@@ -3,9 +3,10 @@
 // ------ INCLUDES -------
 
 // Math
-#include "Types.h"
+#include "geometry.h"
 #include "Utils\Log.h"
-
+using namespace geometry;
+using namespace math;
 
 #include <cassert>
 // ------- DEFINES -------

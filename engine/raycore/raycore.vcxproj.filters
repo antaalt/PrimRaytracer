@@ -19,9 +19,6 @@
     <Filter Include="Header Files\Lights">
       <UniqueIdentifier>{5553454f-481c-4046-8745-39b0191093d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Math">
-      <UniqueIdentifier>{3f836c4c-8e88-479a-b01d-305be72e336a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Primitives">
       <UniqueIdentifier>{d1fb203f-c489-46eb-a923-dac41bc00260}</UniqueIdentifier>
     </Filter>
@@ -79,6 +76,12 @@
     <Filter Include="Header Files\Materials">
       <UniqueIdentifier>{ef023b32-e9ad-4290-be9d-d1f9e451eaf3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{b6466f3d-85c9-4429-bc46-1782b0f9dc3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry">
+      <UniqueIdentifier>{3f836c4c-8e88-479a-b01d-305be72e336a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -92,27 +95,6 @@
     </ClInclude>
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix3.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix4.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Quaternion.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Types.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector4.h">
-      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="BoundingBox.h">
       <Filter>Header Files\Primitives</Filter>
@@ -174,17 +156,11 @@
     <ClInclude Include="Utils\Timer.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Type.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mathematic.h">
-      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="RandomLib.h">
       <Filter>Header Files\Sampler</Filter>
@@ -224,6 +200,12 @@
     </ClInclude>
     <ClInclude Include="Loader.h">
       <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\IndexType.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry.h">
+      <Filter>Header Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="Loader.cpp">
       <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry.cpp">
+      <Filter>Source Files\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

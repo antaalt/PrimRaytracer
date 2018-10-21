@@ -1,7 +1,6 @@
 #include "PathTracer.h"
 #include "Hitable.h"
 #include "Material.h"
-#include "Mathematic.h"
 #include "Random.h"
 #include "Light.h"
 
@@ -22,7 +21,7 @@ namespace raycore {
 				LightInfo linfo;
 				if (l->sample(info, accelerator, linfo))
 				{
-					radiance = radiance + linfo.color * std::abs(vec3::dot(linfo.sample, info.normal));
+					radiance = radiance + linfo.color * std::abs(dot(linfo.sample, info.normal));
 				}
 			}
 			return radiance;
@@ -44,7 +43,7 @@ namespace raycore {
 			vec3 wo;
 			prim::BSDFType type;
 			colorHDR brdf = info.material->sample(ray, info, wo, pdf, type) * info.color;
-			colorHDR reflectance = brdf * vec3::dot(wo, info.normal) / pdf;
+			colorHDR reflectance = brdf * dot(wo, info.normal) / pdf;
 
 			// Sample light (depending on type)
 			colorHDR lightRadiance(0.f);
@@ -56,13 +55,17 @@ namespace raycore {
 			// Russian roulette
 			if (depth < (RAY_DEFAULT_DEPTH / 2))
 			{
-				float probability = max(reflectance.x, max(reflectance.y, reflectance.z));
+				float probability = max(reflectance.r, max(reflectance.g, reflectance.b));
 				if (probability < rand::rnd())
 					return colorHDR(0.f);
 				reflectance = reflectance / probability;
 			}
+			//return colorHDR(info.normal.x, info.normal.y, info.normal.z, 1.f);
 
-			return lightRadiance + reflectance * castRay(Ray(info.point, wo), accelerator, depth - 1);
+			colorHDR ret = lightRadiance + reflectance * castRay(Ray(info.point, wo), accelerator, depth - 1);
+			if (hasNan(ret))
+				__debugbreak();
+			return ret;
 		}
 
 		bool PathTracer::trace(const Ray & ray, const Accelerator* accelerator, prim::HitInfo &info) const

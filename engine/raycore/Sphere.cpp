@@ -8,7 +8,7 @@ namespace raycore {
 		{
 		}
 
-		Sphere::Sphere(const point3 & center, float radius, const vec3 up) : center(center), radius(radius), up(up)
+		Sphere::Sphere(const point3 & center, float radius, const norm3 up) : center(center), radius(radius), up(up)
 		{
 		}
 
@@ -18,9 +18,9 @@ namespace raycore {
 
 		bool Sphere::intersect(const tracer::Ray & ray, Intersection & intersection) const
 		{
-			vec3 eyeDirection = this->center - ray.origin;
-			float b = vec3::dot(eyeDirection, ray.direction); // a is always 1 because dot of same normalized vector
-			float det = b * b - vec3::dot(eyeDirection, eyeDirection) + this->radius * this->radius;
+			vec3 eyeDirection(this->center - ray.origin);
+			float b = dot(eyeDirection, ray.direction); // a is always 1 because dot of same normalized vector
+			float det = b * b - dot(eyeDirection, eyeDirection) + this->radius * this->radius;
 			if (det < 0)
 				return false;
 			else
@@ -40,8 +40,8 @@ namespace raycore {
 		{
 			HitInfo info;
 			info.direction = ray.direction;
-			info.point = ray.origin + ray.direction * intersection.getDistance();
-			info.normal = vec3::normalize(info.point - this->center);
+			info.point = point3(ray.origin + ray.direction * intersection.getDistance());
+			info.normal = normalize(norm3(info.point - this->center));
 			// https://en.wikipedia.org/wiki/UV_mraycoreing
 			transform::Onb onb(this->up);
 			norm3 n = onb(info.normal);
@@ -56,8 +56,8 @@ namespace raycore {
 		BoundingBox Sphere::computeBoundingBox() const
 		{
 			BoundingBox bbox;
-			bbox.min = this->center - vec3(this->radius);
-			bbox.max = this->center + vec3(this->radius);
+			bbox.min = this->center - point3(this->radius);
+			bbox.max = this->center + point3(this->radius);
 			return bbox;
 		}
 

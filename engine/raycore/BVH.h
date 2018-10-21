@@ -26,7 +26,7 @@ namespace raycore {
 
 
 		struct BVHNode : public prim::BoundingBox {
-			BVHNode(const vec3 &min, const vec3 &max);
+			BVHNode(const point3 &min, const point3 &max);
 			~BVHNode();
 
 			unsigned int init(const std::vector<const HitableBounded*> &hitables, unsigned int depth);

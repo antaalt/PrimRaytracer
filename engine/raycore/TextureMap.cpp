@@ -15,21 +15,13 @@ namespace raycore {
 	template <typename T, typename U>
 	T TTextureMap<T, U>::evaluate(const uv2 &uv = uv2(0.f)) const
 	{
-		float ui = uv.x * this->width;
-		float vi = uv.y * this->height;
+		float ui = uv.u * this->width;
+		float vi = uv.v * this->height;
 		unsigned int uPixel = static_cast<unsigned int>(ui) % this->width;
 		unsigned int vPixel = static_cast<unsigned int>(vi) % this->height;
 #if defined(BILINEAR_FILTER_TEXTURE)
 		float uf = ui - floorf(ui);
 		float vf = vi - floorf(vi);
-
-		/*colorHDR c1 = at(uPixel, vPixel);
-		colorHDR c2 = at(uPixel + 1, vPixel);
-		colorHDR c3 = at(uPixel, vPixel + 1);
-		colorHDR c4 = at(uPixel + 1, vPixel + 1);
-		float ufvf = uf * vf; // 3088
-		return c1 * (1 - uf - vf + ufvf) + c2 * (uf - ufvf) + c3 * (vf - ufvf) + c4 * (ufvf);
-		//return c1 + uf * (c2 - c1) + vf * (c3 - c1) + uf * vf * (c1 - c2 - c3 + c4);*/
 		return lerp<T>(
 			lerp<T>(
 				at(uPixel, vPixel),
@@ -125,7 +117,7 @@ namespace raycore {
 			return color4(0.f);
 #endif
 		unsigned int index = y * this->width * this->components + x * this->components;
-		return ldr2hdr(color32(
+		return colorHDR(color32(
 			this->data[index + 0],
 			this->data[index + 1],
 			this->data[index + 2],

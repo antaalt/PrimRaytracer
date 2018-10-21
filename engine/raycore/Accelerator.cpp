@@ -83,7 +83,7 @@ namespace raycore {
 					const Mesh *mesh = dynamic_cast<const Mesh*>(shape);
 					ASSERT(mesh != nullptr, "should not happend");
 					const mat4 transform = node.getModel();
-					const mat3 normalTransform = convert::toMat3(transform);
+					const mat3 normalTransform(transform);
 					float det = transform.det();
 					unsigned int triVert1 = 1;
 					unsigned int triVert2 = 2;
@@ -103,10 +103,8 @@ namespace raycore {
 							for (unsigned int iVert = 0; iVert < 3; iVert++)
 							{
 								const Vertex &v = prim.vertices[tri.vertices[iVert]];
-								vec3 p = v.position;
-								norm3 n = v.normal;
-								p = transform * p;
-								n = normalTransform * n;
+								point3 p(transform * v.position);
+								norm3 n(normalTransform * v.normal);
 								data[iVert] = prim::Vertex(p, n, v.texcoord, v.color);
 								bbox.include(p);
 							}

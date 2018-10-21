@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Types.h"
+#include "Config.h"
 #include "Texture.h"
 #include "TextureMap.h"
 #include "ConstantTexture.h"
@@ -72,7 +72,7 @@ namespace raycore {
 	struct Sphere : public Shape {
 		float radius;
 		point3 center;
-		vec3 up;
+		norm3 up;
 		Material* material;
 		virtual ShapeType type() const;
 	};
@@ -94,7 +94,7 @@ namespace raycore {
 	};
 
 	struct Light {
-		vec3 position;
+		point3 position;
 	};
 
 	struct Scene {

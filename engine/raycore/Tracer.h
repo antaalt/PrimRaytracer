@@ -3,6 +3,7 @@
 #include "Hitable.h"
 #include "Accelerator.h"
 #include "PixelBuffer.h"
+#include "Config.h"
 
 //#define MAX_DEPTH 10
 #define BACKGROUND_COLOR colorHDR(0.1f)

@@ -1,5 +1,4 @@
 #include "GUI.h"
-#include "Mathematic.h"
 #include "Config.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
@@ -73,13 +72,13 @@ namespace app {
 			// check bounds
 			ImVec2 size = ImGui::GetWindowSize();
 			if (size.x > width || size.y > height)
-				ImGui::SetWindowSize(ImVec2(raycore::min(size.x, static_cast<float>(width)), raycore::min(size.y, static_cast<float>(height))));
+				ImGui::SetWindowSize(ImVec2(min(size.x, static_cast<float>(width)), min(size.y, static_cast<float>(height))));
 
 			ImVec2 pos = ImGui::GetWindowPos();
 			if (pos.x < 0.f || pos.y < 0.f)
-				ImGui::SetWindowPos(ImVec2(raycore::max(pos.x, 0.f), raycore::max(pos.y, 0.f)));
+				ImGui::SetWindowPos(ImVec2(max(pos.x, 0.f), max(pos.y, 0.f)));
 			if (pos.x + size.x > width || pos.y + size.y > height)
-				ImGui::SetWindowPos(ImVec2(raycore::min(pos.x, width - size.x), raycore::min(pos.y, height - size.y)));
+				ImGui::SetWindowPos(ImVec2(min(pos.x, width - size.x), min(pos.y, height - size.y)));
 
 			// check mouse position
 			if (m_inputs.mouse.position[0] > pos.x &&

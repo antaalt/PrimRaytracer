@@ -150,9 +150,7 @@
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Location.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="Mathematic.h" />
-    <ClInclude Include="Matrix3.h" />
-    <ClInclude Include="Matrix4.h" />
+    <ClInclude Include="geometry.h" />
     <ClInclude Include="Matte.h" />
     <ClInclude Include="Metal.h" />
     <ClInclude Include="NoAccel.h" />
@@ -163,7 +161,6 @@
     <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="PointLight.h" />
-    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="RandomLib.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
@@ -175,13 +172,9 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="Tracer.h" />
     <ClInclude Include="Triangle.h" />
-    <ClInclude Include="Types.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Utils\Timer.h" />
-    <ClInclude Include="Utils\Type.h" />
-    <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Vector4.h" />
+    <ClInclude Include="Utils\IndexType.h" />
     <ClInclude Include="WhittedTracer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +189,7 @@
     <ClCompile Include="Glass.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="geometry.cpp" />
     <ClCompile Include="Matte.cpp" />
     <ClCompile Include="Metal.cpp" />
     <ClCompile Include="NoAccel.cpp" />

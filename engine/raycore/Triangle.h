@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Hitable.h"
-#include "Types.h"
+#include "Config.h"
 
 #define MOLLER_TRUMBORE
 //#define BACKFACE_CULLING

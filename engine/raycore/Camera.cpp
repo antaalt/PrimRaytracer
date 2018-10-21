@@ -13,16 +13,16 @@ namespace raycore {
 		Camera::~Camera()
 		{
 		}
-		void Camera::lookAt(const point3 & eye, const point3 & target, const vec3 &up)
+		void Camera::lookAt(const point3 & eye, const point3 & target, const norm3 &up)
 		{
-			vec3 forward = vec3::normalize(target - eye);
-			vec3 right = vec3::cross(vec3::normalize(up), forward);
-			vec3 upCoordinate = vec3::cross(forward, right);
+			norm3 forward(target - eye);
+			norm3 right(cross(up, forward));
+			norm3 upCoordinate(cross(forward, right));
 
-			m_transform[0] = convert::toVec4(right, 0.f);
-			m_transform[1] = convert::toVec4(upCoordinate, 0.f);
-			m_transform[2] = convert::toVec4(forward, 0.f);
-			m_transform[3] = convert::toVec4(eye, 1.f);
+			m_transform.cols[0] = mat4::col(normalize(right), 0.f);
+			m_transform.cols[1] = mat4::col(normalize(upCoordinate), 0.f);
+			m_transform.cols[2] = mat4::col(normalize(forward), 0.f);
+			m_transform.cols[3] = mat4::col(eye, 1.f);
 			m_changed = true;
 		}
 		void Camera::rotate(float angle, const vec3 & axis)
@@ -32,7 +32,7 @@ namespace raycore {
 			// NOTE: Element 0,1 is wrong in Foley and Van Dam, Pg 227!
 			float sintheta = sinf(radians);
 			float costheta = cosf(radians);
-			vec3 an = vec3::normalize(axis);
+			vec3 an = normalize(axis);
 			float ux = an.x;
 			float uy = an.y;
 			float uz = an.z;

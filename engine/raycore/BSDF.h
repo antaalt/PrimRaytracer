@@ -1,5 +1,5 @@
 #pragma once
-#include "Types.h"
+#include "Config.h"
 #include "Ray.h"
 #include "Hitable.h"
 #include "Random.h"
@@ -55,7 +55,7 @@ namespace raycore {
 	protected:
 		virtual float PDF(const vec3 &wo) const
 		{
-			return vec3::dot(wo, normal) / M_PIf;
+			return dot(wo, normal) / M_PIf;
 		}
 		virtual colorHDR evaluate(const vec3 &wo) const
 		{
@@ -85,7 +85,7 @@ namespace raycore {
 		}
 		virtual colorHDR evaluate(const vec3 &wo) const
 		{
-			return Rs / vec3::dot(wo, normal);
+			return Rs / dot(wo, normal);
 		}
 	private:
 		colorHDR Rs;
@@ -100,10 +100,10 @@ namespace raycore {
 		}
 		virtual colorHDR sample(vec3 &wo, float &pdf) const
 		{
-			vec3 nn = normal;
+			norm3 nn = normal;
 
 			float etar = 1.f / etaIn;
-			if (vec3::dot(wi, normal) >= 0.f)
+			if (dot(wi, normal) >= 0.f)
 			{
 				etar = etaIn;
 				nn = -normal;
@@ -118,29 +118,29 @@ namespace raycore {
 				return this->evaluate(wo);
 			}
 			Schlick schlick(1.f, etaIn);
-			float R = schlick.evaluate(normal, wi);
+			float R = schlick.evaluate(wi, normal);
 			float z = rand::rnd();
 			if (z <= R)
 			{ // Reflect
 				wo = reflected;
-				pdf = R;
+				pdf = this->PDF(wo);
 				return R * this->evaluate(wo);
 			}
 			else
 			{ // Refract
 				wo = refracted;
-				pdf = -(1.f - R);
+				pdf = this->PDF(wo);
 				return (1.f - R) * this->evaluate(wo);
 			}
 		}
 	protected:
 		virtual float PDF(const vec3 &wo) const
 		{
-			return 0.f; // not used
+			return 1.f;
 		}
 		virtual colorHDR evaluate(const vec3 &wo) const
 		{
-			return Ts / vec3::dot(wo, normal);
+			return Ts / dot(wo, normal);
 		}
 	private:
 		colorHDR Ts;
@@ -173,7 +173,7 @@ namespace raycore {
 	protected:
 		virtual float PDF(const vec3 &wo) const
 		{
-			return vec3::dot(wo, normal) / M_PIf;
+			return dot(wo, normal) / M_PIf;
 		}
 		virtual colorHDR evaluate(const vec3 &wo) const
 		{

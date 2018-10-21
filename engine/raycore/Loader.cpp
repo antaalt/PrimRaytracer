@@ -241,7 +241,7 @@ namespace raycore {
 												&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
 												sizeof(float) * 3
 											);
-											vert.color.w = 1.f;
+											vert.color.a = 1.f;
 										}
 										break;
 									case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
@@ -290,10 +290,10 @@ namespace raycore {
 								for (size_t iVert = 0; iVert < newPrim.vertices.size(); iVert++)
 								{
 									Vertex &vert = newPrim.vertices[iVert];
-									vert.color.x = 1.f;
-									vert.color.y = 1.f;
-									vert.color.z = 1.f;
-									vert.color.w = 1.f;
+									vert.color.r = 1.f;
+									vert.color.g = 1.f;
+									vert.color.b = 1.f;
+									vert.color.a = 1.f;
 								}
 							}
 						}
@@ -472,65 +472,101 @@ namespace raycore {
 			mesh.primitives.emplace_back();
 			Primitive &prim = mesh.primitives.back();
 			
-			std::vector<vec3> positions;
-			std::vector<vec3> normals;
-			std::vector<vec2> uvs;
-			std::vector<Triangle> triangles;
+			std::vector<point3> positions;
+			std::vector<norm3> normals;
+			std::vector<uv2> uvs;
+			std::vector<Face> faces;
 			std::vector<Vertex> vertices;
 			while (std::getline(file, line))
 			{
 				std::stringstream ss(line);
-				char c;
-				ss >> c;
-				switch (c)
+				std::string header;
+				ss >> header;
+				switch (header[0])
 				{
 				case 'v':
-				case 'V': {// TODO vn, vt
-					vec3 pos;
-					ss >> pos.x >> pos.y >> pos.z;
-					positions.push_back(pos);
+				case 'V': {
+					switch (line[1])
+					{
+					case 'n':
+					case 'N': {
+						norm3 norm;
+						ss >> norm.x >> norm.y >> norm.z;
+						normals.push_back(norm);
+						break;
+					}
+					case 't':
+					case 'T': {
+						uv2 uv;
+						ss >> uv.u >> uv.v;
+						uvs.push_back(uv);
+						break;
+					}
+					case ' ': {
+						point3 pos;
+						ss >> pos.x >> pos.y >> pos.z;
+						positions.push_back(pos);
+						break;
+					}
+					default:
+						break;
+					}
 					break;
 				}
 				case 'f':
 				case 'F': {
-					Triangle tri;
-					ss >> tri.A >> tri.B >> tri.C;
-					triangles.push_back(tri);
+					Face face;
+					for(int iVert = 0; iVert < 3; iVert++)
+					{
+						ss >> face.posID.vertices[iVert];
+						if (ss.peek() == '/')
+						{
+							ss.ignore(1);
+							if (ss.peek() == '/')
+							{
+								ss.ignore(1);
+								ss >> face.normID.vertices[iVert];
+							}
+							else
+							{
+								ss >> face.uvID.vertices[iVert];
+								if (ss.peek() == '/')
+									ss >> face.normID.vertices[iVert];
+							}
+						}
+					}
+					faces.push_back(face);
 					break;
 				}
 				case '#':
 					Log::warn("Skipping comment");
 					break;
 				case 'o':
-					Log::warn("Data not implemented : ", c);
+					Log::warn("Data not implemented : ", line);
 					break;
 				default:
-					Log::error("Unknown character : ", c);
+					Log::error("Unknown data : ", line);
 					break;
 				}
 			}
-			for (size_t iTri = 0; iTri < triangles.size(); iTri++)
+			for (size_t iTri = 0; iTri < faces.size(); iTri++)
 			{
-				Triangle &triangle = triangles[iTri];
-				vec3 AB = positions[triangle.B - 1] - positions[triangle.A - 1];
-				vec3 AC = positions[triangle.C - 1] - positions[triangle.A - 1];
-				norm3 normal = vec3::normalize(vec3::cross(AB, AC));
+				Face &face = faces[iTri];
+				vec3 AB(positions[face.posID.B - 1] - positions[face.posID.A - 1]);
+				vec3 AC(positions[face.posID.C - 1] - positions[face.posID.A - 1]);
+				norm3 normal(normalize(cross(AB, AC)));
 				for (size_t iVert = 0; iVert < 3; iVert++)
 				{
 					Vertex vert;
-					vert.position = positions[triangle.vertices[iVert] - 1];
+					vert.position = positions[face.posID.vertices[iVert] - 1];
 					if (normals.size() > 0)
-						vert.normal = normals[triangle.vertices[iVert] - 1];
+						vert.normal = normals[face.normID.vertices[iVert] - 1];
 					else
-					{
 						vert.normal = normal;
-					}
 					if(uvs.size() > 0)
-						vert.texcoord = uvs[triangle.vertices[iVert] - 1];
+						vert.texcoord = uvs[face.uvID.vertices[iVert] - 1];
 					else
-					{
 						vert.texcoord = uv2(0.f);
-					}
 					vert.color = colorHDR(1.f);
 					prim.vertices.push_back(vert);
 				}
@@ -538,6 +574,7 @@ namespace raycore {
 			}
 			return true;
 		}
+
 		bool write(std::string path, const Mesh & scene)
 		{
 			return false;
@@ -590,35 +627,35 @@ namespace raycore {
 			Sphere &sphere1 = scene.addSphere();
 			sphere1.center = point3(0.f);
 			sphere1.radius = 0.4f;
-			sphere1.up = vec3(0.f, 1.f, 0.f);
+			sphere1.up = norm3(0.f, 1.f, 0.f);
 			sphere1.material = &mat1;
 
 			Sphere &sphere2 = scene.addSphere();
 			sphere2.center = point3(0.f, 0.1f, -1.0f);
 			sphere2.radius = 0.5f;
-			sphere2.up = vec3(0.f, 1.f, 0.f);
+			sphere2.up = norm3(0.f, 1.f, 0.f);
 			sphere2.material = &mat2;
 
 			Sphere &sphere3 = scene.addSphere();
 			sphere3.center = point3(1.5f, 0.2f, -0.5f);
 			sphere3.radius = 0.7f;
-			sphere3.up = vec3(0.f, 1.f, 0.f);
+			sphere3.up = norm3(0.f, 1.f, 0.f);
 			sphere3.material = &mat3;
 
 			Sphere &sphere4 = scene.addSphere();
 			sphere4.center = point3(0.f, -30.f, 0.f);
 			sphere4.radius = 29.f;
-			sphere4.up = vec3(1.f, 0.f, 0.f);
+			sphere4.up = norm3(1.f, 0.f, 0.f);
 			sphere4.material = &mat4;
 
 			Sphere &sphere5 = scene.addSphere();
 			sphere5.center = point3(-1.5f, 0.2f, 0.f);
 			sphere5.radius = 0.6f;
-			sphere5.up = vec3::normalize(vec3(1.f));
+			sphere5.up = normalize(norm3(1.f));
 			sphere5.material = &mat5;
 
 			Mesh &mesh = scene.addMesh();
-			raycore::OBJ::load("../data/models/bunny/bunny.obj", mesh);
+			raycore::OBJ::load("../data/models/dragon/dragonn.obj", mesh);
 			mesh.primitives[0].material = &mat1;
 
 			// nodes
@@ -645,9 +682,12 @@ namespace raycore {
 			Node &node6 = scene.addNode();
 			node6.shape = &mesh;
 			node6.transform = mat4::identity();
-			node6.transform[0].x = 15.f;
-			node6.transform[1].y = 15.f;
-			node6.transform[2].z = 15.f;
+			node6.transform[0].x = 1.f;
+			node6.transform[1].y = 1.f;
+			node6.transform[2].z = 1.f;
+			node6.transform[3].x = 0.f;
+			node6.transform[3].y = 0.f;
+			node6.transform[3].z = -2.f;
 
 			return true;
 		}

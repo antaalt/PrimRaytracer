@@ -23,10 +23,10 @@ namespace raycore {
 		}
 		bool Parallelogram::intersect(const tracer::Ray & ray, Intersection & intersection) const
 		{
-			float denom = vec3::dot(this->normal, ray.direction);
+			float denom = dot(ray.direction, this->normal);
 			if (fabs(denom) < EPSILON)
 				return false;
-			float t = vec3::dot(this->point[0] - ray.origin, this->normal) / denom;
+			float t = dot(this->point[0] - ray.origin, this->normal) / denom;
 			if (t < 0.f)
 				return false;
 			/*point3 hitPoint = ray.origin + ray.direction * t;
@@ -41,7 +41,7 @@ namespace raycore {
 		{
 			HitInfo info;
 			info.direction = ray.direction;
-			info.point = ray.origin + ray.direction * intersection.getDistance();
+			info.point = point3(ray.origin + ray.direction * intersection.getDistance());
 			info.normal = this->normal;
 			info.texcoord = uv2(); // TODO compute texcoord
 			info.color = colorHDR(1.f);

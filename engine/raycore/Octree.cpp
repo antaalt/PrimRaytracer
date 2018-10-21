@@ -35,7 +35,7 @@ namespace raycore {
 				}
 			}
 			unsigned int created = this->root->init(tris);
-			Log::debug("Octree generated with ", created, " subtrees");
+			Log::info("Octree generated with ", created, " subtrees");
 			return created > 0;
 		}
 

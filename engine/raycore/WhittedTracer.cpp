@@ -1,6 +1,5 @@
 #include "WhittedTracer.h"
 #include "Material.h"
-#include "Mathematic.h"
 #include "Light.h"
 
 namespace raycore {

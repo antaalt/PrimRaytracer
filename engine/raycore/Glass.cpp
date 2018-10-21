@@ -1,5 +1,5 @@
 #include "Glass.h"
-#include "Mathematic.h"
+
 namespace raycore {
 	namespace prim {
 		Glass::Glass(Texture<colorHDR> * color, float ior) : 

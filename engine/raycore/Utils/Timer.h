@@ -20,8 +20,6 @@ namespace Utils
 		template<typename Duration = Timer::seconds>
 		long long elapsedTime();
 
-		void displayFPS();
-
 	private:
 		std::chrono::time_point<std::chrono::steady_clock> m_lastTick;
 		unsigned int m_tickCount;

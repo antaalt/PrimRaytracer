@@ -1,5 +1,5 @@
 #include "BoundingBox.h"
-#include "Mathematic.h"
+#include "Config.h"
 #include <climits>
 
 namespace raycore {
@@ -68,7 +68,7 @@ namespace raycore {
 		}
 		float BoundingBox::extent() const
 		{
-			return (max - min).length();
+			return length(vec3(max - min));
 		}
 		point3 BoundingBox::center() const
 		{

@@ -14,9 +14,9 @@ namespace raycore {
 
 		bool PointLight::sample(const prim::HitInfo & info, const Accelerator *accelerator, LightInfo &lightInfo) const
 		{
-			point3 lightDir = this->position - info.point;
-			float dist = lightDir.length();
-			lightDir = vec3::normalize(lightDir);
+			vec3 lightDir(this->position - info.point);
+			float dist = length(lightDir);
+			lightDir = normalize(lightDir);
 			Ray shadowRay(info.point, lightDir, tracer::RayType::SHADOW_RAY, EPSILON, dist);
 
 			if (accelerator->isOccluded(shadowRay))

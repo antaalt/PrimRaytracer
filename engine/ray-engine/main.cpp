@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	//raycore::GLTF::load("../data/models/boxTextured/BoxTextured.gltf", scene);
 	//raycore::GLTF::load("../data/models/sponza/Sponza.gltf", scene);
 	raycore::Light l;
-	l.position = vec3(0.f, 20.f, 0.f);
+	l.position = point3(0.f, 20.f, 0.f);
 	scene.lights.push_back(l);
 	application.run(scene, options);
 

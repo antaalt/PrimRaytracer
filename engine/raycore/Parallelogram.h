@@ -1,6 +1,5 @@
 #pragma once
 #include "Hitable.h"
-#include "Types.h"
 
 namespace raycore {
 	namespace prim {

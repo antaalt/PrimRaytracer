@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Types.h"
+#include "Config.h"
 
 namespace raycore {
 
@@ -11,20 +11,24 @@ namespace raycore {
 			{
 				normal = n;
 				if (std::fabs(n.x) > std::fabs(n.y))
-					tangent = vec3::normalize(vec3(n.z, 0, -n.x));
+					tangent = normalize(norm3(n.z, 0, -n.x));
 				else
-					tangent = vec3::normalize(vec3(0, -n.z, n.y));
-				binormal = vec3::cross(n, tangent);
+					tangent = normalize(norm3(0, -n.z, n.y));
+				binormal = normalize(cross(n, tangent));
 			}
 
-			vec3 operator()(const norm3 &n)
+			vec3 operator()(const vec3 &n)
+			{
+				return vec3(n.x * binormal + n.y * normal + n.z * tangent);
+			}
+			norm3 operator()(const norm3 &n)
 			{
 				return n.x * binormal + n.y * normal + n.z * tangent;
 			}
 		private:
-			vec3 normal;
-			vec3 binormal;
-			vec3 tangent;
+			norm3 normal;
+			norm3 binormal;
+			norm3 tangent;
 		};
 	}
 }
