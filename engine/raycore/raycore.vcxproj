@@ -147,8 +147,10 @@
     <ClInclude Include="Glass.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightDistribution.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Location.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="geometry.h" />
     <ClInclude Include="Matte.h" />
@@ -156,7 +158,6 @@
     <ClInclude Include="NoAccel.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="Onb.h" />
-    <ClInclude Include="Parallelogram.h" />
     <ClInclude Include="PathTracer.h" />
     <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="PixelBuffer.h" />
@@ -165,16 +166,16 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="Sampling.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ShapeLight.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="StrictType.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMap.h" />
-    <ClInclude Include="Time.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Tracer.h" />
     <ClInclude Include="Triangle.h" />
-    <ClInclude Include="Utils\Log.h" />
-    <ClInclude Include="Utils\Timer.h" />
-    <ClInclude Include="Utils\IndexType.h" />
     <ClInclude Include="WhittedTracer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -188,25 +189,25 @@
     <ClCompile Include="ConstantTexture.cpp" />
     <ClCompile Include="Glass.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightDistribution.cpp" />
     <ClCompile Include="Loader.cpp" />
-    <ClCompile Include="geometry.cpp" />
     <ClCompile Include="Matte.cpp" />
     <ClCompile Include="Metal.cpp" />
     <ClCompile Include="NoAccel.cpp" />
     <ClCompile Include="Octree.cpp" />
-    <ClCompile Include="Parallelogram.cpp" />
     <ClCompile Include="PathTracer.cpp" />
     <ClCompile Include="PinholeCamera.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="Sampling.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ShapeLight.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="TextureMap.cpp" />
-    <ClCompile Include="Tracer.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="Utils\Timer.cpp" />
     <ClCompile Include="WhittedTracer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

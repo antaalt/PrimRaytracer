@@ -1,8 +1,7 @@
 #include "Application.h"
 
 #include "Config.h"
-#include "Utils/Timer.h"
-#include "Utils/Log.h"
+#include "Timer.h"
 #include "PathTracer.h"
 #include "WhittedTracer.h"
 #include "PinholeCamera.h"
@@ -118,7 +117,7 @@ namespace app {
 		m_renderer->resize(width, height);
 	}
 
-	void Application::run(raycore::Scene &scene, options &options)
+	void Application::run(raycore::prim::Scene &scene, options &options)
 	{
 		Utils::Timer timer;
 

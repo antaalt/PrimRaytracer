@@ -28,10 +28,10 @@ namespace raycore {
 		class Hitable
 		{
 		public:
-			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const = 0;
-			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection &intersection) const = 0;
+			virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const = 0;
+			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection *intersection) const = 0;
 			virtual BoundingBox computeBoundingBox() const = 0;
-
+			virtual float area() const = 0;
 			Material *material;
 		};
 
@@ -59,7 +59,7 @@ namespace raycore {
 			}
 			HitInfo compute(const tracer::Ray & ray) const
 			{
-				return this->hitable->computeIntersection(ray, *this);
+				return this->hitable->computeIntersection(ray, this);
 			}
 			bool hit() const
 			{
@@ -75,7 +75,7 @@ namespace raycore {
 				return true;
 			}
 
-			float getDistance() const { return distance; }
+			point3 computeHit(const tracer::Ray &ray) const { return ray(distance); }
 			float getAlpha() const { return alpha; }
 			float getBeta() const { return beta; }
 		};

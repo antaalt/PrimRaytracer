@@ -32,10 +32,10 @@ namespace raycore {
 			Triangle();
 			Triangle(const Vertex &vA, const Vertex &vB, const Vertex &vC);
 
-			virtual bool intersect(const tracer::Ray &ray, Intersection &intersection) const;
-			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection &intersection) const;
+			virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const;
+			virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection *intersection) const;
 			virtual BoundingBox computeBoundingBox() const;
-
+			virtual float area() const;
 		};
 
 	}

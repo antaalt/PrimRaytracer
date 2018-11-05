@@ -15,7 +15,7 @@
  **/
 
 namespace raycore {
-	namespace tracer {
+	namespace prim {
 
 		struct TriangleBounded : prim::Triangle, prim::BoundingBox {
 			TriangleBounded(const prim::Triangle &tri) : Triangle(tri.A, tri.B, tri.C)
@@ -27,14 +27,14 @@ namespace raycore {
 			}
 		};
 
-		class OctNode : public prim::BoundingBox {
+		class OctNode : public BoundingBox {
 		public:
 			OctNode();
 			OctNode(const point3 &min, const point3 &max);
 			~OctNode();
 
 			// Check if the ray hit a triangle from the Octree
-			bool intersect(const tracer::Ray &ray, prim::Intersection &intersection) const;
+			bool intersect(const tracer::Ray &ray, Intersection *intersection) const;
 			
 			// Get the index of the sub-bbox the point is in
 			unsigned int getOctant(const vec3 &point) const;
@@ -56,13 +56,11 @@ namespace raycore {
 		class Octree : public Accelerator
 		{
 		public:
-			Octree();
+			Octree(const std::vector<Hitable*> &prim);
 			~Octree();
 
-			virtual bool build(const Scene &scene);
-
-			virtual bool intersect(const Ray &ray, prim::HitInfo &info) const;
-			virtual bool isOccluded(const Ray &ray) const;
+			virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const;
+			virtual bool intersect(const tracer::Ray &ray) const;
 		private:
 			OctNode *root; // Root node of the octree
 			std::vector<TriangleBounded> triangleBounded;

@@ -2,121 +2,102 @@
 
 #include <vector>
 #include "Config.h"
+// Textures
 #include "Texture.h"
 #include "TextureMap.h"
 #include "ConstantTexture.h"
 #include "Checker.h"
+// Materials
 #include "Matte.h"
 #include "Metal.h"
 #include "Glass.h"
+// Primitives
+#include "Accelerator.h"
+#include "LightDistribution.h"
 
 namespace raycore {
 
-	enum class MaterialType {
-		DIFFUSE,
-		SPECULAR,
-		DIELECTRIC,
-		METAL,
-		UNDEFINED_TYPE
-	};
+	namespace prim {
 
-	struct Material {
-		unsigned int index;
-		Texture<colorHDR>* texture;
-		colorHDR color;
-		MaterialType type;
-	};
-
-	struct Vertex {
-		point3 position;
-		norm3 normal;
-		uv2 texcoord;
-		colorHDR color;
-
-		Vertex() {}
-		Vertex(point3 p, norm3 n, uv2 t, colorHDR c) : position(p), normal(n), texcoord(t), color(c) {}
-	};
-
-	struct Triangle {
-		union {
-			unsigned int vertices[3];
-			struct {
-				unsigned int A, B, C;
-			};
+		// --- Nodes
+		struct Node {
+		public:
+			Node();
+			~Node();
+			virtual bool traverse(const tracer::Ray &ray, Intersection *intersection) const {
+				tracer::Ray transformedRay;
+				transformedRay.origin = transform * ray.origin;
+				transformedRay.direction = transform * ray.direction;
+				if (!bbox.intersectBounds(transformedRay))
+					return false;
+				return accelerator->intersect(transformedRay, intersection);
+			}
+			virtual bool build() = 0;
+			virtual const BoundingBox &bounds() const { return bbox; };
+			void setAcceleration(Acceleration accel) { this->accel = accel; };
+			//virtual void setTransform(const mat4 &transform) { this->transform = inverse(transform); }
+		protected:
+			BoundingBox bbox;
+			Acceleration accel;
+			Accelerator *accelerator;
+			mat4 transform; // called during traverse to transform the ray before passing it to accelerator
 		};
 
-		Triangle();
-		Triangle(unsigned int v1, unsigned int v2, unsigned int v3);
-	};
-	// --- Primitive
-	struct Primitive {
-		std::vector<Triangle> triangles;
-		std::vector<Vertex> vertices;
-		Material* material;
-	};
-	// --- Shapes
-	enum class ShapeType {
-		PARALLELOGRAM,
-		SPHERE,
-		MESH
-	};
-	struct Shape {
-		virtual ShapeType type() const = 0;
-	};
-	struct Parallelogram : public Shape {
-		point3 point[3];
-		norm3 normal;
-		Material* material;
-		virtual ShapeType type() const;
-	};
-	struct Sphere : public Shape {
-		float radius;
-		point3 center;
-		norm3 up;
-		Material* material;
-		virtual ShapeType type() const;
-	};
-	struct Mesh : public Shape {
-		std::vector<Primitive> primitives;
-		virtual ShapeType type() const;
-	};
+		struct Group : Node {
+			Group();
+			~Group();
+			Node* addChild(Node* node);
+			virtual bool build();
+		private:
+			struct ChildBound : Hitable {
+			public:
+				ChildBound(Node* node);
+				~ChildBound();
+				virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const;
+				virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection *intersection) const;
+				virtual BoundingBox computeBoundingBox() const;
+				virtual float area() const;
+				Node* node();
+			private:
+				BoundingBox bbox;
+				Node* child;
+			};
+			std::vector<ChildBound*> bounds;
+		};
 
-	// --- Nodes
-	struct Node {
-		Shape* shape;
-		Material* material;
-		mat4 transform;
-		Node* parent;
-		std::vector<Node*> childrens;
-		Node() : parent(nullptr), material(nullptr), shape(nullptr) {}
+		struct Geometry : Node {
+			Geometry(const std::vector<Hitable*> &hitables);
+			~Geometry();
+			virtual bool build();
+		private:
+			std::vector<Hitable*> hitables;
+		};
 
-		mat4 getModel() const;
-	};
+		class LightDistribution;
 
-	struct Light {
-		point3 position;
-	};
+		// --- Scene
+		struct Scene {
+		public:
+			Scene();
+			~Scene();
+			// Scene traversal
+			virtual bool intersect(const tracer::Ray &ray, HitInfo &info) const;
+			virtual bool isOccluded(const tracer::Ray &ray) const;
 
-	struct Scene {
-		Scene();
-		~Scene();
-		Scene(const Scene& other) = delete;
-		Scene& operator=(const Scene &other) = delete;
-
-		std::vector<Shape*> shapes;
-		std::vector<Node> nodes;
-		std::vector<Material> materials;
-		std::vector<Texture<colorHDR>*> textures;
-		std::vector<Light> lights;
-
-		Mesh &addMesh();
-		Sphere &addSphere();
-		Parallelogram &addParallelogram();
-		Node &addNode();
-		Material &addMaterial();
-		Texture<colorHDR> *addTexture(Texture<colorHDR> * texture);
-		Light &addLight();
-	};
+			// Scene preparation
+			Material *addMaterial(Material* material);
+			Texture<colorHDR> *addTexture(Texture<colorHDR>* texture);
+			Group* setRoot(Group* root);
+			void setLightDistribution(LightDistribution *lightDistribution);
+			const LightDistribution *getLightDistribution() const;
+			bool build();
+		private:
+			Group *rootNode;
+			LightDistribution *lightDistribution;
+			std::vector<Material*> materials;
+			std::vector<Texture<colorHDR>*> textures;
+		};
+	}
 }
 
 

@@ -1,46 +1,39 @@
 #include "NoAccel.h"
 
-#include "Triangle.h"
-#include "Sphere.h"
-#include "Parallelogram.h"
-
 #include <map>
 
 
 namespace raycore {
-	namespace tracer {
-		NoAccel::NoAccel()
+	namespace prim {
+		NoAccel::NoAccel(const std::vector<Hitable*> &hitables) : Accelerator(hitables)
 		{
+			Log::info("Building NoAccel...");
 		}
 		NoAccel::~NoAccel()
 		{
 		}
-		bool NoAccel::intersect(const Ray & ray, prim::HitInfo & info) const
+		bool NoAccel::intersect(const tracer::Ray & ray, Intersection *intersection) const
 		{
 			if (!bbox.intersectBounds(ray))
 				return false;
-			prim::Intersection intersection;
-			for (size_t iHitable = 0; iHitable < this->hitableCount; iHitable++)
+			// TODO compute size 
+			for (size_t iHitable = 0; iHitable < this->hitables.size(); iHitable++)
 			{
-				prim::Intersection localIntersection;
-				if (this->hitables[iHitable]->intersect(ray, localIntersection))
+				Intersection localIntersection;
+				if (this->hitables[iHitable]->intersect(ray, &localIntersection))
 				{
-					intersection.isClosestThan(localIntersection);
+					intersection->isClosestThan(localIntersection);
 				}
 			}
-			if (!intersection.hit())
-				return false;
-			
-			info = intersection.compute(ray);
-			return true;
+			return intersection->hit();
 		}
-		bool NoAccel::isOccluded(const Ray &ray) const
+		bool NoAccel::intersect(const tracer::Ray &ray) const
 		{
 			if (!bbox.intersectBounds(ray))
 				return false;
-			prim::Intersection intersection;
-			for (size_t iHitable = 0; iHitable < this->hitableCount; iHitable++)
-				if (this->hitables[iHitable]->intersect(ray, intersection))
+			Intersection intersection;
+			for (size_t iHitable = 0; iHitable < this->hitables.size(); iHitable++)
+				if (this->hitables[iHitable]->intersect(ray, &intersection))
 					return true;
 			return false;
 		}

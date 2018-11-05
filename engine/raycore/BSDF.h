@@ -5,13 +5,14 @@
 #include "Random.h"
 #include "Onb.h"
 #include "Fresnel.h"
+#include "Sampling.h"
 
 namespace raycore {
 
 	vec3 reflect(const vec3 &wi, const norm3 &normal);
 	bool refract(vec3 &out, const vec3 &wi, const norm3 &normal, float eta);
-	vec3 sampleUnitSphere(float r1, float r2);
-	vec3 sampleMicroFacet(float roughness, float r1, float r2);
+	//vec3 sampleUnitSphere(float r1, float r2);
+	//vec3 sampleMicroFacet(float roughness, float r1, float r2);
 
 	class BSDF
 	{
@@ -46,7 +47,7 @@ namespace raycore {
 		{
 			float r1 = rand::rnd();
 			float r2 = rand::rnd();
-			vec3 randomDirection = sampleUnitSphere(r1, r2);
+			vec3 randomDirection = sample::unitHemisphere(r1, r2);
 			transform::Onb onb(normal);
 			wo = onb(randomDirection);
 			pdf = this->PDF(wo);
@@ -157,14 +158,7 @@ namespace raycore {
 		}
 		virtual colorHDR sample(vec3 &wo, float &pdf) const
 		{
-			float r1 = rand::rnd();
-			float r2 = rand::rnd();
-			float theta = atanf(roughness * sqrtf(r1) / sqrtf(1 - r1));
-			float phi = 2 * M_PIf * r2;
-			vec3 m;
-			m.x = cosf(phi) * sinf(theta);
-			m.z = sinf(phi) * sinf(theta);
-			m.y = cosf(theta);
+			vec3 m = sample::unitMicrofacet(roughness, rand::rnd(), rand::rnd());
 			transform::Onb onb(normal);
 			wo = onb(m);
 			pdf = this->PDF(wo);

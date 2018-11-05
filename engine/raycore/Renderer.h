@@ -50,7 +50,7 @@ namespace raycore {
 			Renderer(const Renderer& other) = delete;
 			Renderer& operator=(const Renderer &other) = delete;
 
-			bool buildScene(Scene &&scene, Acceleration acceleration);
+			bool buildScene(prim::Scene &&scene, prim::Acceleration acceleration);
 
 			bool updateRays();
 
@@ -70,7 +70,7 @@ namespace raycore {
 		private:
 			Camera* camera;
 			Tracer* tracer; // TODO add a secondary quick tracer (whitted for example) for display
-			Accelerator* accelerator;
+			prim::Scene scene;
 
 			std::vector<Tile> tiles;
 			unsigned int tileSize;

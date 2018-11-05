@@ -19,7 +19,7 @@ namespace raycore {
 			A(vA), B(vB), C(vC)
 		{
 		}
-		bool Triangle::intersect(const tracer::Ray & ray, Intersection & intersection) const
+		bool Triangle::intersect(const tracer::Ray & ray, Intersection * intersection) const
 		{
 #if defined(MOLLER_TRUMBORE)
 			// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
@@ -47,7 +47,7 @@ namespace raycore {
 				return false;
 			float t = f * dot(AC, q);
 			if (t > epsilon && t > ray.tmin && t < ray.tmax)
-				return intersection.set(t, this, u, v);
+				return intersection->set(t, this, u, v);
 			else
 				return false;
 #else 
@@ -117,13 +117,13 @@ namespace raycore {
 			return cB * alpha + cC * beta + cA * (1.f - alpha - beta);
 		}
 
-		HitInfo Triangle::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
+		HitInfo Triangle::computeIntersection(const tracer::Ray & ray, const Intersection * intersection) const
 		{
 			HitInfo info;
 			info.direction = ray.direction;
-			info.point = point3(ray.origin + ray.direction * intersection.getDistance());
-			float alpha = intersection.getAlpha();
-			float beta = intersection.getBeta();
+			info.point = intersection->computeHit(ray);
+			float alpha = intersection->getAlpha();
+			float beta = intersection->getBeta();
 			info.normal = interpolatenormal(A.normal, B.normal, C.normal, alpha, beta);
 			info.texcoord = interpolateTexCoord(A.texcoord, B.texcoord, C.texcoord, alpha, beta);
 			info.color = interpolateColors(A.color, B.color, C.color, alpha, beta);
@@ -137,6 +137,10 @@ namespace raycore {
 			bbox.include(B.position);
 			bbox.include(C.position);
 			return bbox;
+		}
+		float Triangle::area() const
+		{
+			return length(cross(vec3(B.position - A.position), vec3(C.position - A.position))) / 2.f;
 		}
 	}
 }

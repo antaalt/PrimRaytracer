@@ -26,6 +26,8 @@ namespace raycore {
 				tmin(tmin),
 				tmax(tmax)
 				{}
+
+			point3 operator()(float distance) const { return point3(origin + direction * distance); }
 		};
 	}
 }

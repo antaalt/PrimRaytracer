@@ -5,17 +5,16 @@
 #include "BoundingBox.h"
 
 namespace raycore {
-	namespace tracer {
+	namespace prim {
 
 		class NoAccel : public Accelerator
 		{
 		public:
-			NoAccel();
+			NoAccel(const std::vector<Hitable*> &hitables);
 			~NoAccel();
 
-			virtual bool intersect(const Ray &ray, prim::HitInfo &intersection) const;
-
-			virtual bool isOccluded(const Ray &ray) const;
+			virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const;
+			virtual bool intersect(const tracer::Ray &ray) const;
 		};
 	}
 }

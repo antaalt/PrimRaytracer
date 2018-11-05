@@ -1,14 +1,10 @@
 #include "Light.h"
 
 namespace raycore {
-	namespace tracer {
-
+	namespace prim {
 		Light::Light(colorHDR albedo, float intensity) : albedo(albedo), intensity(intensity)
 		{
 		}
 
-		Light::~Light()
-		{
-		}
 	}
 }

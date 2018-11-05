@@ -12,10 +12,11 @@ namespace raycore {
 		{
 		}
 
-		colorHDR sampleLights(const prim::HitInfo &info, const Accelerator* accelerator)
+		colorHDR sampleLights(const prim::HitInfo &info, const prim::Scene& scene)
 		{
 			colorHDR radiance(0.f);
-			for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
+			const prim::LightDistribution *lightDistribution = scene.getLightDistribution();
+			/*for (size_t iLight = 0; iLight < lightDistribution.; iLight++)
 			{
 				const Light *l = accelerator->getLight(iLight);
 				LightInfo linfo;
@@ -23,16 +24,16 @@ namespace raycore {
 				{
 					radiance = radiance + linfo.color * std::abs(dot(linfo.sample, info.normal));
 				}
-			}
-			return radiance;
+			}*/
+			return lightDistribution->sampleOneLight(info, scene);
 		}
 
-		colorHDR PathTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
+		colorHDR PathTracer::castRay(const Ray & ray, const prim::Scene& scene, unsigned int depth) const
 		{
 			if (depth == 0)
 				return colorHDR(0.f);
 			prim::HitInfo info;
-			if (!trace(ray, accelerator, info))
+			if (!trace(ray, scene, info))
 				return miss(ray);
 
 			// if material is emissive, return emission
@@ -49,7 +50,7 @@ namespace raycore {
 			colorHDR lightRadiance(0.f);
 			if (!(type & prim::BSDF_SPECULAR))
 			{
-				lightRadiance = reflectance * sampleLights(info, accelerator);
+				lightRadiance = reflectance * sampleLights(info, scene);
 			}
 
 			// Russian roulette
@@ -62,19 +63,17 @@ namespace raycore {
 			}
 			//return colorHDR(info.normal.x, info.normal.y, info.normal.z, 1.f);
 
-			colorHDR ret = lightRadiance + reflectance * castRay(Ray(info.point, wo), accelerator, depth - 1);
-			if (hasNan(ret))
-				__debugbreak();
+			colorHDR ret = lightRadiance + reflectance * castRay(Ray(info.point, wo), scene, depth - 1);
 			return ret;
 		}
 
-		bool PathTracer::trace(const Ray & ray, const Accelerator* accelerator, prim::HitInfo &info) const
+		bool PathTracer::trace(const Ray & ray, const prim::Scene& scene, prim::HitInfo &info) const
 		{
-			return accelerator->intersect(ray, info);
+			return scene.intersect(ray, info);
 		}
 		colorHDR PathTracer::miss(const Ray & ray) const
 		{
-			return colorHDR(0.9f);
+			return colorHDR(0.f);
 		}
 	}
 }

@@ -3,43 +3,32 @@
 
 
 namespace raycore {
-	namespace tracer {
-		BVH::BVH()
+	namespace prim {
+		BVH::BVH(const std::vector<Hitable*> &prim) : Accelerator(prim)
 		{
+			Log::info("Building BVH...");
+			this->root = new BVHNode(bbox.min, bbox.max);
+
+			std::vector<const HitableBounded*> pHitableBounded;
+			for (prim::Hitable* hitable : hitables) {
+				pHitableBounded.push_back(new HitableBounded(hitable));
+			}
+			unsigned int nodeCount = this->root->init(pHitableBounded, 0);
+			Log::info("BVH generated with ", nodeCount, " nodes (max. of ", (1 << (MAX_TREE_DEPTH + 1)), ") for ", this->hitables.size(), " hitables.");
+			Log::info("BVH bounds : min: ", bbox.min, " - max: ", bbox.max);
 		}
 		BVH::~BVH()
 		{
 			delete root;
 		}
-		bool BVH::build(const Scene & scene)
+		bool BVH::intersect(const tracer::Ray & ray, Intersection *intersection) const
 		{
-			Log::info("Building BVH...");
-			Accelerator::build(scene);
-			this->root = new BVHNode(bbox.min, bbox.max);
-
-			std::vector<const HitableBounded*> pHitableBounded;
-			this->hitableBounded.reserve(hitables.size());
-			for (prim::Hitable* &hitable : hitables) {
-				this->hitableBounded.emplace_back(hitable);
-				pHitableBounded.push_back(&this->hitableBounded.back());
-			}
-			unsigned int nodeCount = this->root->init(pHitableBounded, 0);
-			Log::info("BVH generated with ", nodeCount, " nodes (max. of ", (1 << (MAX_TREE_DEPTH+1)),") for ", this->hitables.size(), " hitables.");
-			Log::info("BVH bounds : min: ", bbox.min, " - max: ", bbox.max);
-			return true;
+			return root->intersect(ray, intersection);
 		}
-		bool BVH::intersect(const Ray & ray, prim::HitInfo & info) const
+		bool BVH::intersect(const tracer::Ray & ray) const
 		{
-			prim::Intersection intersection;
-			if (!root->intersect(ray, intersection))
-				return false;
-			info = intersection.compute(ray);
-			return true;
-		}
-		bool BVH::isOccluded(const Ray & ray) const
-		{
-			prim::HitInfo info;
-			return intersect(ray, info);
+			Intersection intersection;
+			return intersect(ray, &intersection);
 		}
 		BVHNode::BVHNode(const point3 & min, const point3 & max) : BoundingBox(min, max), hitableCount(0)
 		{
@@ -53,7 +42,7 @@ namespace raycore {
 		{
 			unsigned int nodeCount = 0;
 			// 1. check the depth and add element
-			if (hitableParents.size() < 10 || depth > MAX_TREE_DEPTH)
+			if (hitableParents.size() < CHILD_MAX_HITABLE || depth > MAX_TREE_DEPTH)
 			{
 				//Log::debug("LEAF created - Depth : ", depth, ", contain ", hitableParent.size(), " hitables.");
 				for(const HitableBounded* lHitable : hitableParents)
@@ -104,10 +93,15 @@ namespace raycore {
 				for (unsigned int iGroup = 0; iGroup < CHILD_COUNT; iGroup++)
 				{
 					ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
-					point3 newGroupCentroid(0.f);
-					for (const HitableBounded* &hitable : subGroup[iGroup])
-						newGroupCentroid = newGroupCentroid + hitable->bbox().center();
-					newGroupCentroid = newGroupCentroid / static_cast<float>(subGroup[iGroup].size());
+					point3 tmp(0.f);
+					float weights = 0.f;
+					for (const HitableBounded* hitable : subGroup[iGroup])
+					{
+						float weight = hitable->getHitable()->area();
+						tmp += hitable->bbox().center() * weight;
+						weights += weight;
+					}
+					point3 newGroupCentroid = tmp / weights;
 					// Check weights
 					epsilon[iGroup] = distance(newGroupCentroid, centroid[iGroup]);
 					centroid[iGroup] = newGroupCentroid;
@@ -129,7 +123,7 @@ namespace raycore {
 			}
 			return nodeCount;
 		}
-		bool BVHNode::intersect(const Ray & ray, prim::Intersection & intersection)
+		bool BVHNode::intersect(const tracer::Ray & ray, Intersection * intersection)
 		{
 			if (!this->intersectBounds(ray))
 				return false;
@@ -137,21 +131,21 @@ namespace raycore {
 			{
 				for (size_t iTri = 0; iTri < this->hitableCount; iTri++)
 				{
-					prim::Intersection localIntersection;
-					if (this->hitable[iTri]->intersect(ray, localIntersection))
-						intersection.isClosestThan(localIntersection);
+					Intersection localIntersection;
+					if (this->hitable[iTri]->intersect(ray, &localIntersection))
+						intersection->isClosestThan(localIntersection);
 				}
-				return intersection.hit();
+				return intersection->hit();
 			}
 			else
 			{
 				for (unsigned int i = 0; i < CHILD_COUNT; i++)
 				{
-					prim::Intersection localIntersection;
-					if (childrens[i]->intersect(ray, localIntersection))
-						intersection.isClosestThan(localIntersection);
+					Intersection localIntersection;
+					if (childrens[i]->intersect(ray, &localIntersection))
+						intersection->isClosestThan(localIntersection);
 				}
-				return intersection.hit();
+				return intersection->hit();
 			}
 			return false;
 		}

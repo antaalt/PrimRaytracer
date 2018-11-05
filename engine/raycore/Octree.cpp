@@ -2,25 +2,12 @@
 #include "Material.h"
 #include <map>
 namespace raycore {
-	namespace tracer {
+	
+	namespace prim {
 
-		Octree::Octree()
-		{
-		}
-
-		Octree::~Octree()
-		{
-			for (size_t i = 0; i < this->hitables.size(); i++)
-				delete this->hitables[i];
-			for (size_t i = 0; i < this->materials.size(); i++)
-				delete this->materials[i];
-			delete root;
-		}
-
-		bool Octree::build(const Scene & scene)
+		Octree::Octree(const std::vector<Hitable*> &prim) : Accelerator(prim)
 		{
 			Log::info("Building Octree...");
-			Accelerator::build(scene);
 			this->root = new OctNode(bbox.min, bbox.max);
 			this->triangleBounded.reserve(this->hitables.size());
 			std::vector<const TriangleBounded*> tris;
@@ -33,25 +20,29 @@ namespace raycore {
 					this->triangleBounded.push_back(TriangleBounded(*tri));
 					tris.push_back(&this->triangleBounded.back());
 				}
+				else
+				{
+					Log::error("Only triangle supported for Octree.");
+				}
 			}
 			unsigned int created = this->root->init(tris);
 			Log::info("Octree generated with ", created, " subtrees");
-			return created > 0;
 		}
 
-		bool Octree::intersect(const Ray & ray, prim::HitInfo &info) const
+		Octree::~Octree()
 		{
-			prim::Intersection intersection;
-			if (!root->intersect(ray, intersection))
-				return false;
-			info = intersection.compute(ray);
-			return true;
+			delete root;
 		}
 
-		bool Octree::isOccluded(const Ray & ray) const
+		bool Octree::intersect(const tracer::Ray & ray, Intersection *intersection) const
 		{
-			prim::Intersection intersection;
 			return root->intersect(ray, intersection);
+		}
+
+		bool Octree::intersect(const tracer::Ray & ray) const
+		{
+			Intersection intersection;
+			return root->intersect(ray, &intersection);
 		}
 
 		bool OctNode::isLeafNode() const
@@ -126,7 +117,7 @@ namespace raycore {
 				delete childrens[i];
 		}
 
-		bool OctNode::intersect(const tracer::Ray & ray, prim::Intersection & intersection) const
+		bool OctNode::intersect(const tracer::Ray & ray, Intersection * intersection) const
 		{
 			if (!this->intersectBounds(ray))
 				return false;
@@ -135,10 +126,10 @@ namespace raycore {
 				for (size_t iTri = 0; iTri < this->triangles.size(); iTri++)
 				{
 					prim::Intersection localIntersection;
-					if (this->triangles[iTri]->intersect(ray, localIntersection))
-						intersection.isClosestThan(localIntersection);
+					if (this->triangles[iTri]->intersect(ray, &localIntersection))
+						intersection->isClosestThan(localIntersection);
 				}
-				return intersection.hit();
+				return intersection->hit();
 			}
 			else
 			{
@@ -147,10 +138,10 @@ namespace raycore {
 					prim::Intersection localIntersection;
 					if (childrens[i] == nullptr)
 						continue;
-					if (childrens[i]->intersect(ray, localIntersection))
-						intersection.isClosestThan(localIntersection);
+					if (childrens[i]->intersect(ray, &localIntersection))
+						intersection->isClosestThan(localIntersection);
 				}
-				return intersection.hit();
+				return intersection->hit();
 			}
 		}
 

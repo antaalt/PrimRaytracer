@@ -1,17 +1,15 @@
 #pragma once
 #include "Light.h"
 namespace raycore {
-	namespace tracer {
+	namespace prim {
 		class PointLight : public Light
 		{
 		public:
-			PointLight(colorHDR albedo, float intensity, point3 position);
-			~PointLight();
-
-			virtual bool sample(const prim::HitInfo &info, const Accelerator *accelerator, LightInfo &lightInfo) const;
-
+			PointLight(const point3 &center, colorHDR albedo, float intensity);
+			virtual bool sample(const prim::HitInfo &info, const prim::Scene &scene, float *pdf, vec3 *sample) const;
+			virtual float contribution(const prim::HitInfo &info) const;
 		private:
-			point3 position;
+			point3 center;
 		};
 	}
 }

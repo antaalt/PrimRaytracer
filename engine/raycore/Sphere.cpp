@@ -16,7 +16,7 @@ namespace raycore {
 		{
 		}
 
-		bool Sphere::intersect(const tracer::Ray & ray, Intersection & intersection) const
+		bool Sphere::intersect(const tracer::Ray & ray, Intersection * intersection) const
 		{
 			vec3 eyeDirection(this->center - ray.origin);
 			float b = dot(eyeDirection, ray.direction); // a is always 1 because dot of same normalized vector
@@ -29,18 +29,18 @@ namespace raycore {
 			float t1 = b - det;
 			float t2 = b + det;
 			if (t1 > ray.tmin && t1 < ray.tmax)
-				return intersection.set(t1, this);
+				return intersection->set(t1, this);
 			else if (t2 > ray.tmin && t2 < ray.tmax)
-				return intersection.set(t2, this);
+				return intersection->set(t2, this);
 			else
 				return false;
 		}
 
-		HitInfo Sphere::computeIntersection(const tracer::Ray & ray, const Intersection & intersection) const
+		HitInfo Sphere::computeIntersection(const tracer::Ray & ray, const Intersection * intersection) const
 		{
 			HitInfo info;
 			info.direction = ray.direction;
-			info.point = point3(ray.origin + ray.direction * intersection.getDistance());
+			info.point = intersection->computeHit(ray);
 			info.normal = normalize(norm3(info.point - this->center));
 			// https://en.wikipedia.org/wiki/UV_mraycoreing
 			transform::Onb onb(this->up);
@@ -59,6 +59,11 @@ namespace raycore {
 			bbox.min = this->center - point3(this->radius);
 			bbox.max = this->center + point3(this->radius);
 			return bbox;
+		}
+
+		float Sphere::area() const
+		{
+			return 4.f * M_PIf * this->radius * this->radius;
 		}
 
 	}

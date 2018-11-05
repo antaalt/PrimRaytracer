@@ -17,7 +17,7 @@ namespace raycore {
 			width(width), 
 			height(height), 
 			camera(nullptr), 
-			accelerator(nullptr), 
+			//accelerator(nullptr), 
 			tracer(nullptr),
 			tileSize(settings.tileSize),
 			samples(0),
@@ -34,31 +34,33 @@ namespace raycore {
 		{
 			if (this->camera != nullptr)
 				delete this->camera;
-			if (this->accelerator != nullptr)
-				delete this->accelerator;
+			/*if (this->accelerator != nullptr)
+				delete this->accelerator;*/
 			if (this->tracer != nullptr)
 				delete this->tracer;
 		}
 
-		bool Renderer::buildScene(Scene &&scene, Acceleration acceleration)
+		bool Renderer::buildScene(prim::Scene &&scene, prim::Acceleration acceleration)
 		{
-			if (this->accelerator != nullptr)
+			/*if (this->accelerator != nullptr)
 				delete this->accelerator;
 			switch (acceleration)
 			{
-			case Acceleration::OCTREE:
-				this->accelerator = new Octree();
+			case prim::Acceleration::OCTREE:
+				this->accelerator = nullptr;// new prim::Octree();
 				break;
-			case Acceleration::NONE:
-				this->accelerator = new NoAccel();
+			case prim::Acceleration::NONE:
+				this->accelerator = new prim::NoAccel();
 				break;
-			case Acceleration::BVH:
-				this->accelerator = new BVH();
+			case prim::Acceleration::BVH:
+				this->accelerator = new prim::BVH();
 				break;
 			default:
 				return false;
 			}
-			return this->accelerator->build(scene);
+			return this->accelerator->build(scene);*/
+			this->scene = scene;
+			return this->scene.build();
 		}
 
 		bool Renderer::updateRays()
@@ -83,7 +85,7 @@ namespace raycore {
 					RayIndex(center.x, this->width, RaySampler::LINEAR),
 					RayIndex(center.y, this->height, RaySampler::LINEAR)
 				);
-				Pixel p = this->tracer->castRay(ray, this->accelerator, 5);
+				Pixel p = this->tracer->castRay(ray, this->scene, 5);
 				for (unsigned int y = tile.min.y; y < tile.max.y; y++)
 					for (unsigned int x = tile.min.x; x < tile.max.x; x++)
 						pixel[y * this->width + x] = p;
@@ -114,7 +116,7 @@ namespace raycore {
 									RayIndex(x * this->subSamplesX + sx, this->width * this->subSamplesX, this->raySamplerX),
 									RayIndex(y * this->subSamplesY + sy, this->height * this->subSamplesY, this->raySamplerY)
 								);
-								p += this->tracer->castRay(ray, this->accelerator, Config::maxDepth) * c;
+								p += this->tracer->castRay(ray, this->scene, Config::maxDepth) * c;
 							}
 						}
 						pixel[y * this->width + x].accumulate(p, samples);

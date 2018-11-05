@@ -13,11 +13,11 @@ namespace raycore {
 		Camera::~Camera()
 		{
 		}
-		void Camera::lookAt(const point3 & eye, const point3 & target, const norm3 &up)
+		void Camera::lookAt(const point3 & eye, const point3 & target, const vec3 &up)
 		{
-			norm3 forward(target - eye);
-			norm3 right(cross(up, forward));
-			norm3 upCoordinate(cross(forward, right));
+			vec3 forward(target - eye);
+			vec3 right(cross(up, forward));
+			vec3 upCoordinate(cross(forward, right));
 
 			m_transform.cols[0] = mat4::col(normalize(right), 0.f);
 			m_transform.cols[1] = mat4::col(normalize(upCoordinate), 0.f);

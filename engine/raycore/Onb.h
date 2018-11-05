@@ -9,12 +9,12 @@ namespace raycore {
 		struct Onb {
 			Onb(const norm3 &n)
 			{
-				normal = n;
+				normal = vec3(n);
 				if (std::fabs(n.x) > std::fabs(n.y))
-					tangent = normalize(norm3(n.z, 0, -n.x));
+					tangent = normalize(vec3(n.z, 0, -n.x));
 				else
-					tangent = normalize(norm3(0, -n.z, n.y));
-				binormal = normalize(cross(n, tangent));
+					tangent = normalize(vec3(0, -n.z, n.y));
+				binormal = normalize(cross(normal, tangent));
 			}
 
 			vec3 operator()(const vec3 &n)
@@ -23,12 +23,12 @@ namespace raycore {
 			}
 			norm3 operator()(const norm3 &n)
 			{
-				return n.x * binormal + n.y * normal + n.z * tangent;
+				return norm3(n.x * binormal + n.y * normal + n.z * tangent);
 			}
 		private:
-			norm3 normal;
-			norm3 binormal;
-			norm3 tangent;
+			vec3 normal;
+			vec3 binormal;
+			vec3 tangent;
 		};
 	}
 }

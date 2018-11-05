@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-#include "Log.h"
+#include "Config.h"
 
 namespace Utils {
 

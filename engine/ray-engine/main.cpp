@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 		4.f,
 		4.f
 	), point3(0.f, 0.f, 0.f));
-	options.acceleration = raycore::tracer::Acceleration::BVH;
+	options.acceleration = raycore::prim::Acceleration::BVH;
 	options.settings.raySamplerX = raycore::tracer::RaySampler::RANDOM;
 	options.settings.raySamplerY = raycore::tracer::RaySampler::RANDOM;
 	options.settings.samplesX = 1;
@@ -32,17 +32,17 @@ int main(int argc, char *argv[])
 
 	// Load Scene
 	Log::info("Loading scene");
-	raycore::Scene scene;
-	raycore::builder::build(scene);
+	raycore::prim::Scene scene;
+	raycore::builder::newBuild(scene);
 	//raycore::GLTF::load("../data/models/milkTruck/CesiumMilkTruck.gltf", scene);
 	//raycore::GLTF::load("../data/models/lantern/Lantern.gltf", scene);
 	//raycore::GLTF::load("../data/models/duck/Duck.gltf", scene);
 	//raycore::GLTF::load("../data/models/box/box.gltf", scene);
 	//raycore::GLTF::load("../data/models/boxTextured/BoxTextured.gltf", scene);
 	//raycore::GLTF::load("../data/models/sponza/Sponza.gltf", scene);
-	raycore::Light l;
+	/*raycore::prim::Light *l;
 	l.position = point3(0.f, 20.f, 0.f);
-	scene.lights.push_back(l);
+	scene.lights.push_back(l);*/
 	application.run(scene, options);
 
 	system("pause");

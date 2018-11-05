@@ -4,7 +4,7 @@
 
 // Math
 #include "geometry.h"
-#include "Utils\Log.h"
+#include "Log.h"
 using namespace geometry;
 using namespace math;
 

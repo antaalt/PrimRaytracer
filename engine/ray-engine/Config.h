@@ -6,9 +6,8 @@
 #include <GL\glew.h>
 // OpenGL
 #include <GL\GL.h>
-// Math
-//#include "Types.h"
-#include "Utils\Log.h"
+
+//#include "Utils\Log.h"
 #include "../raycore/Config.h"
 
 #include <cassert>

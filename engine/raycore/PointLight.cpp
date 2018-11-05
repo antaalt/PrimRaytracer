@@ -2,30 +2,24 @@
 
 
 namespace raycore {
-	namespace tracer {
-
-		PointLight::PointLight(colorHDR albedo, float intensity, point3 position) : Light(albedo, intensity), position(position)
+	namespace prim {
+		PointLight::PointLight(const point3 & center, colorHDR albedo, float intensity) : Light(albedo, intensity), center(center)
 		{
 		}
-
-		PointLight::~PointLight()
+		bool PointLight::sample(const prim::HitInfo & info, const prim::Scene & scene, float * pdf, vec3 * sample) const
 		{
-		}
-
-		bool PointLight::sample(const prim::HitInfo & info, const Accelerator *accelerator, LightInfo &lightInfo) const
-		{
-			vec3 lightDir(this->position - info.point);
-			float dist = length(lightDir);
-			lightDir = normalize(lightDir);
-			Ray shadowRay(info.point, lightDir, tracer::RayType::SHADOW_RAY, EPSILON, dist);
-
-			if (accelerator->isOccluded(shadowRay))
+			vec3 s(center - info.point);
+			if (scene.isOccluded(tracer::Ray(info.point, normalize(s), tracer::GEOMETRY_RAY, EPSILON, length(s))))
 				return false;
-			lightInfo.sample = lightDir;
-			lightInfo.light = this;
-			lightInfo.color = this->albedo * this->intensity;
-			lightInfo.pdf = 1.f;
+			*sample = s;
+			*pdf = 1.f;
 			return true;
+		}
+		float PointLight::contribution(const prim::HitInfo & info) const
+		{
+			float d = distance(info.point, center);
+			return intensity / (d * d);
 		}
 	}
 }
+

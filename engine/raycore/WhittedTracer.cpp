@@ -12,12 +12,12 @@ namespace raycore {
 		WhittedTracer::~WhittedTracer()
 		{
 		}
-		colorHDR WhittedTracer::castRay(const Ray & ray, const Accelerator* accelerator, unsigned int depth) const
+		colorHDR WhittedTracer::castRay(const Ray & ray, const prim::Scene &scene, unsigned int depth) const
 		{
 			if (depth == 0)
 				return miss(ray);
 			prim::HitInfo info;
-			if (!trace(ray, accelerator, info))
+			if (!trace(ray, scene, info))
 				return miss(ray); 
 			
 			float pdf = 0;
@@ -72,9 +72,9 @@ namespace raycore {
 				return miss(ray);
 			}*/
 		}
-		bool WhittedTracer::trace(const Ray & ray, const Accelerator* accelerator, prim::HitInfo & info) const
+		bool WhittedTracer::trace(const Ray & ray, const prim::Scene &scene, prim::HitInfo & info) const
 		{
-			return accelerator->intersect(ray, info);
+			return scene.intersect(ray, info);
 		}
 		colorHDR WhittedTracer::miss(const Ray & ray) const
 		{
