@@ -1,5 +1,5 @@
 #include "Sphere.h"
-#include "Onb.h"
+#include "transform.h"
 
 namespace raycore {
 	namespace prim {
@@ -45,8 +45,8 @@ namespace raycore {
 			// https://en.wikipedia.org/wiki/UV_mraycoreing
 			transform::Onb onb(this->up);
 			norm3 n = onb(info.normal);
-			float u = 0.5f + atan2(-n.z, -n.x) / (2.f * M_PIf);
-			float v = 0.5f - asin(-n.y) / M_PIf;
+			float u = 0.5f + math::arctan2(-n.z, -n.x)() / (2.f * math::pi);
+			float v = 0.5f - math::arcsin(-n.y)() / math::pi;
 			info.texcoord = uv2(u, v);
 			info.color = colorHDR(1.f);
 			info.material = material;
@@ -63,7 +63,7 @@ namespace raycore {
 
 		float Sphere::area() const
 		{
-			return 4.f * M_PIf * this->radius * this->radius;
+			return 4.f * math::pi * this->radius * this->radius;
 		}
 
 	}

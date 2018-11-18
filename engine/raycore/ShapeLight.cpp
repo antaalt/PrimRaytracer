@@ -38,7 +38,7 @@ namespace raycore {
 			}
 			float Sphere::pdf() const
 			{
-				return 4.f * M_PIf * radius * radius;;
+				return 4.f * math::pi * radius * radius;;
 			}
 			point3 Sphere::position() const
 			{
@@ -49,13 +49,13 @@ namespace raycore {
 			}
 			vec3 Disk::sample(const point3 & from) const
 			{
-				vec3 sample = sample::unitDisk(rand::rnd(), rand::rnd());
+				vec3 sample = vec3(sample::unitDisk(rand::rnd(), rand::rnd()), 1.f);
 				transform::Onb onb(up);
 				return center + onb(sample * radius);
 			}
 			float Disk::pdf() const
 			{
-				return M_PIf * radius * radius;
+				return math::pi * radius * radius;
 			}
 			point3 Disk::position() const
 			{

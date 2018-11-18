@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	// Load Scene
 	Log::info("Loading scene");
 	raycore::prim::Scene scene;
-	raycore::builder::newBuild(scene);
+	raycore::builder::build(scene);
 	//raycore::GLTF::load("../data/models/milkTruck/CesiumMilkTruck.gltf", scene);
 	//raycore::GLTF::load("../data/models/lantern/Lantern.gltf", scene);
 	//raycore::GLTF::load("../data/models/duck/Duck.gltf", scene);

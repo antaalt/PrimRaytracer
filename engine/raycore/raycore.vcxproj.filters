@@ -34,9 +34,6 @@
     <Filter Include="Header Files\Tracer">
       <UniqueIdentifier>{758eade0-92e6-40a7-854e-deaddb3f6095}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Tracer\Helpers">
-      <UniqueIdentifier>{860311e4-cd6e-4dc3-9d12-f98d81f5c171}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{f8de84e6-a9f1-4507-bb30-fc0f001c1533}</UniqueIdentifier>
     </Filter>
@@ -76,11 +73,14 @@
     <Filter Include="Header Files\Materials">
       <UniqueIdentifier>{ef023b32-e9ad-4290-be9d-d1f9e451eaf3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Geometry">
-      <UniqueIdentifier>{3f836c4c-8e88-479a-b01d-305be72e336a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Geometry">
       <UniqueIdentifier>{606ca553-6e67-4931-ac13-caa58bd489f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{3f836c4c-8e88-479a-b01d-305be72e336a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math\Geometry">
+      <UniqueIdentifier>{eb1eaba5-d674-49a1-ba59-0635a3930930}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +138,6 @@
     <ClInclude Include="WhittedTracer.h">
       <Filter>Header Files\Tracer</Filter>
     </ClInclude>
-    <ClInclude Include="Onb.h">
-      <Filter>Header Files\Tracer\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -187,7 +184,7 @@
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="geometry.h">
-      <Filter>Header Files\Geometry</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Location.h">
       <Filter>Header Files\Utils</Filter>
@@ -205,10 +202,49 @@
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
     <ClInclude Include="Sampling.h">
-      <Filter>Header Files\Geometry</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="LightDistribution.h">
       <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="transform.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\color32.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\colorHDR.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\mat3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\mat4.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\norm3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\point3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\print.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\quat.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\uv2.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec2.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\scientific.h">
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -302,5 +338,37 @@
     <ClCompile Include="LightDistribution.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="math\color32.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\colorHDR.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\mat3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\mat4.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\norm3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\point3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\quat.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\uv2.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\vec2.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\vec3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
   </ItemGroup>
 </Project>

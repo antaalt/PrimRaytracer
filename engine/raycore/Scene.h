@@ -35,7 +35,7 @@ namespace raycore {
 			virtual bool build() = 0;
 			virtual const BoundingBox &bounds() const { return bbox; };
 			void setAcceleration(Acceleration accel) { this->accel = accel; };
-			//virtual void setTransform(const mat4 &transform) { this->transform = inverse(transform); }
+			virtual void setTransform(const mat4 &transform) { this->transform = inverse(transform); }
 		protected:
 			BoundingBox bbox;
 			Acceleration accel;

@@ -3,7 +3,7 @@
 #include "Ray.h"
 #include "Hitable.h"
 #include "Random.h"
-#include "Onb.h"
+#include "transform.h"
 #include "Fresnel.h"
 #include "Sampling.h"
 
@@ -11,8 +11,6 @@ namespace raycore {
 
 	vec3 reflect(const vec3 &wi, const norm3 &normal);
 	bool refract(vec3 &out, const vec3 &wi, const norm3 &normal, float eta);
-	//vec3 sampleUnitSphere(float r1, float r2);
-	//vec3 sampleMicroFacet(float roughness, float r1, float r2);
 
 	class BSDF
 	{
@@ -56,11 +54,11 @@ namespace raycore {
 	protected:
 		virtual float PDF(const vec3 &wo) const
 		{
-			return dot(wo, normal) / M_PIf;
+			return dot(wo, normal) / math::pi;
 		}
 		virtual colorHDR evaluate(const vec3 &wo) const
 		{
-			return Rd / M_PIf;
+			return Rd / math::pi;
 		}
 	private:
 		colorHDR Rd;
@@ -167,11 +165,11 @@ namespace raycore {
 	protected:
 		virtual float PDF(const vec3 &wo) const
 		{
-			return dot(wo, normal) / M_PIf;
+			return dot(wo, normal) / math::pi;
 		}
 		virtual colorHDR evaluate(const vec3 &wo) const
 		{
-			return Rs / M_PIf;
+			return Rs / math::pi;
 		}
 	private:
 		colorHDR Rs;

@@ -153,11 +153,22 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="geometry.h" />
+    <ClInclude Include="math\color32.h" />
+    <ClInclude Include="math\colorHDR.h" />
+    <ClInclude Include="math\mat3.h" />
+    <ClInclude Include="math\mat4.h" />
+    <ClInclude Include="math\norm3.h" />
+    <ClInclude Include="math\point3.h" />
+    <ClInclude Include="math\print.h" />
+    <ClInclude Include="math\quat.h" />
+    <ClInclude Include="math\scientific.h" />
+    <ClInclude Include="math\uv2.h" />
+    <ClInclude Include="math\vec2.h" />
+    <ClInclude Include="math\vec3.h" />
     <ClInclude Include="Matte.h" />
     <ClInclude Include="Metal.h" />
     <ClInclude Include="NoAccel.h" />
     <ClInclude Include="Octree.h" />
-    <ClInclude Include="Onb.h" />
     <ClInclude Include="PathTracer.h" />
     <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="PixelBuffer.h" />
@@ -175,6 +186,7 @@
     <ClInclude Include="TextureMap.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Tracer.h" />
+    <ClInclude Include="transform.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="WhittedTracer.h" />
   </ItemGroup>
@@ -209,6 +221,18 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="WhittedTracer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="math\color32.inl" />
+    <None Include="math\colorHDR.inl" />
+    <None Include="math\mat3.inl" />
+    <None Include="math\mat4.inl" />
+    <None Include="math\norm3.inl" />
+    <None Include="math\point3.inl" />
+    <None Include="math\quat.inl" />
+    <None Include="math\uv2.inl" />
+    <None Include="math\vec2.inl" />
+    <None Include="math\vec3.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

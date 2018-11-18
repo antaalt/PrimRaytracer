@@ -12,7 +12,7 @@ namespace raycore {
 		float k = 1.f - eta * eta * (1.f - NdotV * NdotV);
 		if (k < 0.f)
 			return true;
-		wt = normalize(eta * wi - (eta*NdotV + sqrtf(k)) * n);
+		wt = normalize(eta * wi - (eta*NdotV + math::sqrt(k)) * n);
 		return false;
 	}
 }

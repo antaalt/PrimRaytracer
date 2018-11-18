@@ -56,12 +56,13 @@ namespace raycore {
 			// Russian roulette
 			if (depth < (RAY_DEFAULT_DEPTH / 2))
 			{
-				float probability = max(reflectance.r, max(reflectance.g, reflectance.b));
+				float probability = math::max(reflectance.r, math::max(reflectance.g, reflectance.b));
 				if (probability < rand::rnd())
 					return colorHDR(0.f);
 				reflectance = reflectance / probability;
 			}
-			//return colorHDR(info.normal.x, info.normal.y, info.normal.z, 1.f);
+			//return colorHDR(wo.x, wo.y, wo.z, 1.f);
+			//return colorHDR(info.point.x, info.point.y, info.point.z, 1.f);
 
 			colorHDR ret = lightRadiance + reflectance * castRay(Ray(info.point, wo), scene, depth - 1);
 			return ret;
@@ -73,7 +74,7 @@ namespace raycore {
 		}
 		colorHDR PathTracer::miss(const Ray & ray) const
 		{
-			return colorHDR(0.f);
+			return colorHDR(0.9f);
 		}
 	}
 }

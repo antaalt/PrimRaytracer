@@ -22,13 +22,13 @@ namespace raycore {
 #if defined(BILINEAR_FILTER_TEXTURE)
 		float uf = ui - floorf(ui);
 		float vf = vi - floorf(vi);
-		return lerp<T>(
-			lerp<T>(
+		return math::lerp<T>(
+			math::lerp<T>(
 				at(uPixel, vPixel),
 				at(uPixel + 1, vPixel),
 				uf
 			),
-			lerp<T>(
+			math::lerp<T>(
 				at(uPixel, vPixel + 1),
 				at(uPixel + 1, vPixel + 1),
 				uf

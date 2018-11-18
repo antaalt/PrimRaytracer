@@ -17,7 +17,6 @@ namespace raycore {
 			width(width), 
 			height(height), 
 			camera(nullptr), 
-			//accelerator(nullptr), 
 			tracer(nullptr),
 			tileSize(settings.tileSize),
 			samples(0),
@@ -34,31 +33,12 @@ namespace raycore {
 		{
 			if (this->camera != nullptr)
 				delete this->camera;
-			/*if (this->accelerator != nullptr)
-				delete this->accelerator;*/
 			if (this->tracer != nullptr)
 				delete this->tracer;
 		}
 
 		bool Renderer::buildScene(prim::Scene &&scene, prim::Acceleration acceleration)
 		{
-			/*if (this->accelerator != nullptr)
-				delete this->accelerator;
-			switch (acceleration)
-			{
-			case prim::Acceleration::OCTREE:
-				this->accelerator = nullptr;// new prim::Octree();
-				break;
-			case prim::Acceleration::NONE:
-				this->accelerator = new prim::NoAccel();
-				break;
-			case prim::Acceleration::BVH:
-				this->accelerator = new prim::BVH();
-				break;
-			default:
-				return false;
-			}
-			return this->accelerator->build(scene);*/
 			this->scene = scene;
 			return this->scene.build();
 		}
@@ -156,7 +136,7 @@ namespace raycore {
 				{
 					this->tiles.push_back(Tile(
 						index2D(x * tileSize, y * tileSize),
-						index2D(min((x + 1) * tileSize, this->width), min((y + 1) * tileSize, this->height))
+						index2D(math::min((x + 1) * tileSize, this->width), math::min((y + 1) * tileSize, this->height))
 					));
 				}
 			}

@@ -72,13 +72,13 @@ namespace app {
 			// check bounds
 			ImVec2 size = ImGui::GetWindowSize();
 			if (size.x > width || size.y > height)
-				ImGui::SetWindowSize(ImVec2(min(size.x, static_cast<float>(width)), min(size.y, static_cast<float>(height))));
+				ImGui::SetWindowSize(ImVec2(math::min(size.x, static_cast<float>(width)), math::min(size.y, static_cast<float>(height))));
 
 			ImVec2 pos = ImGui::GetWindowPos();
 			if (pos.x < 0.f || pos.y < 0.f)
-				ImGui::SetWindowPos(ImVec2(max(pos.x, 0.f), max(pos.y, 0.f)));
+				ImGui::SetWindowPos(ImVec2(math::max(pos.x, 0.f), math::max(pos.y, 0.f)));
 			if (pos.x + size.x > width || pos.y + size.y > height)
-				ImGui::SetWindowPos(ImVec2(min(pos.x, width - size.x), min(pos.y, height - size.y)));
+				ImGui::SetWindowPos(ImVec2(math::min(pos.x, width - size.x), math::min(pos.y, height - size.y)));
 
 			// check mouse position
 			if (m_inputs.mouse.position[0] > pos.x &&

@@ -105,7 +105,7 @@ namespace app {
 		for (unsigned int y = 0; y < m_height; y++)
 			for (unsigned int x = 0; x < m_width; x++)
 				for (unsigned int i = 0; i < 3; i++)
-					output[y * m_width * 3 + x * 3 + i] = static_cast<unsigned char>(clamp(data[y * m_width * 4 + x * 4 + i], 0.f, 1.f) * 255.f);
+					output[y * m_width * 3 + x * 3 + i] = static_cast<unsigned char>(math::clamp(data[y * m_width * 4 + x * 4 + i], 0.f, 1.f) * 255.f);
 		stbi_flip_vertically_on_write(true);
 		int save = stbi_write_jpg(path.c_str(), m_width, m_height, 3, output.data(), 100);
 		Log::info("Render saved at '", path, "'");
@@ -123,6 +123,7 @@ namespace app {
 
 		m_renderer = new raycore::tracer::Renderer(m_width, m_height, options.settings);
 		bool init = m_renderer->buildScene(std::move(scene), options.acceleration);
+		ASSERT(init == true, "Error building scene");
 		m_renderer->setTracer(options.tracer);
 		m_renderer->setCamera(options.camera);
 		m_camera = options.camera;
@@ -167,8 +168,8 @@ namespace app {
 		const float scaleFactor = 0.01f;
 		if (inputs.mouse.mouse[LEFT])
 		{
-			this->m_camera->rotate(static_cast<float>(-inputs.mouse.relPos[0]), vec3(0.f, 1.f, 0.f));
-			this->m_camera->rotate(static_cast<float>(-inputs.mouse.relPos[1]), vec3(1.f, 0.f, 0.f));
+			this->m_camera->rotate(vec3(0.f, 1.f, 0.f), static_cast<float>(-inputs.mouse.relPos[0]));
+			this->m_camera->rotate(vec3(1.f, 0.f, 0.f), static_cast<float>(-inputs.mouse.relPos[1]));
 		}
 		if (inputs.mouse.mouse[RIGHT])
 			this->m_camera->translate(vec3(-inputs.mouse.relPos[0] * 0.01f, inputs.mouse.relPos[1] * 0.01f, 0.f));

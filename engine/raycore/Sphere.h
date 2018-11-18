@@ -7,7 +7,7 @@ namespace raycore {
 		{
 		public:
 			Sphere();
-			Sphere(const point3 &center, float radius, const norm3 up = norm3(0.f, 1.f, 0.f));
+			Sphere(const point3 &center, float radius, const norm3 up = norm3(settings::up));
 			~Sphere();
 
 			virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const;

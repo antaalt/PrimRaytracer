@@ -14,10 +14,10 @@ namespace raycore {
 	}
 	void Pixel::accumulate(const Pixel & pixel, unsigned int samples)
 	{
-		r = lerp(r, pixel.r, 1.f / (samples + 1.f));
-		g = lerp(g, pixel.g, 1.f / (samples + 1.f));
-		b = lerp(b, pixel.b, 1.f / (samples + 1.f));
-		a = lerp(a, pixel.a, 1.f / (samples + 1.f));
+		r = math::lerp(r, pixel.r, 1.f / (samples + 1.f));
+		g = math::lerp(g, pixel.g, 1.f / (samples + 1.f));
+		b = math::lerp(b, pixel.b, 1.f / (samples + 1.f));
+		a = math::lerp(a, pixel.a, 1.f / (samples + 1.f));
 	}
 	Pixel::operator colorHDR()
 	{

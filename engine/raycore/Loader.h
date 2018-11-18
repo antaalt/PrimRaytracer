@@ -5,47 +5,6 @@
 namespace raycore {
 
 	namespace loader {
-
-		/*struct Shape {
-			enum Type {
-				MESH,
-				SPHERE
-			};
-			struct bbox {
-				point3 min, max;
-			};
-			virtual Type type() const = 0;
-			int materialID;
-		};
-		struct Mesh : Shape {
-			struct Face {
-				union {
-					unsigned int data[3];
-					struct {
-						unsigned int A, B, C;
-					};
-				};
-				Face() {}
-				Face(unsigned int A, unsigned int B, unsigned int C) : A(A), B(B), C(C) {}
-			};
-
-			struct Vertex {
-				point3 position;
-				norm3 normal;
-				uv2 uv;
-				colorHDR color;
-			};
-			std::vector<Vertex> vertices;
-			std::vector<Face> faces;
-			virtual Type type() const;
-		};
-		struct Sphere : Shape {
-			point3 center;
-			float radius;
-			norm3 up;
-			virtual Type type() const;
-		};*/
-
 		struct Mesh {
 			struct Face {
 				union {
@@ -84,26 +43,6 @@ namespace raycore {
 
 			std::vector<prim::Hitable*> hitables;
 		};
-		/*struct Node {
-			mat4 transform;
-			int shapeID;
-			int parentID;
-			std::vector<int> childrensID;
-		};
-
-		struct Scene {
-			Scene();
-			~Scene();
-			std::vector<prim::Material*> materials; // pass it, no delete
-			std::vector<Texture<colorHDR>*> textures; // pass it, no delete
-			std::vector<Shape*> shapes; // no direct access
-			std::vector<Node> nodes; // transform it then delete it
-			Mesh &addMesh();
-			Sphere &addSphere();
-			Node &addNode();
-			prim::Material *addMaterial(prim::Material *material);
-			Texture<colorHDR> *addTexture(Texture<colorHDR> * texture);
-		};*/
 	}
 
 	namespace GLTF {
@@ -123,8 +62,7 @@ namespace raycore {
 	}
 
 	namespace builder {
-		//bool build(loader::Scene &scene);
-		bool newBuild(prim::Scene &scene);
+		bool build(prim::Scene &scene);
 	}
 }
 
