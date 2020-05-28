@@ -5,7 +5,7 @@
 
 #include <climits>
 
-#define INFINITE_DISTANCE (std::numeric_limits<float>::max())
+#define INFINITE_DISTANCE ((std::numeric_limits<float>::max)())
 
 
 namespace raycore {

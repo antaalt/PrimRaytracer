@@ -88,12 +88,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)raycore;$(SolutionDir)thirdparty-libs\SDL2-2.0.8\include;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)raycore;$(SolutionDir)thirdparty-libs\glfw-3.3.2\include;$(SolutionDir)thirdparty-libs\glew-2.0.0\include;$(SolutionDir)thirdparty-libs\tinygltf;$(SolutionDir)thirdparty-libs\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty-libs\glew-2.0.0\lib;$(SolutionDir)thirdparty-libs\SDL2-2.0.8\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;opengl32.lib;x64\glew32.lib;$(SolutionDir)x64\Debug\raycore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty-libs\glew-2.0.0\lib;$(SolutionDir)thirdparty-libs\glfw-3.3.2\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;x64\glew32.lib;glfw3.lib;$(SolutionDir)x64\Debug\raycore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -134,14 +135,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\thirdparty-libs\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\thirdparty-libs\imgui\examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\thirdparty-libs\imgui\imgui.cpp" />
+    <ClCompile Include="..\thirdparty-libs\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\thirdparty-libs\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\thirdparty-libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="GUI.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="imgui\imgui_impl_sdl.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -184,7 +184,7 @@
     <ClInclude Include="StrictType.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMap.h" />
-    <ClInclude Include="Timer.h" />
+    <ClInclude Include="StopWatch.h" />
     <ClInclude Include="Tracer.h" />
     <ClInclude Include="transform.h" />
     <ClInclude Include="Triangle.h" />
@@ -218,7 +218,6 @@
     <ClCompile Include="ShapeLight.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="TextureMap.cpp" />
-    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="WhittedTracer.cpp" />
   </ItemGroup>
