@@ -94,6 +94,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)thirdparty-libs\glew-2.0.0\lib;$(SolutionDir)thirdparty-libs\SDL2-2.0.8\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;opengl32.lib;x64\glew32.lib;$(SolutionDir)x64\Debug\raycore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
