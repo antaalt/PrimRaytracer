@@ -88,6 +88,7 @@ namespace raycore {
 			Material *addMaterial(Material* material);
 			Texture<colorHDR> *addTexture(Texture<colorHDR>* texture);
 			Group* setRoot(Group* root);
+			Group* getRoot() { return rootNode; }
 			void setLightDistribution(LightDistribution *lightDistribution);
 			const LightDistribution *getLightDistribution() const;
 			bool build();

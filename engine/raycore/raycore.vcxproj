@@ -145,6 +145,7 @@
     <ClInclude Include="ConstantTexture.h" />
     <ClInclude Include="Fresnel.h" />
     <ClInclude Include="Glass.h" />
+    <ClInclude Include="GLTFLoader.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightDistribution.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Matte.h" />
     <ClInclude Include="Metal.h" />
     <ClInclude Include="NoAccel.h" />
+    <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="PathTracer.h" />
     <ClInclude Include="PinholeCamera.h" />
@@ -200,12 +202,14 @@
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="ConstantTexture.cpp" />
     <ClCompile Include="Glass.cpp" />
+    <ClCompile Include="GLTFLoader.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightDistribution.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Matte.cpp" />
     <ClCompile Include="Metal.cpp" />
     <ClCompile Include="NoAccel.cpp" />
+    <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="PathTracer.cpp" />
     <ClCompile Include="PinholeCamera.cpp" />

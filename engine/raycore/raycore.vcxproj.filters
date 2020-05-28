@@ -79,6 +79,12 @@
     <Filter Include="Header Files\Math\Geometry">
       <UniqueIdentifier>{eb1eaba5-d674-49a1-ba59-0635a3930930}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scene\Loader">
+      <UniqueIdentifier>{b588d8a2-f8ba-40d5-8154-0fc805215f04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Loader">
+      <UniqueIdentifier>{fbc23e0e-5290-43ee-8386-fdaae9192e24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -177,9 +183,6 @@
     <ClInclude Include="Fresnel.h">
       <Filter>Header Files\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="Loader.h">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="geometry.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
@@ -242,6 +245,15 @@
     </ClInclude>
     <ClInclude Include="StopWatch.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJLoader.h">
+      <Filter>Header Files\Scene\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Loader.h">
+      <Filter>Header Files\Scene\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="GLTFLoader.h">
+      <Filter>Header Files\Scene\Loader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -320,9 +332,6 @@
     <ClCompile Include="Glass.cpp">
       <Filter>Source Files\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="Loader.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="ShapeLight.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
@@ -331,6 +340,15 @@
     </ClCompile>
     <ClCompile Include="LightDistribution.cpp">
       <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Loader.cpp">
+      <Filter>Source Files\Scene\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJLoader.cpp">
+      <Filter>Source Files\Scene\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="GLTFLoader.cpp">
+      <Filter>Source Files\Scene\Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
