@@ -3,131 +3,81 @@
 
 namespace raycore {
 
-	template <typename T, typename U>
-	TTextureMap<T, U>::TTextureMap(const std::vector<U> &bytes, unsigned int width, unsigned int height, unsigned int components) :
-		width(width),
-		height(height),
-		components(components),
-		data(bytes)
-	{
-	}
+template <typename T, typename U>
+TTextureMap<T, U>::TTextureMap(const std::vector<U> &bytes, unsigned int width, unsigned int height) :
+	m_data(bytes),
+	m_width(width),
+	m_height(height),
+	m_components(4)
+{
+}
 
-	template <typename T, typename U>
-	T TTextureMap<T, U>::evaluate(const uv2 &uv = uv2(0.f)) const
-	{
-		float ui = uv.u * this->width;
-		float vi = uv.v * this->height;
-		unsigned int uPixel = static_cast<unsigned int>(ui) % this->width;
-		unsigned int vPixel = static_cast<unsigned int>(vi) % this->height;
+template<typename T, typename U>
+TTextureMap<T, U>::TTextureMap(const U * data, unsigned int width, unsigned int height) :
+	m_data(data, data + width * height * 4),
+	m_width(width),
+	m_height(height),
+	m_components(4)
+{	
+}
+
+template <typename T, typename U>
+geometry::color4<T> TTextureMap<T, U>::evaluate(const geometry::uv2f &uv) const
+{
+	float ui = uv.u * m_width;
+	float vi = uv.v * m_height;
+	unsigned int uPixel = static_cast<unsigned int>(ui) % m_width;
+	unsigned int vPixel = static_cast<unsigned int>(vi) % m_height;
 #if defined(BILINEAR_FILTER_TEXTURE)
-		float uf = ui - floorf(ui);
-		float vf = vi - floorf(vi);
-		return math::lerp<T>(
-			math::lerp<T>(
-				at(uPixel, vPixel),
-				at(uPixel + 1, vPixel),
-				uf
-			),
-			math::lerp<T>(
-				at(uPixel, vPixel + 1),
-				at(uPixel + 1, vPixel + 1),
-				uf
-			),
-			vf
-		);
+	float uf = ui - geometry::floor(ui);
+	float vf = vi - geometry::floor(vi);
+	return geometry::lerp<geometry::color4<T>>(
+		geometry::lerp<geometry::color4<T>>(
+			at(uPixel, vPixel),
+			at(uPixel + 1, vPixel),
+			uf
+		),
+		geometry::lerp<geometry::color4<T>>(
+			at(uPixel, vPixel + 1),
+			at(uPixel + 1, vPixel + 1),
+			uf
+		),
+		vf
+	);
 #else
-		unsigned int index = vPixel * this->width * this->component + uPixel * this->component;
-		return color4(&this->data[index]);
+	unsigned int index = vPixel * m_width * m_component + uPixel * m_component;
+	return color4(&this->data[index]);
 #endif
-	}
+}
 
-	template <typename T, typename U>
-	unsigned int TTextureMap<T, U>::stride() const
-	{
-		return sizeof(float) * this->components;
-	}
-
-	template <typename T, typename U>
-	T TTextureMap<T, U>::at(unsigned int x, unsigned int y) const
-	{
-		return 0.f;
-	}
-
-	template<typename T, typename U>
-	Texture<T> * TTextureMap<T, U>::clone() const
-	{
-		return new TTextureMap<T, U>(*this);
-	}
-
-	template <>
-	float TTextureMap<float, unsigned char>::at(unsigned int x, unsigned int y) const
-	{
+template <typename T, typename U>
+geometry::color4<T> TTextureMap<T, U>::at(unsigned int x, unsigned int y) const
+{
 #if defined(TEXTURE_REPEAT)
-		x = x % this->width;
-		y = y % this->height;
+	x = x % m_width;
+	y = y % m_height;
 #else
-		if (x >= this->width || x < 0 || y >= this->height || this->height == 0)
-			return color4(0.f);
+	if (x >= m_width || x < 0 || y >= m_height || m_height == 0)
+		return geometry::color4<T>(0.f);
 #endif
-		unsigned int index = y * this->width * this->components + x * this->components;
-		return powf(this->data[index], 2.2f);
-	}
+	unsigned int index = y * m_width * m_components + x * m_components;
+	return color4<T>(m_data[index]); // TODO conversion srgb ?
+}
 
-	template <>
-	float TTextureMap<float, float>::at(unsigned int x, unsigned int y) const
-	{
-#if defined(TEXTURE_REPEAT)
-		x = x % this->width;
-		y = y % this->height;
-#else
-		if (x >= this->width || x < 0 || y >= this->height || this->height == 0)
-			return color4(0.f);
-#endif
-		unsigned int index = y * this->width * this->components + x * this->components;
-		return this->data[index];
-	}
+template <typename T, typename U>
+unsigned int TTextureMap<T, U>::stride() const
+{
+	// TODO T or U ?
+	return sizeof(T) * m_components;
+}
 
-	template <>
-	colorHDR TTextureMap<colorHDR, float>::at(unsigned int x, unsigned int y) const
-	{
-#if defined(TEXTURE_REPEAT)
-		x = x % this->width;
-		y = y % this->height;
-#else
-		if (x >= this->width || x < 0 || y >= this->height || this->height == 0)
-			return color4(0.f);
-#endif
-		unsigned int index = y * this->width * this->components + x * this->components;
-		return colorHDR(
-			this->data[index + 0],
-			this->data[index + 1],
-			this->data[index + 2],
-			(this->components == 4) ? this->data[index + 3] : 1.f
-		);
-	}
+template<typename T, typename U>
+Texture<T> * TTextureMap<T, U>::clone() const
+{
+	return new TTextureMap<T, U>(*this);
+}
 
-	template <>
-	colorHDR TTextureMap<colorHDR, unsigned char>::at(unsigned int x, unsigned int y) const
-	{
-#if defined(TEXTURE_REPEAT)
-		x = x % this->width;
-		y = y % this->height;
-#else
-		if (x >= this->width || x < 0 || y >= this->height || this->height == 0)
-			return color4(0.f);
-#endif
-		unsigned int index = y * this->width * this->components + x * this->components;
-		return colorHDR(color32(
-			this->data[index + 0],
-			this->data[index + 1],
-			this->data[index + 2],
-			(this->components == 4) ? this->data[index + 3] : 255
-		));
-	}
-
-	template class TTextureMap<float, unsigned char>;
-	template class TTextureMap<float, float>;
-	template class TTextureMap<colorHDR, float>;
-	template class TTextureMap<colorHDR, unsigned char>;
+template class TTextureMap<float, unsigned char>;
+template class TTextureMap<float, float>;
 
 }

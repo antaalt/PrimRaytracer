@@ -27,7 +27,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 	}
 	std::vector<prim::Hitable*> prims(tinyModel.meshes.size());
 	std::vector<prim::Material*> materials(tinyModel.materials.size());
-	std::vector<Texture<colorHDR>*> textures(tinyModel.textures.size());
+	std::vector<Texture<float>*> textures(tinyModel.textures.size());
 	const size_t nbScene = tinyModel.scenes.size();
 	// TODO manage multiple scenes
 	// --- TEXTURES
@@ -36,19 +36,20 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 	{
 		tinygltf::Texture &tinyTex = tinyModel.textures[iTex];
 		tinygltf::Image &tinyImage = tinyModel.images[tinyTex.source];
-		textures[iTex] = scene.addTexture(new TextureMap32(tinyImage.image, tinyImage.width, tinyImage.height, tinyImage.component));
+		ASSERT(tinyImage.component == 4, "Only 4 components images supported");
+		textures[iTex] = scene.addTexture(new TextureMapFloat32(tinyImage.image.data(), tinyImage.width, tinyImage.height));
 	}
 	// --- MATERIALS
 	for (size_t iMaterial = 0; iMaterial < tinyModel.materials.size(); iMaterial++)
 	{
 		tinygltf::Material &tinyMat = tinyModel.materials[iMaterial];
 
-		colorHDR color = colorHDR(1.f);
+		color4f color = color4f(1.f);
 		auto itColor = tinyMat.values.find("baseColorFactor");
 		if (itColor != tinyMat.values.end())
 		{
 			tinygltf::ColorValue c = itColor->second.ColorFactor();
-			color = colorHDR(
+			color = color4f(
 				static_cast<float>(c[0]),
 				static_cast<float>(c[1]),
 				static_cast<float>(c[2]),
@@ -63,10 +64,10 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 			ASSERT(itIndex != itTexture->second.json_double_value.end(), "Index not defined");
 			textureID = static_cast<int>(itIndex->second);
 		}
-		Texture<colorHDR> *colorText;
+		Texture<float> *colorText;
 		if (textureID == -1)
 		{
-			colorText = new ConstantTexture<colorHDR>(color);
+			colorText = new ConstantTexture<float>(color);
 		}
 		else
 		{
@@ -75,13 +76,13 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 		materials[iMaterial] = scene.addMaterial(new prim::Matte(colorText));
 	}
 
-	auto coordinates = [](const point3 &p) -> point3
+	auto coordinates = [](const point3f &p) -> point3f
 	{
-		return point3(p.x, -p.z, p.y);
+		return point3f(p.x, -p.z, p.y);
 	};
-	auto coordinatesN = [](const norm3 &p) -> norm3
+	auto coordinatesN = [](const norm3f &p) -> norm3f
 	{
-		return norm3(p.x, -p.z, p.y);
+		return norm3f(p.x, -p.z, p.y);
 	};
 
 	// --- MESHES
@@ -116,7 +117,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 							memcpy(
 								vert.position.data,
 								&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-								sizeof(point3)
+								sizeof(point3f)
 							);
 							vert.position = coordinates(vert.position);
 							vertices.push_back(vert);
@@ -144,7 +145,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 							memcpy(
 								vert.normal.data,
 								&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-								sizeof(point3)
+								sizeof(point3f)
 							);
 							vert.normal = coordinatesN(vert.normal);
 						}
@@ -192,7 +193,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 								memcpy(
 									vert.texcoord.data,
 									&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-									sizeof(uv2)
+									sizeof(uv2f)
 								);
 							}
 							break;
@@ -282,7 +283,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 									memcpy(
 										vert.color.data,
 										&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-										sizeof(colorHDR)
+										sizeof(color4f)
 									);
 								}
 								break;
@@ -468,7 +469,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 		if (tinyNode.matrix.size() == 16)
 		{
 			int globalIndex = 0;
-			mat4 transform;
+			mat4f transform;
 			for (int col = 0; col < 4; col++)
 				for (int row = 0; row < 4; row++)
 					transform[col][row] = static_cast<float>(tinyNode.matrix[globalIndex++]);
@@ -476,9 +477,9 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 		}
 		else
 		{
-			vec3 translation(0.f);
-			quat rotation = quat::identity();
-			vec3 scale(1.f);
+			vec3f translation(0.f);
+			quatf rotation = quatf::identity();
+			vec3f scale(1.f);
 
 			if (tinyNode.translation.size() == 3)
 				for (int i = 0; i < 3; i++)
@@ -492,7 +493,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 				for (int i = 0; i < 4; i++)
 					rotation[i] = static_cast<float>(tinyNode.rotation[i]);
 
-			node->setTransform(TRS(translation, rotation, scale));
+			node->setTransform(mat4f::TRS(translation, rotation, scale));
 		}
 	}
 	// Child nodes

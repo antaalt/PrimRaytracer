@@ -6,30 +6,30 @@
 
 namespace raycore {
 
-	namespace prim {
+namespace prim {
 
-		class BoundingBox
-		{
-		public:
-			BoundingBox();
-			BoundingBox(const point3 &min, const point3 &max);
+class BoundingBox
+{
+public:
+	BoundingBox();
+	BoundingBox(const geometry::point3f &min, const geometry::point3f &max);
 
-			bool intersectBounds(const tracer::Ray &ray) const;
+	bool intersectBounds(const tracer::Ray &ray) const;
 
-			float extent() const;
-			point3 center() const;
+	float extent() const;
+	geometry::point3f center() const;
 
-			void include(const point3 &vec);
-			void include(const BoundingBox &bbox);
+	void include(const geometry::point3f &vec);
+	void include(const BoundingBox &bbox);
 
-			bool contain(const point3 &point) const;
-			bool contain(const BoundingBox &bbox) const;
+	bool contain(const geometry::point3f &point) const;
+	bool contain(const BoundingBox &bbox) const;
 
-			bool overlap(const BoundingBox &bbox) const;
+	bool overlap(const BoundingBox &bbox) const;
 
-			void reset();
+	void reset();
 
-			point3 min, max;
-		};
-	}
+	geometry::point3f min, max;
+};
+}
 }

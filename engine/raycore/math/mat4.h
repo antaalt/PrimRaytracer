@@ -1,46 +1,65 @@
 #pragma once
 #include "scientific.h"
+
 namespace geometry {
-	struct norm3;
-	struct point3;
-	struct vec3;
-	struct quat;
 
-	struct mat4 {
-		struct col {
-			union {
-				math::real_t data[4];
-				struct {
-					math::real_t x, y, z, w;
-				};
-			};
-			col();
-			col(math::real_t value);
-			col(math::real_t x, math::real_t y, math::real_t z, math::real_t w);
-			col(norm3 vec, math::real_t w);
-			col(vec3 vec, math::real_t w);
-			col(point3 vec, math::real_t w);
-			math::real_t &operator[](size_t index);
-			const math::real_t &operator[](size_t index) const;
-			operator point3();
-			operator norm3();
-		} cols[4];
-		mat4();
-		mat4(math::real_t value);
-		mat4(col x, col y, col z, col w);
-		mat4(const quat &quat);
-		mat4::col &operator[](size_t index);
-		const mat4::col &operator[](size_t index) const;
-		static mat4 identity();
-		static mat4 translate(const vec3 &translation);
-		static mat4 rotate(const vec3 &axis, math::Radian angle);
-		static mat4 scale(const vec3 &scale);
-		float det() const;
+template <typename T>
+struct norm3;
+template <typename T>
+struct point3;
+template <typename T>
+struct vec3;
+template <typename T>
+struct quat;
+
+template <typename T>
+struct col4 {
+	union {
+		T data[4];
+		struct {
+			T x, y, z, w;
+		};
 	};
+	col4();
+	col4(T value);
+	col4(T x, T y, T z, T w);
+	col4(norm3<T> vec, T w);
+	col4(vec3<T> vec, T w);
+	col4(vec4<T> vec);
+	col4(point3<T> vec, T w);
 
-	mat4 operator*(const mat4& lhs, const mat4 &rhs);
-	point3 operator*(const mat4& lhs, const point3 &rhs);
-	vec3 operator*(const mat4& lhs, const vec3 &rhs);
-	mat4 TRS(const vec3 & t, const quat & r, const vec3 & s);
-	mat4 inverse(const mat4 &mat);
+	T &operator[](size_t index);
+	const T &operator[](size_t index) const;
+};
+
+template <typename T>
+struct mat4 {
+
+	col4<T> cols[4];
+
+	mat4();
+	mat4(T value);
+	mat4(col4<T> x, col4<T> y, col4<T> z, col4<T> w);
+	mat4(const quat<T> &quat);
+
+	col4<T> &operator[](size_t index);
+	const col4<T> &operator[](size_t index) const;
+
+	static mat4 identity();
+	static mat4 translate(const vec3<T> &translation);
+	static mat4 rotate(const vec3<T> &axis, radian<T> angle);
+	static mat4 scale(const vec3<T> &scale);
+	static mat4 TRS(const vec3<T> & t, const quat<T> & r, const vec3<T> & s);
+	static mat4 inverse(const mat4 &mat);
+	static mat4 perspective(const radian<T> &fov, float ratio, float nearZ, float farZ);
+	float det() const;
+};
+
+template <typename T>
+mat4<T> operator*(const mat4<T>& lhs, const mat4<T> &rhs);
+template <typename T>
+point3<T> operator*(const mat4<T>& lhs, const point3<T> &rhs);
+template <typename T>
+vec3<T> operator*(const mat4<T>& lhs, const vec3<T> &rhs);
+
 }

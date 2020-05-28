@@ -85,13 +85,13 @@ void GUI::draw()
 		// check bounds
 		ImVec2 size = ImGui::GetWindowSize();
 		if (size.x > m_width || size.y > m_height)
-			ImGui::SetWindowSize(ImVec2(math::min(size.x, static_cast<float>(m_width)), math::min(size.y, static_cast<float>(m_height))));
+			ImGui::SetWindowSize(ImVec2(geometry::min(size.x, static_cast<float>(m_width)), geometry::min(size.y, static_cast<float>(m_height))));
 
 		ImVec2 pos = ImGui::GetWindowPos();
 		if (pos.x < 0.f || pos.y < 0.f)
-			ImGui::SetWindowPos(ImVec2(math::max(pos.x, 0.f), math::max(pos.y, 0.f)));
+			ImGui::SetWindowPos(ImVec2(geometry::max(pos.x, 0.f), geometry::max(pos.y, 0.f)));
 		if (pos.x + size.x > m_width || pos.y + size.y > m_height)
-			ImGui::SetWindowPos(ImVec2(math::min(pos.x, m_width - size.x), math::min(pos.y, m_height - size.y)));
+			ImGui::SetWindowPos(ImVec2(geometry::min(pos.x, m_width - size.x), geometry::min(pos.y, m_height - size.y)));
 
 		// check mouse position
 		if (m_inputs.mouse.position[0] > pos.x &&

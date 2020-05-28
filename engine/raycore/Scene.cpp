@@ -8,7 +8,7 @@
 namespace raycore {
 	namespace prim {
 
-		Node::Node() : accelerator(nullptr), transform(mat4::identity())
+		Node::Node() : accelerator(nullptr), transform(geometry::mat4f::identity())
 		{
 		}
 		Node::~Node()
@@ -77,7 +77,7 @@ namespace raycore {
 		}
 		float Group::ChildBound::area() const
 		{
-			vec3 extent(bbox.max - bbox.min);
+			geometry::vec3f extent(bbox.max - bbox.min);
 			return (extent.x * extent.y + extent.x * extent.z + extent.y * extent.z) * 2.f;
 		}
 		Node * Group::ChildBound::node()
@@ -126,7 +126,7 @@ namespace raycore {
 				delete lightDistribution;
 			for (Material *material : materials)
 				delete material;
-			for (Texture<colorHDR> *texture : textures)
+			for (Texture<float> *texture : textures)
 				delete texture;
 		}
 
@@ -149,7 +149,7 @@ namespace raycore {
 			materials.push_back(material);
 			return materials.back();
 		}
-		Texture<colorHDR> * Scene::addTexture(Texture<colorHDR>* texture)
+		Texture<float> * Scene::addTexture(Texture<float>* texture)
 		{
 			textures.push_back(texture);
 			return textures.back();

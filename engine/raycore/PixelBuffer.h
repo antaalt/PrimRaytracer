@@ -4,45 +4,45 @@
 
 namespace raycore {
 
-	struct Pixel {
-		union {
-			float data[4];
-			struct {
-				float r, g, b, a;
-			};
+struct Pixel {
+	union {
+		float data[4];
+		struct {
+			float r, g, b, a;
 		};
-		void clamp();
-		void applyGamma();
-		void accumulate(const Pixel &pixel, unsigned int samples);
-
-		operator colorHDR();
-
-		Pixel operator+(const Pixel &rhs);
-		friend Pixel operator*(float lhs, const Pixel &rhs);
-		friend Pixel operator*(const Pixel &lhs, float rhs);
-
-		Pixel();
-		Pixel(float val);
-		Pixel(const colorHDR &color);
-		Pixel(float r, float g, float b, float a);
 	};
+	void clamp();
+	void applyGamma();
+	void accumulate(const Pixel &pixel, unsigned int samples);
 
-	class PixelBuffer {
-	public:
-		PixelBuffer(unsigned int w, unsigned int h);
-		void resize(unsigned int w, unsigned int h);
+	operator color4f();
 
-		Pixel &operator()(unsigned int x, unsigned int y);
-		const Pixel &operator()(unsigned int x, unsigned int y) const;
+	Pixel operator+(const Pixel &rhs);
+	friend Pixel operator*(float lhs, const Pixel &rhs);
+	friend Pixel operator*(const Pixel &lhs, float rhs);
 
-		Pixel *data();
-		const Pixel *data() const;
-		unsigned int width() const;
-		unsigned int height() const;
-		unsigned int size() const;
-	private:
+	Pixel();
+	Pixel(float val);
+	Pixel(const color4f &color);
+	Pixel(float r, float g, float b, float a);
+};
 
-		std::vector<Pixel> m_data;
-		unsigned int m_width, m_height;
-	};
+class PixelBuffer {
+public:
+	PixelBuffer(unsigned int w, unsigned int h);
+	void resize(unsigned int w, unsigned int h);
+
+	Pixel &operator()(unsigned int x, unsigned int y);
+	const Pixel &operator()(unsigned int x, unsigned int y) const;
+
+	Pixel *data();
+	const Pixel *data() const;
+	unsigned int width() const;
+	unsigned int height() const;
+	unsigned int size() const;
+private:
+
+	std::vector<Pixel> m_data;
+	unsigned int m_width, m_height;
+};
 }

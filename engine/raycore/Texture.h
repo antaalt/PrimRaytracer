@@ -2,16 +2,19 @@
 #include <vector>
 #include "Config.h"
 
+#include "math/geometry.h"
+
 #define BILINEAR_FILTER_TEXTURE
 #define TEXTURE_REPEAT
 
 namespace raycore {
 
-	template <typename T>
-	class Texture
-	{
-	public:
-		virtual T evaluate(const uv2 &uv = uv2(0.f)) const = 0;
-		virtual Texture* clone() const = 0;
-	};
+template <typename T>
+class Texture
+{
+public:
+	virtual geometry::color4<T> evaluate(const geometry::uv2f &uv = geometry::uv2f(0.f)) const = 0;
+	virtual Texture* clone() const = 0;
+};
+
 }

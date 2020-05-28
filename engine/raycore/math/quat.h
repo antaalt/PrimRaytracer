@@ -1,17 +1,44 @@
 #pragma once
+
 #include "scientific.h"
+#include "vec3.h"
+
 namespace geometry {
 
-	struct quat {
-		union {
-			math::real_t data[4];
-			struct {
-				math::real_t x, y, z, w;
-			};
+template <typename T>
+struct quat {
+	union {
+		T data[4];
+		struct {
+			T x, y, z, w;
 		};
-		quat();
-		quat(math::real_t x, math::real_t y, math::real_t z, math::real_t w);
-		math::real_t &operator[](size_t index);
-		static quat identity();
 	};
+	quat();
+	explicit quat(T x, T y, T z, T w);
+
+	T &operator[](size_t index);
+	const T &operator[](size_t index) const;
+
+	T norm() const;
+
+	static quat identity();
+	static quat conjuguate(const quat &quaternion);
+	static quat normalize(const quat &quaternion);
+	static quat axis(const vec3<T> &axis, const radian<T> &angle);
+
+	quat operator*(float scalar) const;
+	quat &operator*=(float scalar);
+
+	quat operator*(const quat &rhs) const;
+	quat &operator*=(const quat &rhs);
+
+	quat operator+(const quat &rhs) const;
+	quat &operator+=(const quat &rhs);
+
+	quat operator-(const quat &rhs) const;
+	quat &operator-=(const quat &rhs);
+
+	vec3<T> operator*(const vec3<T> &rhs);
+};
+
 }

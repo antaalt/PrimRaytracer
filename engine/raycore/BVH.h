@@ -11,49 +11,49 @@
 // @see https://github.com/brandonpelfrey/Fast-BVH/blob/master/BVH.h
 
 namespace raycore {
-	namespace prim {
+namespace prim {
 
-		struct HitableBounded {
-			HitableBounded(Hitable * hitable) : hitable(hitable) {
-				this->boundingBox = hitable->computeBoundingBox();
-			}
-			const BoundingBox &bbox() const { return boundingBox; }
-			const Hitable *getHitable() const { return hitable; }
-		private:
-			Hitable *hitable;
-			BoundingBox boundingBox;
-		};
-
-
-
-		struct BVHNode : public BoundingBox {
-			BVHNode(const point3 &min, const point3 &max);
-			~BVHNode();
-
-			unsigned int init(const std::vector<const HitableBounded*> &hitables, unsigned int depth);
-
-			bool intersect(const tracer::Ray &ray, Intersection *intersection);
-
-			bool isLeafNode();
-		private:
-			BVHNode *childrens[CHILD_COUNT];
-			std::vector<const Hitable*> hitable;
-			size_t hitableCount;
-		};
-
-
-
-		class BVH : public Accelerator
-		{
-		public:
-			BVH(const std::vector<Hitable*> &prim);
-			~BVH();
-			virtual bool intersect(const tracer::Ray &ray, Intersection *info) const;
-			virtual bool intersect(const tracer::Ray &ray) const;
-
-		private:
-			BVHNode *root;
-		};
+struct HitableBounded {
+	HitableBounded(Hitable * hitable) : hitable(hitable) {
+		this->boundingBox = hitable->computeBoundingBox();
 	}
+	const BoundingBox &bbox() const { return boundingBox; }
+	const Hitable *getHitable() const { return hitable; }
+private:
+	Hitable *hitable;
+	BoundingBox boundingBox;
+};
+
+
+
+struct BVHNode : public BoundingBox {
+	BVHNode(const geometry::point3f &min, const geometry::point3f &max);
+	~BVHNode();
+
+	unsigned int init(const std::vector<const HitableBounded*> &hitables, unsigned int depth);
+
+	bool intersect(const tracer::Ray &ray, Intersection *intersection);
+
+	bool isLeafNode();
+private:
+	BVHNode *childrens[CHILD_COUNT];
+	std::vector<const Hitable*> hitable;
+	size_t hitableCount;
+};
+
+
+
+class BVH : public Accelerator
+{
+public:
+	BVH(const std::vector<Hitable*> &prim);
+	~BVH();
+	virtual bool intersect(const tracer::Ray &ray, Intersection *info) const;
+	virtual bool intersect(const tracer::Ray &ray) const;
+
+private:
+	BVHNode *root;
+};
+}
 }
 

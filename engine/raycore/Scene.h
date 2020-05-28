@@ -35,12 +35,12 @@ namespace raycore {
 			virtual bool build() = 0;
 			virtual const BoundingBox &bounds() const { return bbox; };
 			void setAcceleration(Acceleration accel) { this->accel = accel; };
-			virtual void setTransform(const mat4 &transform) { this->transform = inverse(transform); }
+			virtual void setTransform(const geometry::mat4f &transform) { this->transform = geometry::mat4f::inverse(transform); }
 		protected:
 			BoundingBox bbox;
 			Acceleration accel;
 			Accelerator *accelerator;
-			mat4 transform; // called during traverse to transform the ray before passing it to accelerator
+			geometry::mat4f transform; // called during traverse to transform the ray before passing it to accelerator
 		};
 
 		struct Group : Node {
@@ -86,7 +86,7 @@ namespace raycore {
 
 			// Scene preparation
 			Material *addMaterial(Material* material);
-			Texture<colorHDR> *addTexture(Texture<colorHDR>* texture);
+			Texture<float> *addTexture(Texture<float>* texture);
 			Group* setRoot(Group* root);
 			Group* getRoot() { return rootNode; }
 			void setLightDistribution(LightDistribution *lightDistribution);
@@ -96,7 +96,7 @@ namespace raycore {
 			Group *rootNode;
 			LightDistribution *lightDistribution;
 			std::vector<Material*> materials;
-			std::vector<Texture<colorHDR>*> textures;
+			std::vector<Texture<float>*> textures;
 		};
 	}
 }

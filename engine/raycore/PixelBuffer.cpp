@@ -14,14 +14,14 @@ namespace raycore {
 	}
 	void Pixel::accumulate(const Pixel & pixel, unsigned int samples)
 	{
-		r = math::lerp(r, pixel.r, 1.f / (samples + 1.f));
-		g = math::lerp(g, pixel.g, 1.f / (samples + 1.f));
-		b = math::lerp(b, pixel.b, 1.f / (samples + 1.f));
-		a = math::lerp(a, pixel.a, 1.f / (samples + 1.f));
+		r = geometry::lerp(r, pixel.r, 1.f / (samples + 1.f));
+		g = geometry::lerp(g, pixel.g, 1.f / (samples + 1.f));
+		b = geometry::lerp(b, pixel.b, 1.f / (samples + 1.f));
+		a = geometry::lerp(a, pixel.a, 1.f / (samples + 1.f));
 	}
-	Pixel::operator colorHDR()
+	Pixel::operator color4f()
 	{
-		return colorHDR(r, g, b, a);
+		return color4f(r, g, b, a);
 	}
 	
 	Pixel Pixel::operator+(const Pixel & rhs)
@@ -39,7 +39,7 @@ namespace raycore {
 	Pixel::Pixel(float val) : r(val), g(val), b(val), a(val)
 	{
 	}
-	Pixel::Pixel(const colorHDR & color) : r(color.r), g(color.g), b(color.b), a(color.a)
+	Pixel::Pixel(const color4f & color) : r(color.r), g(color.g), b(color.b), a(color.a)
 	{
 	}
 	Pixel::Pixel(float r, float g, float b, float a) : r(r), g(g), b(b), a(a)

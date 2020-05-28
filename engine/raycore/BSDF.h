@@ -9,172 +9,172 @@
 
 namespace raycore {
 
-	vec3 reflect(const vec3 &wi, const norm3 &normal);
-	bool refract(vec3 &out, const vec3 &wi, const norm3 &normal, float eta);
+geometry::vec3f reflect(const geometry::vec3f &wi, const geometry::norm3f &normal);
+bool refract(geometry::vec3f &out, const geometry::vec3f &wi, const geometry::norm3f &normal, float eta);
 
-	class BSDF
-	{
-	public:
-		BSDF(const prim::HitInfo &info) : normal(info.normal), wi(info.direction) {}
-		virtual colorHDR sample(vec3 &wo, float &pdf) const = 0;
-	protected:
-		virtual float PDF(const vec3 &wo) const = 0;
-		virtual colorHDR evaluate(const vec3 &wo) const = 0;
-	protected:
-		norm3 normal;
-		vec3 wi;
-	};
+class BSDF
+{
+public:
+	BSDF(const prim::HitInfo &info) : normal(info.normal), wi(info.direction) {}
+	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const = 0;
+protected:
+	virtual float PDF(const geometry::vec3f &wo) const = 0;
+	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const = 0;
+protected:
+	geometry::norm3f normal;
+	geometry::vec3f wi;
+};
 
-	class BRDF : protected BSDF {
-	public:
-		BRDF(const prim::HitInfo &info) : BSDF(info) {}
-	};
+class BRDF : protected BSDF {
+public:
+	BRDF(const prim::HitInfo &info) : BSDF(info) {}
+};
 
-	class BTDF : protected BSDF {
-	public:
-		BTDF(const prim::HitInfo &info) : BSDF(info) {}
+class BTDF : protected BSDF {
+public:
+	BTDF(const prim::HitInfo &info) : BSDF(info) {}
 
-	};
+};
 
-	class LambertianReflection : BRDF
-	{
-	public:
-		LambertianReflection(const colorHDR &color, const prim::HitInfo &info) : BRDF(info), Rd(color) {}
+class LambertianReflection : BRDF
+{
+public:
+	LambertianReflection(const geometry::color4f &color, const prim::HitInfo &info) : BRDF(info), Rd(color) {}
 		
-		virtual colorHDR sample(vec3 &wo, float &pdf) const
+	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
+	{
+		float r1 = rand::rnd();
+		float r2 = rand::rnd();
+		geometry::vec3f randomDirection = sample::unitHemisphere(r1, r2);
+		transform::Onb onb(normal);
+		wo = onb(randomDirection);
+		pdf = this->PDF(wo);
+		return this->evaluate(wo);
+	}
+protected:
+	virtual float PDF(const geometry::vec3f &wo) const
+	{
+		return geometry::vec3f::dot(wo, geometry::vec3f(normal)) / geometry::pi<float>();
+	}
+	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	{
+		return Rd / geometry::pi<float>();
+	}
+private:
+	geometry::color4f Rd;
+};
+
+class SpecularReflection : BRDF
+{
+public:
+	SpecularReflection(const geometry::color4f &color, const prim::HitInfo &info) :
+		BRDF(info), Rs(color)
+	{
+	}
+	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
+	{
+		wo = reflect(wi, normal);
+		pdf = this->PDF(wo);
+		return this->evaluate(wo);
+	}
+protected:
+	virtual float PDF(const geometry::vec3f &wo) const
+	{
+		return 1.f;
+	}
+	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	{
+		return Rs / geometry::vec3f::dot(wo, geometry::vec3f(normal));
+	}
+private:
+	geometry::color4f Rs;
+};
+
+class Specular : BSDF
+{
+public:
+	Specular(const geometry::color4f &color, const prim::HitInfo &info, float etaOut, float etaIn) :
+		BSDF(info), Ts(color), etaOut(etaOut), etaIn(etaIn)
+	{
+	}
+	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
+	{
+		geometry::norm3f nn = normal;
+
+		float etar = 1.f / etaIn;
+		if (geometry::vec3f::dot(wi, geometry::vec3f(normal)) >= 0.f)
 		{
-			float r1 = rand::rnd();
-			float r2 = rand::rnd();
-			vec3 randomDirection = sample::unitHemisphere(r1, r2);
-			transform::Onb onb(normal);
-			wo = onb(randomDirection);
+			etar = etaIn;
+			nn = -normal;
+		}
+
+		geometry::vec3f refracted;
+		geometry::vec3f reflected = reflect(wi, normal);
+		if (refract(refracted, wi, nn, etar)) // TIR
+		{
+			wo = reflected;
 			pdf = this->PDF(wo);
 			return this->evaluate(wo);
 		}
-	protected:
-		virtual float PDF(const vec3 &wo) const
-		{
-			return dot(wo, normal) / math::pi;
-		}
-		virtual colorHDR evaluate(const vec3 &wo) const
-		{
-			return Rd / math::pi;
-		}
-	private:
-		colorHDR Rd;
-	};
-
-	class SpecularReflection : BRDF
-	{
-	public:
-		SpecularReflection(const colorHDR &color, const prim::HitInfo &info) :
-			BRDF(info), Rs(color)
-		{
-		}
-		virtual colorHDR sample(vec3 &wo, float &pdf) const
-		{
-			wo = reflect(wi, normal);
+		Schlick schlick(1.f, etaIn);
+		float R = schlick.evaluate(wi, normal);
+		float z = rand::rnd();
+		if (z <= R)
+		{ // Reflect
+			wo = reflected;
 			pdf = this->PDF(wo);
-			return this->evaluate(wo);
+			return R * this->evaluate(wo);
 		}
-	protected:
-		virtual float PDF(const vec3 &wo) const
-		{
-			return 1.f;
-		}
-		virtual colorHDR evaluate(const vec3 &wo) const
-		{
-			return Rs / dot(wo, normal);
-		}
-	private:
-		colorHDR Rs;
-	};
-
-	class Specular : BSDF
-	{
-	public:
-		Specular(const colorHDR &color, const prim::HitInfo &info, float etaOut, float etaIn) :
-			BSDF(info), Ts(color), etaOut(etaOut), etaIn(etaIn)
-		{
-		}
-		virtual colorHDR sample(vec3 &wo, float &pdf) const
-		{
-			norm3 nn = normal;
-
-			float etar = 1.f / etaIn;
-			if (dot(wi, normal) >= 0.f)
-			{
-				etar = etaIn;
-				nn = -normal;
-			}
-
-			vec3 refracted;
-			vec3 reflected = reflect(wi, normal);
-			if (refract(refracted, wi, nn, etar)) // TIR
-			{
-				wo = reflected;
-				pdf = this->PDF(wo);
-				return this->evaluate(wo);
-			}
-			Schlick schlick(1.f, etaIn);
-			float R = schlick.evaluate(wi, normal);
-			float z = rand::rnd();
-			if (z <= R)
-			{ // Reflect
-				wo = reflected;
-				pdf = this->PDF(wo);
-				return R * this->evaluate(wo);
-			}
-			else
-			{ // Refract
-				wo = refracted;
-				pdf = this->PDF(wo);
-				return (1.f - R) * this->evaluate(wo);
-			}
-		}
-	protected:
-		virtual float PDF(const vec3 &wo) const
-		{
-			return 1.f;
-		}
-		virtual colorHDR evaluate(const vec3 &wo) const
-		{
-			return Ts / dot(wo, normal);
-		}
-	private:
-		colorHDR Ts;
-		float etaOut;
-		float etaIn;
-	};
-
-	class MicrofacetReflection : BRDF
-	{
-	public:
-		MicrofacetReflection(const colorHDR &color, const prim::HitInfo &info, float roughness) :
-			BRDF(info), Rs(color), roughness(roughness)
-		{
-		}
-		virtual colorHDR sample(vec3 &wo, float &pdf) const
-		{
-			vec3 m = sample::unitMicrofacet(roughness, rand::rnd(), rand::rnd());
-			transform::Onb onb(normal);
-			wo = onb(m);
+		else
+		{ // Refract
+			wo = refracted;
 			pdf = this->PDF(wo);
-			return this->evaluate(wo);
+			return (1.f - R) * this->evaluate(wo);
 		}
-	protected:
-		virtual float PDF(const vec3 &wo) const
-		{
-			return dot(wo, normal) / math::pi;
-		}
-		virtual colorHDR evaluate(const vec3 &wo) const
-		{
-			return Rs / math::pi;
-		}
-	private:
-		colorHDR Rs;
-		float roughness;
-		Fresnel *fresnel;
-	};
+	}
+protected:
+	virtual float PDF(const geometry::vec3f &wo) const
+	{
+		return 1.f;
+	}
+	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	{
+		return Ts / geometry::vec3f::dot(wo, geometry::vec3f(normal));
+	}
+private:
+	geometry::color4f Ts;
+	float etaOut;
+	float etaIn;
+};
+
+class MicrofacetReflection : BRDF
+{
+public:
+	MicrofacetReflection(const geometry::color4f &color, const prim::HitInfo &info, float roughness) :
+		BRDF(info), Rs(color), roughness(roughness)
+	{
+	}
+	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
+	{
+		geometry::vec3f m = sample::unitMicrofacet(roughness, rand::rnd(), rand::rnd());
+		transform::Onb onb(normal);
+		wo = onb(m);
+		pdf = this->PDF(wo);
+		return this->evaluate(wo);
+	}
+protected:
+	virtual float PDF(const geometry::vec3f &wo) const
+	{
+		return geometry::vec3f::dot(wo, geometry::vec3f(normal)) / geometry::pi<float>();
+	}
+	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	{
+		return Rs / geometry::pi<float>();
+	}
+private:
+	geometry::color4f Rs;
+	float roughness;
+	Fresnel *fresnel;
+};
 
 }

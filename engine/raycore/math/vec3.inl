@@ -2,89 +2,193 @@
 #include "norm3.h"
 #include "point3.h"
 #include "vec2.h"
+#include "vec4.h"
 
 namespace geometry {
-	inline vec3::vec3()
-	{
-	}
-	inline vec3::vec3(math::real_t value) :
-		x(value), y(value), z(value)
-	{
-	}
-	inline vec3::vec3(math::real_t x, math::real_t y, math::real_t z) : 
-		x(x), y(y), z(z)
-	{
-	}
-	inline vec3::vec3(const norm3 &normal) : 
-		x(normal.x), y(normal.y), z(normal.z)
-	{
-	}
-	inline vec3::vec3(const point3 &point) : 
-		x(point.x), y(point.y), z(point.z)
-	{
-	}
-	inline vec3::vec3(const vec2 &vec, math::real_t z) : 
-		x(vec.x), y(vec.y), z(z)
-	{
-	}
-	inline math::real_t & vec3::operator[](size_t index)
-	{
-		return data[index];
-	}
-	inline const math::real_t & vec3::operator[](size_t index) const
-	{
-		return data[index];
-	}
-	inline bool operator==(const vec3 & lhs, const vec3 & rhs)
-	{
-		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
-	}
-	inline bool operator!=(const vec3 &lhs, const vec3 &rhs)
-	{
-		return !(lhs == rhs);
-	}
-	inline vec3 operator*(const vec3 &lhs, math::real_t rhs)
-	{
-		return vec3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
-	}
-	inline vec3 operator*(math::real_t lhs, const vec3 &rhs)
-	{
-		return vec3(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs);
-	}
-	inline vec3 operator/(const vec3 &lhs, math::real_t rhs)
-	{
-		return vec3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
-	}
-	inline vec3 operator+(const vec3 &lhs, const vec3 &rhs)
-	{
-		return vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
-	}
-	inline vec3 operator-(const vec3 &lhs, const vec3 &rhs)
-	{
-		return vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
-	}
-	inline vec3 operator-(const vec3 &vec)
-	{
-		return vec3(-vec.x, -vec.y, -vec.z);
-	}
-	inline float dot(const vec3 & lhs, const vec3 & rhs)
-	{
-		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
-	}
-	inline vec3 cross(const vec3 & lhs, const vec3 & rhs)
-	{
-		return vec3(
-			lhs.y * rhs.z - lhs.z * rhs.y, 
-			lhs.z * rhs.x - lhs.x * rhs.z, 
-			lhs.x * rhs.y - lhs.y * rhs.x
-		);
-	}
-	inline math::real_t length(const vec3 &vec)
-	{
-		return math::sqrt(dot(vec, vec));
-	}
-	inline vec3 normalize(const vec3 &vec)
-	{
-		return vec / length(vec);
-	}
+
+template <typename T>
+inline vec3<T>::vec3()
+{
+}
+
+template <typename T>
+inline vec3<T>::vec3(T value) :
+	x(value), y(value), z(value)
+{
+}
+
+template <typename T>
+inline vec3<T>::vec3(T x, T y, T z) : 
+	x(x), y(y), z(z)
+{
+}
+
+template <typename T>
+inline vec3<T>::vec3(const norm3<T> &normal) : 
+	x(normal.x), y(normal.y), z(normal.z)
+{
+}
+
+template <typename T>
+inline vec3<T>::vec3(const point3<T> &point) : 
+	x(point.x), y(point.y), z(point.z)
+{
+}
+
+template<typename T>
+inline vec3<T>::vec3(const col3<T>& col) :
+	x(col.x), y(col.y), z(col.z)
+{
+}
+
+template<typename T>
+inline vec3<T>::vec3(const col4<T>& col) :
+	vec3(col.x, col.y, col.z)
+{
+}
+
+template <typename T>
+inline vec3<T>::vec3(const vec2<T> &vec, T z) : 
+	x(vec.x), y(vec.y), z(z)
+{
+}
+
+template<typename T>
+inline vec3<T>::vec3(const vec4<T>& vec) :
+	x(vec.x), y(vec.y), z(vec.z)
+{
+}
+
+template <typename T>
+inline T & vec3<T>::operator[](size_t index)
+{
+	return data[index];
+}
+
+template <typename T>
+inline const T & vec3<T>::operator[](size_t index) const
+{
+	return data[index];
+}
+
+template <typename T>
+inline T vec3<T>::norm() const
+{
+	return sqrt(dot(*this, *this));
+}
+
+template <typename T>
+inline T vec3<T>::dot(const vec3<T> & lhs, const vec3<T> & rhs)
+{
+	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+}
+
+template <typename T>
+inline vec3<T> vec3<T>::cross(const vec3<T> & lhs, const vec3<T> & rhs)
+{
+	return vec3<T>(
+		lhs.y * rhs.z - lhs.z * rhs.y,
+		lhs.z * rhs.x - lhs.x * rhs.z,
+		lhs.x * rhs.y - lhs.y * rhs.x
+	);
+}
+
+template <typename T>
+inline vec3<T> vec3<T>::normalize(const vec3<T> &vec)
+{
+	return vec / vec.norm();
+}
+
+template <typename T>
+inline bool operator==(const vec3<T> & lhs, const vec3<T> & rhs)
+{
+	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+}
+
+template <typename T>
+inline bool operator!=(const vec3<T> &lhs, const vec3<T> &rhs)
+{
+	return !(lhs == rhs);
+}
+
+template <typename T>
+inline vec3<T> operator*(const vec3<T> &lhs, T rhs)
+{
+	vec3<T> out(lhs);
+	out *= rhs;
+	return out;
+}
+
+template <typename T>
+inline vec3<T> operator*(T lhs, const vec3<T> &rhs)
+{
+	vec3<T> out(rhs);
+	out *= lhs;
+	return out;
+}
+
+template <typename T>
+inline vec3<T> & operator*=(vec3<T> & lhs, T rhs)
+{
+	lhs.x *= rhs;
+	lhs.y *= rhs;
+	lhs.z *= rhs;
+	return lhs;
+}
+
+template <typename T>
+inline vec3<T> operator/(const vec3<T> &lhs, T rhs)
+{
+	vec3<T> out(lhs);
+	out /= rhs;
+	return out;
+}
+
+template <typename T>
+inline vec3<T> & operator/=(vec3<T> & lhs, T rhs)
+{
+	lhs.x /= rhs;
+	lhs.y /= rhs;
+	lhs.z /= rhs;
+	return lhs;
+}
+
+template <typename T>
+inline vec3<T> operator+(const vec3<T> &lhs, const vec3<T> &rhs)
+{
+	return vec3<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+}
+
+template <typename T>
+inline vec3<T> & operator+=(vec3<T> & lhs, const vec3<T> & rhs)
+{
+	lhs.x += rhs.x;
+	lhs.y += rhs.y;
+	lhs.z += rhs.z;
+	return lhs;
+}
+
+template <typename T>
+inline vec3<T> operator-(const vec3<T> &lhs, const vec3<T> &rhs)
+{
+	vec3<T> out(lhs);
+	out -= rhs;
+	return out;
+}
+
+template <typename T>
+inline vec3<T> & operator-=(vec3<T> & lhs, const vec3<T> & rhs)
+{
+	lhs.x -= rhs.x;
+	lhs.y -= rhs.y;
+	lhs.z -= rhs.z;
+	return lhs;
+}
+
+template <typename T>
+inline vec3<T> operator-(const vec3<T> &vec)
+{
+	return vec3<T>(-vec.x, -vec.y, -vec.z);
+}
+
 }

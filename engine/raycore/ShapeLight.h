@@ -10,32 +10,32 @@ namespace raycore {
 			class Shape {
 			public:
 				// return non normalized sample
-				virtual vec3 sample(const point3 &from) const = 0;
+				virtual vec3f sample(const point3f &from) const = 0;
 				// return pdf of the shape
 				virtual float pdf() const = 0;
 				// return point3 as position
-				virtual point3 position() const = 0;
+				virtual point3f position() const = 0;
 			};
 
 			class Sphere : public Shape {
 			public:
-				Sphere(const point3 &center, float radius);
-				virtual vec3 sample(const point3 &from) const;
+				Sphere(const point3f &center, float radius);
+				virtual vec3f sample(const point3f &from) const;
 				virtual float pdf() const;
-				virtual point3 position() const;
+				virtual point3f position() const;
 			private:
 				float radius;
-				point3 center;
+				point3f center;
 			};
 			class Disk : public Shape {
 			public:
-				Disk(const point3 &center, float radius, const norm3 &up);
-				virtual vec3 sample(const point3 &from) const;
+				Disk(const point3f &center, float radius, const norm3f &up);
+				virtual vec3f sample(const point3f &from) const;
 				virtual float pdf() const;
-				virtual point3 position() const;
+				virtual point3f position() const;
 			private:
-				norm3 up;
-				point3 center;
+				norm3f up;
+				point3f center;
 				float radius;
 			};
 		}
@@ -43,9 +43,9 @@ namespace raycore {
 		class ShapeLight : public Light
 		{
 		public:
-			ShapeLight(shape::Shape *shape, colorHDR albedo, float intensity);
+			ShapeLight(shape::Shape *shape, color4f albedo, float intensity);
 			~ShapeLight();
-			virtual bool sample(const prim::HitInfo &info, const prim::Scene &scene, float *pdf, vec3 *sample) const;
+			virtual bool sample(const prim::HitInfo &info, const prim::Scene &scene, float *pdf, vec3f *sample) const;
 			float contribution(const prim::HitInfo &info) const;
 		private:
 			shape::Shape *shape;

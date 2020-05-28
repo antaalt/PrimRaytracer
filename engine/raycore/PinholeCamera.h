@@ -4,22 +4,22 @@
 
 namespace raycore {
 
-	namespace tracer {
-		class PinholeCamera : public Camera
-		{
-		public:
-			PinholeCamera(float aperture, float focalDist);
-			~PinholeCamera();
+namespace tracer {
+class PinholeCamera : public Camera
+{
+public:
+	PinholeCamera(float aperture, float focalDist);
+	~PinholeCamera();
 
-			virtual Ray generateRay(RayIndex x, RayIndex y) const;
+	virtual Ray generateRay(RayIndex x, RayIndex y) const;
 
-			virtual bool computeTransform();
+	virtual bool computeTransform();
 
-		private:
-			norm3 u, v, w;
-			point3 eye;
-			float aperture, focalDist;
-		};
-	}
+private:
+	norm3f u, v, w;
+	point3f eye;
+	float aperture, focalDist;
+};
+}
 }
 

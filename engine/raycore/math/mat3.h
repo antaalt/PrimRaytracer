@@ -1,37 +1,55 @@
 #pragma once
+
 #include "scientific.h"
+
 namespace geometry {
-	struct norm3;
-	struct point3;
-	struct vec3;
-	struct quat;
-	struct mat4;
 
-	struct mat3 {
-		struct col {
-			union {
-				math::real_t data[3];
-				struct {
-					math::real_t x, y, z;
-				};
-			};
-			col();
-			col(math::real_t value);
-			col(math::real_t x, math::real_t y, math::real_t z);
-			math::real_t &operator[](size_t index);
-			const math::real_t &operator[](size_t index) const;
-			operator point3();
-			operator norm3();
-		} cols[3];
-		mat3();
-		mat3(math::real_t value);
-		mat3(const mat4& mat);
-		mat3(col x, col y, col z);
-		mat3::col &operator[](size_t index);
-		const mat3::col &operator[](size_t index) const;
-		static mat3 identity();
+template <typename T>
+struct norm3;
+template <typename T>
+struct point3;
+template <typename T>
+struct vec3;
+template <typename T>
+struct quat;
+template <typename T>
+struct mat4;
+
+template <typename T>
+struct col3 {
+	union {
+		T data[3];
+		struct {
+			T x, y, z;
+		};
 	};
+	col3();
+	col3(T value);
+	col3(T x, T y, T z);
 
-	inline mat3 operator*(const mat3& lhs, const mat3 &rhs);
-	inline norm3 operator*(const mat3& lhs, const norm3 &rhs);
+	T &operator[](size_t index);
+	const T &operator[](size_t index) const;
+};
+
+template <typename T>
+struct mat3 {
+
+	col3<T> cols[3];
+
+	mat3();
+	mat3(T value);
+	mat3(const mat4<T>& mat);
+	mat3(col3<T> x, col3<T> y, col3<T> z);
+
+	col3<T> &operator[](size_t index);
+	const col3<T> &operator[](size_t index) const;
+
+	static mat3 identity();
+};
+
+template <typename T>
+mat3<T> operator*(const mat3<T>& lhs, const mat3<T> &rhs);
+template <typename T>
+norm3<T> operator*(const mat3<T>& lhs, const norm3<T> &rhs);
+
 }

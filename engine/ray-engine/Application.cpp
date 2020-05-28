@@ -86,7 +86,7 @@ bool Application::save(std::string path)
 	for (unsigned int y = 0; y < m_height; y++)
 		for (unsigned int x = 0; x < m_width; x++)
 			for (unsigned int i = 0; i < 3; i++)
-				output[y * m_width * 3 + x * 3 + i] = static_cast<unsigned char>(math::clamp(data[y * m_width * 4 + x * 4 + i], 0.f, 1.f) * 255.f);
+				output[y * m_width * 3 + x * 3 + i] = static_cast<unsigned char>(geometry::clamp(data[y * m_width * 4 + x * 4 + i], 0.f, 1.f) * 255.f);
 	stbi_flip_vertically_on_write(true);
 	int save = stbi_write_jpg(path.c_str(), m_width, m_height, 3, output.data(), 100);
 	Log::info("Render saved at '", path, "'");
@@ -156,13 +156,13 @@ bool Application::inputs(const Inputs &inputs)
 	const float scaleFactor = 0.01f;
 	if (inputs.mouse.mouse[LEFT])
 	{
-		this->m_camera->rotate(vec3(0.f, 1.f, 0.f), static_cast<float>(-inputs.mouse.relPos[0]));
-		this->m_camera->rotate(vec3(1.f, 0.f, 0.f), static_cast<float>(-inputs.mouse.relPos[1]));
+		this->m_camera->rotate(vec3f(0.f, 1.f, 0.f), geometry::degreef(static_cast<float>(-inputs.mouse.relPos[0])));
+		this->m_camera->rotate(vec3f(1.f, 0.f, 0.f), geometry::degreef(static_cast<float>(-inputs.mouse.relPos[1])));
 	}
 	if (inputs.mouse.mouse[RIGHT])
-		this->m_camera->translate(vec3(-inputs.mouse.relPos[0] * 0.01f, inputs.mouse.relPos[1] * 0.01f, 0.f));
+		this->m_camera->translate(vec3f(-inputs.mouse.relPos[0] * 0.01f, inputs.mouse.relPos[1] * 0.01f, 0.f));
 	if (inputs.mouse.wheel != 0)
-		this->m_camera->translate(vec3(0.f, 0.f, static_cast<float>(inputs.mouse.wheel)* 0.1f));
+		this->m_camera->translate(vec3f(0.f, 0.f, static_cast<float>(inputs.mouse.wheel)* 0.1f));
 	if (inputs.keyboard.printScreen)
 		this->save("output.jpg");
 	return inputs.keyboard.escape || inputs.keyboard.space;

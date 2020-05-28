@@ -153,19 +153,23 @@
     <ClInclude Include="Location.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="geometry.h" />
-    <ClInclude Include="math\color32.h" />
-    <ClInclude Include="math\colorHDR.h" />
+    <ClInclude Include="math\angle.h" />
+    <ClInclude Include="math\color4.h" />
+    <ClInclude Include="math\geometry.h" />
+    <ClInclude Include="math\gpu.h" />
+    <ClInclude Include="math\half.h" />
     <ClInclude Include="math\mat3.h" />
     <ClInclude Include="math\mat4.h" />
     <ClInclude Include="math\norm3.h" />
     <ClInclude Include="math\point3.h" />
     <ClInclude Include="math\print.h" />
     <ClInclude Include="math\quat.h" />
+    <ClInclude Include="math\sampling.h" />
     <ClInclude Include="math\scientific.h" />
     <ClInclude Include="math\uv2.h" />
     <ClInclude Include="math\vec2.h" />
     <ClInclude Include="math\vec3.h" />
+    <ClInclude Include="math\vec4.h" />
     <ClInclude Include="Matte.h" />
     <ClInclude Include="Metal.h" />
     <ClInclude Include="NoAccel.h" />
@@ -206,6 +210,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightDistribution.cpp" />
     <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="math\test.cpp" />
     <ClCompile Include="Matte.cpp" />
     <ClCompile Include="Metal.cpp" />
     <ClCompile Include="NoAccel.cpp" />
@@ -226,16 +231,21 @@
     <ClCompile Include="WhittedTracer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="math\color32.inl" />
-    <None Include="math\colorHDR.inl" />
+    <None Include="math\angle.inl" />
+    <None Include="math\color4.inl" />
+    <None Include="math\gpu.inl" />
+    <None Include="math\half.inl" />
     <None Include="math\mat3.inl" />
     <None Include="math\mat4.inl" />
     <None Include="math\norm3.inl" />
     <None Include="math\point3.inl" />
     <None Include="math\quat.inl" />
+    <None Include="math\sampling.inl" />
+    <None Include="math\scientific.inl" />
     <None Include="math\uv2.inl" />
     <None Include="math\vec2.inl" />
     <None Include="math\vec3.inl" />
+    <None Include="math\vec4.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

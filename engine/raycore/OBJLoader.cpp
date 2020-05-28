@@ -16,18 +16,18 @@ struct FaceID {
 
 bool OBJLoader::load(Reader & reader, prim::Scene &scene)
 {
-	std::vector<point3> positions;
-	std::vector<norm3> normals;
-	std::vector<uv2> uvs;
+	std::vector<point3f> positions;
+	std::vector<norm3f> normals;
+	std::vector<uv2f> uvs;
 	std::vector<FaceID> faces;
 
-	auto coordinates = [](const point3 &p) -> point3
+	auto coordinates = [](const point3f &p) -> point3f
 	{
-		return point3(p.x, -p.z, p.y);
+		return point3f(p.x, -p.z, p.y);
 	};
-	auto coordinatesN = [](const norm3 &p) -> norm3
+	auto coordinatesN = [](const norm3f &p) -> norm3f
 	{
-		return norm3(p.x, -p.z, p.y);
+		return norm3f(p.x, -p.z, p.y);
 	};
 	std::stringstream file;
 	file << reader.data();
@@ -45,20 +45,20 @@ bool OBJLoader::load(Reader & reader, prim::Scene &scene)
 			{
 			case 'n':
 			case 'N': {
-				norm3 norm;
+				norm3f norm;
 				ss >> norm.x >> norm.y >> norm.z;
 				normals.push_back(norm);
 				break;
 			}
 			case 't':
 			case 'T': {
-				uv2 uv;
+				uv2f uv;
 				ss >> uv.u >> uv.v;
 				uvs.push_back(uv);
 				break;
 			}
 			case ' ': {
-				point3 pos;
+				point3f pos;
 				ss >> pos.x >> pos.y >> pos.z;
 				positions.push_back(pos);
 				break;
@@ -105,7 +105,7 @@ bool OBJLoader::load(Reader & reader, prim::Scene &scene)
 		}
 	}
 	// TODO load mtl
-	Texture<colorHDR> *texture = new ConstantTexture<colorHDR>(colorHDR(0.5f, 0.5f, 0.5f, 1.f));
+	Texture<float> *texture = new ConstantTexture<float>(color4f(0.5f, 0.5f, 0.5f, 1.f));
 	prim::Material *material = new prim::Matte(texture);
 	scene.addTexture(texture);
 	scene.addMaterial(material);
@@ -113,9 +113,9 @@ bool OBJLoader::load(Reader & reader, prim::Scene &scene)
 	for (size_t iTri = 0; iTri < faces.size(); iTri++)
 	{
 		FaceID &face = faces[iTri];
-		vec3 AB(positions[face.posID.data[1] - 1] - positions[face.posID.data[0] - 1]);
-		vec3 AC(positions[face.posID.data[2] - 1] - positions[face.posID.data[0] - 1]);
-		norm3 normal(normalize(cross(AB, AC)));
+		vec3f AB(positions[face.posID.data[1] - 1] - positions[face.posID.data[0] - 1]);
+		vec3f AC(positions[face.posID.data[2] - 1] - positions[face.posID.data[0] - 1]);
+		norm3f normal(vec3f::normalize(vec3f::cross(AB, AC)));
 		std::array<prim::Vertex, 3> vertices;
 		for (size_t iVert = 0; iVert < 3; iVert++)
 		{
@@ -128,8 +128,8 @@ bool OBJLoader::load(Reader & reader, prim::Scene &scene)
 			if (uvs.size() > 0)
 				vert.texcoord = uvs[face.uvID.data[iVert] - 1];
 			else
-				vert.texcoord = uv2(0.f);
-			vert.color = colorHDR(1.f);
+				vert.texcoord = uv2f(0.f);
+			vert.color = color4f(1.f);
 			vertices[iVert] = vert;
 		}
 		prim::Triangle *tri = new prim::Triangle(

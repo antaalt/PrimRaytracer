@@ -14,12 +14,12 @@ namespace raycore {
 		};
 
 		struct Ray {
-			point3 origin;
-			vec3 direction;
+			geometry::point3f origin;
+			geometry::vec3f direction;
 			float tmin, tmax;
 			RayType type;
 			Ray() : tmin(EPSILON), tmax((std::numeric_limits<float>::max)()), type(GEOMETRY_RAY) {}
-			Ray(point3 origin, vec3 direction, RayType ray_type = GEOMETRY_RAY, float tmin = EPSILON, float tmax = (std::numeric_limits<float>::max)()) :
+			Ray(geometry::point3f origin, geometry::vec3f direction, RayType ray_type = GEOMETRY_RAY, float tmin = EPSILON, float tmax = (std::numeric_limits<float>::max)()) :
 				origin(origin),
 				direction(direction),
 				type(ray_type),
@@ -27,7 +27,7 @@ namespace raycore {
 				tmax(tmax)
 				{}
 
-			point3 operator()(float distance) const { return point3(origin + direction * distance); }
+			geometry::point3f operator()(float distance) const { return origin + geometry::point3f(direction * distance); }
 		};
 	}
 }

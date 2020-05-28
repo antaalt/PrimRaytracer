@@ -87,7 +87,7 @@ namespace raycore {
 				{
 					for (unsigned int x = tile.min.x; x < tile.max.x; x++)
 					{
-						colorHDR p(0.f);
+						color4f p(0.f);
 						for (unsigned int sy = 0; sy < this->subSamplesY; sy++)
 						{
 							for (unsigned int sx = 0; sx < this->subSamplesX; sx++)
@@ -136,7 +136,7 @@ namespace raycore {
 				{
 					this->tiles.push_back(Tile(
 						index2D(x * tileSize, y * tileSize),
-						index2D(math::min((x + 1) * tileSize, this->width), math::min((y + 1) * tileSize, this->height))
+						index2D(geometry::min((x + 1) * tileSize, this->width), geometry::min((y + 1) * tileSize, this->height))
 					));
 				}
 			}
