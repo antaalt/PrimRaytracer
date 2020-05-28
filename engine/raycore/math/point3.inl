@@ -100,7 +100,7 @@ template <typename T>
 inline point3<T> operator/(const point3<T> &lhs, float rhs)
 {
 	point3<T> out(lhs);
-	out *= rhs;
+	out /= rhs;
 	return out;
 }
 
