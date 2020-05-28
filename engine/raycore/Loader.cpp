@@ -561,6 +561,8 @@ namespace raycore {
 		bool load(std::string path, loader::Mesh & mesh)
 		{
 			std::ifstream file(path);
+			if (!file)
+				throw std::runtime_error("Could not open file " + path);
 			std::string line;
 
 			std::vector<point3> positions;
@@ -749,7 +751,7 @@ namespace raycore {
 			root->addChild(geom4);
 
 			loader::Mesh mesh5;
-			raycore::OBJ::load("../data/models/dragon/dragonn.obj", mesh5);
+			raycore::OBJ::load("../raycore/data/models/bunny/bunny.obj", mesh5);
 			//mesh5.materialID = 0;
 			loader::Primitive prim5(mesh5, mat02);
 			prim::Geometry *geom5 = new prim::Geometry(prim5.hitables);

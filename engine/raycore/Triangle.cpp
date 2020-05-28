@@ -104,15 +104,15 @@ namespace raycore {
 #endif
 		}
 
-		inline norm3 interpolatenormal(const norm3 &nA, const norm3 &nB, const norm3 &nC, float alpha, float beta)
+		norm3 interpolatenormal(const norm3 &nA, const norm3 &nB, const norm3 &nC, float alpha, float beta)
 		{
 			return normalize(norm3(nB * alpha + nC * beta + nA * (1.f - alpha - beta)));
 		}
-		inline uv2 interpolateTexCoord(const uv2 &tA, const uv2 &tB, const uv2 &tC, float alpha, float beta)
+		uv2 interpolateTexCoord(const uv2 &tA, const uv2 &tB, const uv2 &tC, float alpha, float beta)
 		{
 			return tB * alpha + tC * beta + tA * (1.f - alpha - beta);
 		}
-		inline colorHDR interpolateColors(const colorHDR &cA, const colorHDR &cB, const colorHDR &cC, float alpha, float beta)
+		colorHDR interpolateColors(const colorHDR &cA, const colorHDR &cB, const colorHDR &cC, float alpha, float beta)
 		{
 			return cB * alpha + cC * beta + cA * (1.f - alpha - beta);
 		}
