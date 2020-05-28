@@ -60,4 +60,94 @@ inline T vec2<T>::dot(const vec2 &lhs, const vec2 &rhs)
 	return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 
+template <typename T>
+inline bool operator==(const vec2<T> & lhs, const vec2<T> & rhs)
+{
+	return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+
+template <typename T>
+inline bool operator!=(const vec2<T> &lhs, const vec2<T> &rhs)
+{
+	return !(lhs == rhs);
+}
+
+template <typename T>
+inline vec2<T> operator*(const vec2<T> &lhs, T rhs)
+{
+	vec2<T> out(lhs);
+	out *= rhs;
+	return out;
+}
+
+template <typename T>
+inline vec2<T> operator*(T lhs, const vec2<T> &rhs)
+{
+	vec2<T> out(rhs);
+	out *= lhs;
+	return out;
+}
+
+template <typename T>
+inline vec2<T> & operator*=(vec2<T> & lhs, T rhs)
+{
+	lhs.x *= rhs;
+	lhs.y *= rhs;
+	return lhs;
+}
+
+template <typename T>
+inline vec2<T> operator/(const vec2<T> &lhs, T rhs)
+{
+	vec2<T> out(lhs);
+	out /= rhs;
+	return out;
+}
+
+template <typename T>
+inline vec2<T> & operator/=(vec2<T> & lhs, T rhs)
+{
+	lhs.x /= rhs;
+	lhs.y /= rhs;
+	return lhs;
+}
+
+template <typename T>
+inline vec2<T> operator+(const vec2<T> &lhs, const vec2<T> &rhs)
+{
+	vec2<T> out(lhs);
+	out += rhs;
+	return out;
+}
+
+template <typename T>
+inline vec2<T> & operator+=(vec2<T> & lhs, const vec2<T> & rhs)
+{
+	lhs.x += rhs.x;
+	lhs.y += rhs.y;
+	return lhs;
+}
+
+template <typename T>
+inline vec2<T> operator-(const vec2<T> &lhs, const vec2<T> &rhs)
+{
+	vec2<T> out(lhs);
+	out -= rhs;
+	return out;
+}
+
+template <typename T>
+inline vec2<T> & operator-=(vec2<T> & lhs, const vec2<T> & rhs)
+{
+	lhs.x -= rhs.x;
+	lhs.y -= rhs.y;
+	return lhs;
+}
+
+template <typename T>
+inline vec2<T> operator-(const vec2<T> &vec)
+{
+	return vec2<T>(-vec.x, -vec.y);
+}
+
 }

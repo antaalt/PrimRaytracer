@@ -12,73 +12,67 @@
 #define PARALLEL_RENDERING
 
 namespace raycore {
+namespace tracer {
 
-	namespace tracer {
+using index2D = vec2<unsigned int>;
 
-		struct index2D {
-			index2D(unsigned int x, unsigned int y) : x(x), y(y) {}
-			index2D operator-(const index2D &rhs) { return index2D(x - rhs.x, y - rhs.y); }
-			index2D operator+(const index2D &rhs) { return index2D(x + rhs.x, y + rhs.y); }
-			index2D operator*(float scalar) { return index2D(static_cast<unsigned int>(x * scalar), static_cast<unsigned int>(y * scalar)); }
-			unsigned int x, y;
-		};
+struct Tile {
+	Tile(const index2D &min, const index2D &max): min(min), max(max) {}
 
-		struct Tile {
-			Tile(const index2D &min, const index2D &max): min(min), max(max) {}
+	unsigned int width() { return max.x - min.x; }
+	unsigned int height() { return max.y - min.y; }
+	index2D center() { index2D index(max - min); index.x *= 0.5f; index.y *= 0.5f; return index; }
 
-			unsigned int width() { return max.x - min.x; }
-			unsigned int height() { return max.y - min.y; }
-			index2D center() { return (max - min) * 0.5f; }
+	index2D min;
+	index2D max;
+};
 
-			index2D min;
-			index2D max;
-		};
+struct Settings {
+	unsigned int tileSize;
+	unsigned int samplesX;
+	unsigned int samplesY;
+	RaySampler raySamplerX;
+	RaySampler raySamplerY;
+};
 
-		struct Settings {
-			unsigned int tileSize;
-			unsigned int samplesX;
-			unsigned int samplesY;
-			RaySampler raySamplerX;
-			RaySampler raySamplerY;
-		};
+class Renderer
+{
+public:
+	Renderer(unsigned int width, unsigned int height, const Settings &settings);
+	~Renderer();
+	Renderer(const Renderer& other) = delete;
+	Renderer& operator=(const Renderer &other) = delete;
 
-		class Renderer
-		{
-		public:
-			Renderer(unsigned int width, unsigned int height, const Settings &settings);
-			~Renderer();
-			Renderer(const Renderer& other) = delete;
-			Renderer& operator=(const Renderer &other) = delete;
+	bool buildScene(prim::Scene &&scene, prim::Acceleration acceleration);
 
-			bool buildScene(prim::Scene &&scene, prim::Acceleration acceleration);
+	bool updateRays();
 
-			bool updateRays();
+	bool renderPreview();
 
-			bool renderPreview();
+	bool render();
 
-			bool render();
+	void resize(unsigned int width, unsigned int height);
 
-			void resize(unsigned int width, unsigned int height);
+	void buildTiles(unsigned int tileSize);
 
-			void buildTiles(unsigned int tileSize);
+	void setTracer(tracer::Tracer* tracer);
+	void setCamera(tracer::Camera* camera);
 
-			void setTracer(tracer::Tracer* tracer);
-			void setCamera(tracer::Camera* camera);
+	const std::vector<color4f> &image() const;
 
-			const PixelBuffer &image() const;
+private:
+	Camera* camera;
+	Tracer* tracer; // TODO add a secondary quick tracer (whitted for example) for display
+	prim::Scene scene;
 
-		private:
-			Camera* camera;
-			Tracer* tracer; // TODO add a secondary quick tracer (whitted for example) for display
-			prim::Scene scene;
+	std::vector<Tile> tiles;
+	unsigned int tileSize;
+	unsigned int width, height;
+	unsigned int samples;
+	unsigned int subSamplesX, subSamplesY;
+	RaySampler raySamplerX, raySamplerY;
+	std::vector<color4f> m_output;
+};
 
-			std::vector<Tile> tiles;
-			unsigned int tileSize;
-			unsigned int width, height;
-			unsigned int samples;
-			unsigned int subSamplesX, subSamplesY;
-			RaySampler raySamplerX, raySamplerY;
-			PixelBuffer output;
-		};
-	}
+}
 }

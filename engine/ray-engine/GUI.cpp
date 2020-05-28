@@ -125,36 +125,45 @@ void GUI::render()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+bool isKeyDown(ImGuiIO &io, int key)
+{
+	return io.KeysDown[key] || io.KeysDownDuration[key] > 0.f;
+}
+bool isMouseDown(ImGuiIO &io, int key)
+{
+	return io.MouseDown[key] ;
+}
+
 Inputs &GUI::events()
 {
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Key down
-	m_inputs.keyboard.escape = io.KeysDown[GLFW_KEY_ESCAPE];
-	m_inputs.keyboard.space = io.KeysDown[GLFW_KEY_ESCAPE];
-	m_inputs.keyboard.printScreen = io.KeysDown[GLFW_KEY_PRINT_SCREEN];
-	m_inputs.keyboard.escape = io.KeysDown[GLFW_KEY_ESCAPE];
-	m_inputs.keyboard.alt[LEFT] = io.KeysDown[GLFW_KEY_LEFT_ALT];
-	m_inputs.keyboard.alt[RIGHT] = io.KeysDown[GLFW_KEY_RIGHT_ALT];
-	m_inputs.keyboard.space = io.KeysDown[GLFW_KEY_SPACE];
-	m_inputs.keyboard.ctrl[RIGHT] = io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-	m_inputs.keyboard.ctrl[LEFT] = io.KeysDown[GLFW_KEY_LEFT_CONTROL];
-	m_inputs.keyboard.shift[LEFT] = io.KeysDown[GLFW_KEY_LEFT_SHIFT];
-	m_inputs.keyboard.shift[RIGHT] = io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+	m_inputs.keyboard.escape = isKeyDown(io, GLFW_KEY_ESCAPE);
+	m_inputs.keyboard.space = isKeyDown(io, GLFW_KEY_ESCAPE);
+	m_inputs.keyboard.printScreen = isKeyDown(io, GLFW_KEY_PRINT_SCREEN);
+	m_inputs.keyboard.escape = isKeyDown(io, GLFW_KEY_ESCAPE);
+	m_inputs.keyboard.alt[LEFT] = isKeyDown(io, GLFW_KEY_LEFT_ALT);
+	m_inputs.keyboard.alt[RIGHT] = isKeyDown(io, GLFW_KEY_RIGHT_ALT);
+	m_inputs.keyboard.space = isKeyDown(io, GLFW_KEY_SPACE);
+	m_inputs.keyboard.ctrl[RIGHT] = isKeyDown(io, GLFW_KEY_RIGHT_CONTROL);
+	m_inputs.keyboard.ctrl[LEFT] = isKeyDown(io, GLFW_KEY_LEFT_CONTROL);
+	m_inputs.keyboard.shift[LEFT] = isKeyDown(io, GLFW_KEY_LEFT_SHIFT);
+	m_inputs.keyboard.shift[RIGHT] = isKeyDown(io, GLFW_KEY_RIGHT_SHIFT);
 
 	// Mouse button down
-	m_inputs.mouse.mouse[LEFT] = io.MouseClicked[GLFW_MOUSE_BUTTON_1];
-	m_inputs.mouse.mouse[RIGHT] = io.MouseClicked[GLFW_MOUSE_BUTTON_2];
-	m_inputs.mouse.mouse[MIDDLE] = io.MouseClicked[GLFW_MOUSE_BUTTON_3];
+	m_inputs.mouse.mouse[LEFT] = isMouseDown(io, GLFW_MOUSE_BUTTON_1);
+	m_inputs.mouse.mouse[RIGHT] = isMouseDown(io, GLFW_MOUSE_BUTTON_2);
+	m_inputs.mouse.mouse[MIDDLE] = isMouseDown(io, GLFW_MOUSE_BUTTON_3);
 
 	// Mouse motion
-	m_inputs.mouse.relPos[0] = io.MouseDelta.x;
-	m_inputs.mouse.relPos[1] = io.MouseDelta.y;
-	m_inputs.mouse.position[0] = io.MousePos.x;
-	m_inputs.mouse.position[1] = io.MousePos.x;
+	m_inputs.mouse.relPos[0] = (int)io.MouseDelta.x;
+	m_inputs.mouse.relPos[1] = (int)io.MouseDelta.y;
+	m_inputs.mouse.position[0] = (int)io.MousePos.x;
+	m_inputs.mouse.position[1] = (int)io.MousePos.x;
 
 	// Mouse wheel
-	m_inputs.mouse.wheel = io.MouseWheel;
+	m_inputs.mouse.wheel = (int)io.MouseWheel;
 
 	return m_inputs;
 }

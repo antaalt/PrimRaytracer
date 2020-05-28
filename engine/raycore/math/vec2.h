@@ -33,4 +33,34 @@ struct vec2 {
 	static T dot(const vec2 &lhs, const vec2 &rhs);
 };
 
+template <typename T>
+bool operator==(const vec2<T> & lhs, const vec2<T> & rhs);
+template <typename T>
+bool operator!=(const vec2<T> &lhs, const vec2<T> &rhs);
+
+template <typename T>
+vec2<T> operator*(const vec2<T> &lhs, T rhs);
+template <typename T>
+vec2<T> operator*(T lhs, const vec2<T> &rhs);
+template <typename T>
+vec2<T> &operator*=(vec2<T> &lhs, T rhs);
+
+template <typename T>
+vec2<T> operator/(const vec2<T> &lhs, T rhs);
+template <typename T>
+vec2<T> &operator/=(vec2<T> &lhs, T rhs);
+
+template <typename T>
+vec2<T> operator+(const vec2<T> &lhs, const vec2<T> &rhs);
+template <typename T>
+vec2<T> &operator+=(vec2<T> &lhs, const vec2<T> &rhs);
+
+template <typename T>
+vec2<T> operator-(const vec2<T> &lhs, const vec2<T> &rhs);
+template <typename T>
+vec2<T> &operator-=(vec2<T> &lhs, const vec2<T> &rhs);
+
+template <typename T>
+vec2<T> operator-(const vec2<T> &vec);
+
 }
