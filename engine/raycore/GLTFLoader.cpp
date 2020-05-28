@@ -16,7 +16,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 	tinygltf::Model tinyModel;
 	std::string err;
 	// TODO fix base dir
-	bool isLoaded = ctx.LoadASCIIFromString(&tinyModel, &err, reinterpret_cast<const char*>(reader.data()), reader.size(), "./");
+	bool isLoaded = ctx.LoadASCIIFromString(&tinyModel, &err, reinterpret_cast<const char*>(reader.data()), (unsigned int)reader.size(), "./");
 	if (!isLoaded)
 	{
 		throw std::runtime_error("File failed loading");
@@ -528,11 +528,6 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 	scene.setRoot(root);
 	scene.setLightDistribution(new prim::LightDistribution);
 	return true;
-}
-
-bool GLTFLoader::write(Writer & writer, const prim::Scene & scene)
-{
-	throw std::runtime_error("Not implemented");
 }
 
 }

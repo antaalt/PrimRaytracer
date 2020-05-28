@@ -84,7 +84,7 @@ void setScene(raycore::prim::Scene &scene)
 			data.resize(size);
 			file.read(reinterpret_cast<char*>(data.data()), size);
 		}
-		Reader reader(data);
+		MemoryReader reader(data);
 		loader.load(reader, scene);
 		//geom5->setTransform(mat4(
 		//	mat4::col(15.f,  0.f,  0.f, 0.f),

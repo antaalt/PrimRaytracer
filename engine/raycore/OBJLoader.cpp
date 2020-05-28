@@ -148,9 +148,4 @@ bool OBJLoader::load(Reader & reader, prim::Scene &scene)
 	return true;
 }
 
-bool OBJLoader::write(Writer &writer, const prim::Scene & scene)
-{
-	throw std::runtime_error("Not implemented");
-}
-
 }

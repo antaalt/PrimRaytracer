@@ -8,7 +8,6 @@ class GLTFLoader : public Loader
 {
 public:
 	bool load(Reader &reader, prim::Scene &scene) override;
-	bool write(Writer &writer, const prim::Scene &scene) override;
 };
 
 }
