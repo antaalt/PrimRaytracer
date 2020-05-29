@@ -35,7 +35,7 @@ struct RayIndex {
 			value = (static_cast<float>(index) + 0.5f) / static_cast<float>(dim);
 			break;
 		case RaySampler::RANDOM:
-			value = (static_cast<float>(index) + rand::rnd()) / static_cast<float>(dim);
+			value = (static_cast<float>(index) + Rand::sample<float>()) / static_cast<float>(dim);
 			break;
 		default:
 			break;

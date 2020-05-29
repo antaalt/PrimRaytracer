@@ -3,31 +3,35 @@
 #include "Config.h"
 #include <climits>
 
-
 namespace raycore {
 
-	namespace tracer {
+struct Ray {
+	Ray();
+	Ray(geometry::point3f origin, geometry::vec3f direction, float tmin = std::numeric_limits<float>::epsilon(), float tmax = (std::numeric_limits<float>::max)());
 
-		enum RayType {
-			GEOMETRY_RAY,
-			SHADOW_RAY
-		};
+	geometry::point3f operator()(float distance) const;
 
-		struct Ray {
-			geometry::point3f origin;
-			geometry::vec3f direction;
-			float tmin, tmax;
-			RayType type;
-			Ray() : tmin(EPSILON), tmax((std::numeric_limits<float>::max)()), type(GEOMETRY_RAY) {}
-			Ray(geometry::point3f origin, geometry::vec3f direction, RayType ray_type = GEOMETRY_RAY, float tmin = EPSILON, float tmax = (std::numeric_limits<float>::max)()) :
-				origin(origin),
-				direction(direction),
-				type(ray_type),
-				tmin(tmin),
-				tmax(tmax)
-				{}
+	geometry::point3f origin;
+	geometry::vec3f direction;
+	float tmin, tmax;
+};
 
-			geometry::point3f operator()(float distance) const { return origin + geometry::point3f(direction * distance); }
-		};
-	}
+inline Ray::Ray() :
+	tmin(std::numeric_limits<float>::epsilon()),
+	tmax((std::numeric_limits<float>::max)()) 
+{
+}
+inline Ray::Ray(geometry::point3f origin, geometry::vec3f direction, float tmin, float tmax) :
+	origin(origin),
+	direction(direction),
+	tmin(tmin),
+	tmax(tmax)
+{
+}
+
+inline geometry::point3f Ray::operator()(float distance) const 
+{ 
+	return origin + geometry::point3f(direction * distance);
+}
+
 }

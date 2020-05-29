@@ -7,7 +7,7 @@ namespace raycore {
 class OBJLoader : public Loader
 {
 public:
-	bool load(Reader &reader, prim::Scene &scene) override;
+	bool load(Reader &reader, Scene &scene) override;
 };
 
 }

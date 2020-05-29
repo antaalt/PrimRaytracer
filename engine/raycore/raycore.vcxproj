@@ -135,10 +135,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Accelerator.h" />
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="BSDF.h" />
-    <ClInclude Include="BVH.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Checker.h" />
     <ClInclude Include="Config.h" />
@@ -171,13 +169,13 @@
     <ClInclude Include="math\vec3.h" />
     <ClInclude Include="math\vec4.h" />
     <ClInclude Include="Matte.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshBVH.h" />
+    <ClInclude Include="MeshOctree.h" />
     <ClInclude Include="Metal.h" />
-    <ClInclude Include="NoAccel.h" />
     <ClInclude Include="OBJLoader.h" />
-    <ClInclude Include="Octree.h" />
     <ClInclude Include="PathTracer.h" />
     <ClInclude Include="PinholeCamera.h" />
-    <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RandomLib.h" />
     <ClInclude Include="Ray.h" />
@@ -197,28 +195,27 @@
     <ClInclude Include="WhittedTracer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Accelerator.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="BSDF.cpp" />
-    <ClCompile Include="BVH.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Checker.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="ConstantTexture.cpp" />
     <ClCompile Include="Glass.cpp" />
     <ClCompile Include="GLTFLoader.cpp" />
+    <ClCompile Include="Hitable.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightDistribution.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="math\test.cpp" />
     <ClCompile Include="Matte.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshBVH.cpp" />
+    <ClCompile Include="MeshOctree.cpp" />
     <ClCompile Include="Metal.cpp" />
-    <ClCompile Include="NoAccel.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
-    <ClCompile Include="Octree.cpp" />
     <ClCompile Include="PathTracer.cpp" />
     <ClCompile Include="PinholeCamera.cpp" />
-    <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Random.cpp" />

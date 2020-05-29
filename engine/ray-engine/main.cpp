@@ -10,71 +10,30 @@
 
 #include <fstream>
 
-void setScene(raycore::prim::Scene &scene)
+void setScene(raycore::Scene &scene)
 {
 	using namespace raycore;
 	using namespace geometry;
-	prim::Group *root = new prim::Group();
-	root->setAcceleration(prim::Acceleration::BVH);
 
-	prim::LightDistribution *ld = new prim::LightDistribution();
-	//ld->addLight(new prim::ShapeLight(new prim::shape::Sphere(point3f(0.f, 5.f, 0.f), 1.f), colorHDR(1.f), 1.f));
-	//ld->addLight(new prim::ShapeLight(new prim::shape::Disk(point3f(5.f, 2.f, 0.f), 1.f, norm3(0.f, 1.f, 0.f)), colorHDR(1.f), 1.f));
-	//ld->addLight(new prim::PointLight(point3f(5.f, 5.f, 0.f), colorHDR(1.f), 1.f));
-	scene.setLightDistribution(ld);
-	scene.setRoot(root);
-	/*raycore::prim::Light *l;
-	l.position = point3f(0.f, 20.f, 0.f);
-	scene.lights.push_back(l);*/
+	scene.textures.push_back(new ConstantTexture<float>(color4f(0.9f)));
+	scene.textures.push_back(new ConstantTexture<float>(color4f(0.5f, 1.f, 0.5f, 1.f)));
+	scene.textures.push_back(new ConstantTexture<float>(color4f(0.82f, 0.62f, 0.19f, 1.f)));
+	scene.textures.push_back(new Checker<float>(color4f(0.1f), color4f(1.f), 40, 40));
+	scene.textures.push_back(new Checker<float>(color4f(0.5f, 0.5f, 1.f, 1.f), color4f(1.f, 0.5f, 0.5f, 1.f), 2, 2));
+	scene.textures.push_back(new ConstantTexture<float>(color4f(0.1f)));
+	
+	scene.materials.push_back(new Glass(scene.textures[0], 1.1f));
+	scene.materials.push_back(new Matte(scene.textures[1]));
+	scene.materials.push_back(new Metal(scene.textures[2], scene.textures[5]));
+	scene.materials.push_back(new Matte(scene.textures[3]));
+	scene.materials.push_back(new Matte(scene.textures[4]));
 
-	Texture<float> *tex0 = scene.addTexture(new ConstantTexture<float>(color4f(0.9f)));
-	Texture<float> *tex1 = scene.addTexture(new ConstantTexture<float>(color4f(0.5f, 1.f, 0.5f, 1.f)));
-	Texture<float> *tex2 = scene.addTexture(new ConstantTexture<float>(color4f(0.82f, 0.62f, 0.19f, 1.f)));
-	Texture<float> *tex3 = scene.addTexture(new Checker<float>(color4f(0.1f), color4f(1.f), 40, 40));
-	Texture<float> *tex4 = scene.addTexture(new Checker<float>(color4f(0.5f, 0.5f, 1.f, 1.f), color4f(1.f, 0.5f, 0.5f, 1.f), 2, 2));
-	Texture<float> *roughness = new ConstantTexture<float>(color4f(0.1f)); // TODO leak HERE
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f)), 0.4f, scene.materials[0]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, -1.0f, 0.1f)), 0.5f, scene.materials[1]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.f, 0.2f)), 0.6f, scene.materials[2]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, 0.f, -30.f)), 29.f, scene.materials[3]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.f, 0.2f)), 0.6f, scene.materials[4]));
 
-	{
-		// TODO replace vector by pointer array
-		prim::Hitable* sphere = new prim::Sphere(point3f(0.f), 0.4f, norm3f(settings::up));
-		sphere->material = scene.addMaterial(new prim::Glass(tex0, 1.1f));
-		std::vector<prim::Hitable*> hitables(1, sphere);
-		prim::Geometry *geom = new prim::Geometry(hitables);
-		geom->setAcceleration(prim::Acceleration::NONE);
-		root->addChild(geom);
-	}
-	{
-		prim::Hitable* sphere = new prim::Sphere(point3f(0.f, -1.0f, 0.1f), 0.5f, norm3f(settings::up));
-		sphere->material = scene.addMaterial(new prim::Matte(tex1));
-		std::vector<prim::Hitable*> hitables(1, sphere);
-		prim::Geometry *geom = new prim::Geometry(hitables);
-		geom->setAcceleration(prim::Acceleration::NONE);
-		root->addChild(geom);
-	}
-	{
-		prim::Hitable* sphere = new prim::Sphere(point3f(-1.5f, 0.f, 0.2f), 0.6f, norm3f(settings::up));
-		sphere->material = scene.addMaterial(new prim::Metal(tex2, roughness));
-		std::vector<prim::Hitable*> hitables(1, sphere);
-		prim::Geometry *geom = new prim::Geometry(hitables);
-		geom->setAcceleration(prim::Acceleration::NONE);
-		root->addChild(geom);
-	}
-	{
-		prim::Hitable* sphere = new prim::Sphere(point3f(0.f, 0.f, -30.f), 29.f, norm3f(settings::up));
-		sphere->material = scene.addMaterial(new  prim::Matte(tex3));
-		std::vector<prim::Hitable*> hitables(1, sphere);
-		prim::Geometry *geom = new prim::Geometry(hitables);
-		geom->setAcceleration(prim::Acceleration::NONE);
-		root->addChild(geom);
-	}
-	{
-		prim::Hitable* sphere = new prim::Sphere(point3f(-1.5f, 0.f, 0.2f), 0.6f, norm3f(settings::up));
-		sphere->material = scene.addMaterial(new prim::Matte(tex4));
-		std::vector<prim::Hitable*> hitables(1, sphere);
-		prim::Geometry *geom = new prim::Geometry(hitables);
-		geom->setAcceleration(prim::Acceleration::NONE);
-		root->addChild(geom);
-	}
 	{
 		OBJLoader loader;
 		std::vector<uint8_t> data;
@@ -89,12 +48,7 @@ void setScene(raycore::prim::Scene &scene)
 		}
 		MemoryReader reader(data);
 		loader.load(reader, scene);
-		//geom5->setTransform(mat4(
-		//	mat4::col(15.f,  0.f,  0.f, 0.f),
-		//	mat4::col( 0.f, 15.f,  0.f, 0.f),
-		//	mat4::col( 0.f,  0.f, 15.f, 2.f),
-		//	mat4::col( 0.f,  0.f,  0.f, 1.f)
-		//));
+		scene.hitables.back()->setTransform(geometry::mat4f::scale(vec3f(15.f)));
 	}
 }
 
@@ -117,7 +71,6 @@ int main(int argc, char *argv[])
 		4.f,
 		4.f
 	), geometry::point3f(0.f, 0.f, 0.f));
-	options.acceleration = raycore::prim::Acceleration::BVH;
 	options.settings.raySamplerX = raycore::tracer::RaySampler::RANDOM;
 	options.settings.raySamplerY = raycore::tracer::RaySampler::RANDOM;
 	options.settings.samplesX = 1;
@@ -126,7 +79,7 @@ int main(int argc, char *argv[])
 
 	// Load Scene
 	Log::info("Loading scene");
-	raycore::prim::Scene scene;
+	raycore::Scene scene;
 	setScene(scene);
 	application.run(scene, options);
 

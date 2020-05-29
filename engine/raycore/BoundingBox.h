@@ -2,19 +2,16 @@
 #include "Config.h"
 #include "Ray.h"
 
-//#define BRANCHLESS_INTERSECTION
-
 namespace raycore {
 
-namespace prim {
-
-class BoundingBox
+struct BoundingBox
 {
-public:
 	BoundingBox();
 	BoundingBox(const geometry::point3f &min, const geometry::point3f &max);
 
-	bool intersectBounds(const tracer::Ray &ray) const;
+	bool intersect(const Ray &ray) const;
+
+	bool valid() const;
 
 	float extent() const;
 	geometry::point3f center() const;
@@ -27,9 +24,7 @@ public:
 
 	bool overlap(const BoundingBox &bbox) const;
 
-	void reset();
-
 	geometry::point3f min, max;
 };
-}
+
 }

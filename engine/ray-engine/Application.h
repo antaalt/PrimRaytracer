@@ -27,7 +27,6 @@ namespace app {
 struct options {
 	raycore::tracer::Tracer *tracer;
 	raycore::tracer::Camera *camera;
-	raycore::prim::Acceleration acceleration;
 	raycore::tracer::Settings settings;
 };
 
@@ -39,7 +38,7 @@ public:
 	Application(const Application &acc) = delete;
 	Application& operator=(const Application &other) = delete;
 
-	void run(raycore::prim::Scene &scene, options &options);
+	void run(raycore::Scene &scene, options &options);
 
 private:
 	// Application loop

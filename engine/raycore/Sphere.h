@@ -2,24 +2,22 @@
 #include "Hitable.h"
 
 namespace raycore {
-namespace prim {
+
 class Sphere : public Hitable
 {
 public:
-	Sphere();
-	Sphere(const point3f &center, float radius, const norm3f up = norm3f(settings::up));
-	~Sphere();
+	Sphere(const mat4f &transform, float radius, Material *material);
 
-	virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const;
-	virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection *intersection) const;
-	virtual BoundingBox computeBoundingBox() const;
-	virtual float area() const;
+	bool intersect(const Ray &ray, Intersection *intersection) const override;
+
+	ComputedIntersection compute(const Ray &ray, const Intersection &intersection) const override;
+
 protected:
-	float radius;
-	point3f center;
-	norm3f up;
+	float area() const override;
+protected:
+	float m_radius;
 };
-}
+
 }
 
 

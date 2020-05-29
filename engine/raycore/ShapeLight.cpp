@@ -3,7 +3,7 @@
 
 
 namespace raycore {
-namespace prim {
+
 ShapeLight::ShapeLight(shape::Shape * shape, color4f albedo, float intensity) : Light(albedo, intensity), shape(shape)
 {
 }
@@ -11,16 +11,17 @@ ShapeLight::~ShapeLight()
 {
 	delete shape;
 }
-bool ShapeLight::sample(const prim::HitInfo & info, const prim::Scene & scene, float * pdf, vec3f * sample) const
+bool ShapeLight::sample(const ComputedIntersection & info, const Scene & scene, float * pdf, vec3f * sample) const
 {
 	vec3f s = shape->sample(info.point);
-	if (scene.isOccluded(tracer::Ray(info.point, vec3f::normalize(s), tracer::GEOMETRY_RAY, EPSILON, sample->norm())))
+	ComputedIntersection info2;
+	if (scene.intersect(Ray(info.point, vec3f::normalize(s), EPSILON, sample->norm()), &info2))
 		return false;
 	*pdf = shape->pdf();
 	*sample = s;
 	return true;
 }
-float ShapeLight::contribution(const prim::HitInfo & info) const
+float ShapeLight::contribution(const ComputedIntersection & info) const
 {
 	float d = point3f::distance(info.point, shape->position());
 	return intensity / (d * d);
@@ -33,7 +34,7 @@ Sphere::Sphere(const point3f & center, float radius) : center(center), radius(ra
 }
 vec3f Sphere::sample(const point3f & from) const
 {
-	vec3f sample = sample::unitSphere(rand::rnd(), rand::rnd());
+	vec3f sample = sample::unitSphere(Rand::sample<float>(), Rand::sample<float>());
 	return vec3f(center - from) + sample * radius;
 }
 float Sphere::pdf() const
@@ -49,7 +50,7 @@ Disk::Disk(const point3f & center, float radius, const norm3f &up) : center(cent
 }
 vec3f Disk::sample(const point3f & from) const
 {
-	vec3f sample = vec3f(sample::unitDisk(rand::rnd(), rand::rnd()), 1.f);
+	vec3f sample = vec3f(sample::unitDisk(Rand::sample<float>(), Rand::sample<float>()), 1.f);
 	transform::Onb onb(up);
 	return vec3f(center) + onb(sample * radius);
 }
@@ -62,7 +63,7 @@ point3f Disk::position() const
 	return center;
 }
 }
-}
+
 }
 
 

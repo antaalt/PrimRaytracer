@@ -101,13 +101,13 @@ void Application::resize(unsigned int width, unsigned int height)
 	glViewport(0, 0, width, height);
 }
 
-void Application::run(raycore::prim::Scene &scene, options &options)
+void Application::run(raycore::Scene &scene, options &options)
 {
 	Utils::StopWatch<> stopWatch;
 
 	m_renderer = new raycore::tracer::Renderer(m_width, m_height, options.settings);
-	bool init = m_renderer->buildScene(std::move(scene), options.acceleration);
-	ASSERT(init == true, "Error building scene");
+	scene.build();
+	m_renderer->setScene(std::move(scene));
 	m_renderer->setTracer(options.tracer);
 	m_renderer->setCamera(options.camera);
 	m_camera = options.camera;

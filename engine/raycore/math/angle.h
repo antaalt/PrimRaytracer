@@ -35,9 +35,17 @@ private:
 
 
 template <typename T>
+T operator/(const radian<T> &lhs, const radian<T> & rhs);
+template <typename T>
 radian<T> operator/(const radian<T> &rad, float value);
 template <typename T>
 radian<T> &operator/=(radian<T> &rad, float value);
+template <typename T>
+radian<T> operator*(const radian<T> &rad, float value);
+template <typename T>
+radian<T> operator*(float value, const radian<T> &rad);
+template <typename T>
+radian<T> &operator*=(radian<T> &rad, float value);
 
 // Values
 template <typename T>

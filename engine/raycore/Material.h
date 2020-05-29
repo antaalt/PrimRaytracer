@@ -10,8 +10,6 @@
 
 namespace raycore {
 
-namespace prim {
-
 enum TextureType {
 	COLOR_TEXTURE,
 	NORMAL_TEXTURE,
@@ -34,10 +32,10 @@ class Material
 {
 public:
 	Material(Texture<float> *color, BSDFType type) : type(type), colorTexture(color) {}
-	virtual geometry::color4f sample(const tracer::Ray &in, const prim::HitInfo &info, geometry::vec3f &wo, float &pdf, BSDFType &type) const = 0;
+	virtual geometry::color4f sample(const Ray &in, const ComputedIntersection &info, geometry::vec3f &wo, float &pdf, BSDFType &type) const = 0;
 protected:
 	Texture<float> *colorTexture;
 	BSDFType type;
 };
-}
+
 }

@@ -6,12 +6,13 @@
 #define STBI_MSC_SECURE_CRT
 #include "tiny_gltf.h"
 
-#include "Triangle.h"
+#include "MeshBVH.h"
 
 namespace raycore {
 
-bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
+bool GLTFLoader::load(Reader & reader, Scene & scene)
 {
+#if 0
 	tinygltf::TinyGLTF ctx;
 	tinygltf::Model tinyModel;
 	std::string err;
@@ -25,8 +26,8 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 	{
 		throw std::runtime_error(err);
 	}
-	std::vector<prim::Hitable*> prims(tinyModel.meshes.size());
-	std::vector<prim::Material*> materials(tinyModel.materials.size());
+	std::vector<Hitable*> prims(tinyModel.meshes.size());
+	std::vector<Material*> materials(tinyModel.materials.size());
 	std::vector<Texture<float>*> textures(tinyModel.textures.size());
 	const size_t nbScene = tinyModel.scenes.size();
 	// TODO manage multiple scenes
@@ -37,7 +38,8 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 		tinygltf::Texture &tinyTex = tinyModel.textures[iTex];
 		tinygltf::Image &tinyImage = tinyModel.images[tinyTex.source];
 		ASSERT(tinyImage.component == 4, "Only 4 components images supported");
-		textures[iTex] = scene.addTexture(new TextureMapFloat32(tinyImage.image.data(), tinyImage.width, tinyImage.height));
+		scene.textures.push_back(new TextureMapFloat32(tinyImage.image.data(), tinyImage.width, tinyImage.height));
+		textures[iTex] = scene.textures.back();
 	}
 	// --- MATERIALS
 	for (size_t iMaterial = 0; iMaterial < tinyModel.materials.size(); iMaterial++)
@@ -73,7 +75,8 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 		{
 			colorText = textures[textureID];
 		}
-		materials[iMaterial] = scene.addMaterial(new prim::Matte(colorText));
+		scene.materials.push_back(new Matte(colorText));
+		materials[iMaterial] = scene.materials.back();
 	}
 
 	auto coordinates = [](const point3f &p) -> point3f
@@ -87,7 +90,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 
 	// --- MESHES
 	tinygltf::Buffer &buffer = tinyModel.buffers[0];
-	std::vector<prim::Hitable*> hitables;
+	std::vector<Hitable*> hitables;
 
 	for (size_t iMesh = 0; iMesh < tinyModel.meshes.size(); iMesh++)
 	{
@@ -96,7 +99,9 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 		{
 			tinygltf::Primitive &tinyPrimitive = tinyMesh.primitives[iPrimitive];
 
-			std::vector<prim::Vertex> vertices;
+			MeshBVH *meshBVH = new MeshBVH(geometry::mat4f::identity(), material);
+			scene.hitables.push_back(meshBVH);
+
 			// ATTRIBUTES
 			{
 				// POSITION
@@ -141,13 +146,13 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 						ASSERT(accessor.type == TINYGLTF_TYPE_VEC3, "normal not vec3");
 						for (size_t iVert = 0; iVert < accessor.count; iVert++)
 						{
-							prim::Vertex &vert = vertices[iVert];
+							norm3f normal;
 							memcpy(
-								vert.normal.data,
+								normal.data,
 								&buffer.data[bufferView.byteOffset + accessor.byteOffset + iVert * accessor.ByteStride(bufferView)],
-								sizeof(point3f)
+								sizeof(norm3f)
 							);
-							vert.normal = coordinatesN(vert.normal);
+							mesh->addNormal(coordinatesN(normal));
 						}
 					}
 				}
@@ -528,6 +533,7 @@ bool GLTFLoader::load(Reader & reader, prim::Scene & scene)
 	}
 	scene.setRoot(root);
 	scene.setLightDistribution(new prim::LightDistribution);
+#endif
 	return true;
 }
 

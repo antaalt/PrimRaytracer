@@ -4,17 +4,21 @@
 #include "Config.h"
 
 #include <climits>
-
-#define INFINITE_DISTANCE ((std::numeric_limits<float>::max)())
-
+#include <functional>
 
 namespace raycore {
-		
-namespace prim {
 
 class Material;
+class Hitable;
 
-struct HitInfo {
+/*struct SBT {
+	std::function<bool(const Intersection &intersection)> m_anyHit;
+	std::function<void(const Intersection &intersection)> m_closestHit;
+	std::function<void()> m_miss;
+};*/
+
+
+struct ComputedIntersection {
 	vec3f direction;
 	point3f point;
 	norm3f normal;
@@ -23,61 +27,54 @@ struct HitInfo {
 	Material *material;
 };
 
-struct Intersection;
-
-class Hitable
-{
-public:
-	virtual bool intersect(const tracer::Ray &ray, Intersection *intersection) const = 0;
-	virtual HitInfo computeIntersection(const tracer::Ray &ray, const Intersection *intersection) const = 0;
-	virtual BoundingBox computeBoundingBox() const = 0;
-	virtual float area() const = 0;
-	Material *material;
-};
-
 struct Intersection {
-private:
+	Intersection();
+
 	float distance;
-	const Hitable * hitable;
-	// Interpolation
-	float alpha;
-	float beta;
-public:
-	Intersection() : distance(INFINITE_DISTANCE), hitable(nullptr)
-	{
-	}
+	vec2f barycentric;
+	const Hitable *hitable;
+	const void *data; // handle for passing custom data depending on hitable
 
-	bool isClosestThan(const Intersection &intersection)
-	{
-		if (distance < intersection.distance)
-			return true;
-		this->distance = intersection.distance;
-		this->alpha = intersection.alpha;
-		this->beta = intersection.beta;
-		this->hitable = intersection.hitable;
-		return false;
-	}
-	HitInfo compute(const tracer::Ray & ray) const
-	{
-		return this->hitable->computeIntersection(ray, this);
-	}
-	bool hit() const
-	{
-		return (this->hitable != nullptr);
-	}
-
-	bool set(float distance, const Hitable* hitable, float alpha = 0.f, float beta = 0.f)
-	{
-		this->distance = distance;
-		this->hitable = hitable;
-		this->alpha = alpha;
-		this->beta = beta;
-		return true;
-	}
-
-	point3f computeHit(const tracer::Ray &ray) const { return ray(distance); }
-	float getAlpha() const { return alpha; }
-	float getBeta() const { return beta; }
+	bool valid() const { return distance < (std::numeric_limits<float>::max)(); }
+	bool report(float distance, vec2f barycentric, const Hitable *hitable, const void *data = nullptr);
 };
-}
+
+struct Culling {
+	virtual bool operator()(float cosTheta) {
+		return geometry::abs(cosTheta) < std::numeric_limits<float>::epsilon();
+	}
+};
+
+struct FrontCulling : Culling {
+	bool operator()(float cosTheta) override {
+		return cosTheta > std::numeric_limits<float>::epsilon();
+	}
+};
+
+struct BackCulling : Culling {
+	bool operator()(float cosTheta) override {
+		return cosTheta < std::numeric_limits<float>::epsilon();
+	}
+};
+
+class Hitable {
+public:
+	Hitable(const mat4f &transform, Material *material) : m_transform(transform), m_material(material) {}
+
+	virtual void build() {}
+
+	virtual bool intersect(const Ray &ray, Intersection *intersection) const = 0;
+
+	virtual ComputedIntersection compute(const Ray &ray, const Intersection &intersection) const = 0;
+
+public:
+	void setTransform(const mat4f &transform);
+	const mat4f &getTransform() const;
+
+protected:
+	virtual float area() const { return 0.f; }
+protected:
+	mat4f m_transform;
+	Material *m_material;
+};
 }

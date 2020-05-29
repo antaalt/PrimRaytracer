@@ -4,16 +4,16 @@
 
 namespace raycore {
 
-namespace prim {
-
-BoundingBox::BoundingBox()
+BoundingBox::BoundingBox() :
+	BoundingBox(geometry::point3f(std::numeric_limits<float>::max()), geometry::point3f(-std::numeric_limits<float>::max()))
 {
-	reset();
 }
+
 BoundingBox::BoundingBox(const geometry::point3f &min, const geometry::point3f &max) : min(min), max(max)
 {
 }
-bool BoundingBox::intersectBounds(const tracer::Ray & ray) const
+
+bool BoundingBox::intersect(const Ray & ray) const
 {
 #if defined(BRANCHLESS_INTERSECTION) // @see https://tavianator.com/fast-branchless-raybounding-box-intersections/
 	double tx1 = (min.x - ray.origin.x) * -ray.direction.x;
@@ -66,14 +66,22 @@ bool BoundingBox::intersectBounds(const tracer::Ray & ray) const
 	return true;
 #endif
 }
+
+bool BoundingBox::valid() const
+{
+	return (min.x < max.x && min.y < max.y && min.z < max.z);
+}
+
 float BoundingBox::extent() const
 {
 	return geometry::vec3f(max - min).norm();
 }
+
 geometry::point3f BoundingBox::center() const
 {
 	return (max + min) / 2.f;
 }
+
 void BoundingBox::include(const geometry::point3f & vec)
 {
 	if (min.x > vec.x) min.x = vec.x;
@@ -83,11 +91,13 @@ void BoundingBox::include(const geometry::point3f & vec)
 	if (max.y < vec.y) max.y = vec.y;
 	if (max.z < vec.z) max.z = vec.z;
 }
+
 void BoundingBox::include(const BoundingBox & bbox)
 {
 	include(bbox.max);
 	include(bbox.min);
 }
+
 bool BoundingBox::contain(const geometry::point3f & point) const
 {
 	return (
@@ -99,10 +109,12 @@ bool BoundingBox::contain(const geometry::point3f & point) const
 		point.z >= min.z
 	);
 }
+
 bool BoundingBox::contain(const BoundingBox & bbox) const
 {
 	return contain(bbox.min) && contain(bbox.max);
 }
+
 bool BoundingBox::overlap(const BoundingBox & bbox) const
 {
 	return (bbox.min.x <= max.x &&
@@ -112,10 +124,5 @@ bool BoundingBox::overlap(const BoundingBox & bbox) const
 		bbox.max.y >= min.y &&
 		bbox.max.z >= min.z);
 }
-void BoundingBox::reset()
-{
-	min = geometry::point3f(std::numeric_limits<float>::max());
-	max = geometry::point3f(-std::numeric_limits<float>::max());
-}
-}
+
 }

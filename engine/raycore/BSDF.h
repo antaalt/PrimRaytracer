@@ -15,7 +15,7 @@ bool refract(geometry::vec3f &out, const geometry::vec3f &wi, const geometry::no
 class BSDF
 {
 public:
-	BSDF(const prim::HitInfo &info) : normal(info.normal), wi(info.direction) {}
+	BSDF(const ComputedIntersection &info) : normal(info.normal), wi(info.direction) {}
 	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const = 0;
 protected:
 	virtual float PDF(const geometry::vec3f &wo) const = 0;
@@ -27,24 +27,24 @@ protected:
 
 class BRDF : protected BSDF {
 public:
-	BRDF(const prim::HitInfo &info) : BSDF(info) {}
+	BRDF(const ComputedIntersection &info) : BSDF(info) {}
 };
 
 class BTDF : protected BSDF {
 public:
-	BTDF(const prim::HitInfo &info) : BSDF(info) {}
+	BTDF(const ComputedIntersection &info) : BSDF(info) {}
 
 };
 
 class LambertianReflection : BRDF
 {
 public:
-	LambertianReflection(const geometry::color4f &color, const prim::HitInfo &info) : BRDF(info), Rd(color) {}
+	LambertianReflection(const geometry::color4f &color, const ComputedIntersection &info) : BRDF(info), Rd(color) {}
 		
 	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
 	{
-		float r1 = rand::rnd();
-		float r2 = rand::rnd();
+		float r1 = Rand::sample<float>();
+		float r2 = Rand::sample<float>();
 		geometry::vec3f randomDirection = sample::unitHemisphere(r1, r2);
 		transform::Onb onb(normal);
 		wo = onb(randomDirection);
@@ -67,7 +67,7 @@ private:
 class SpecularReflection : BRDF
 {
 public:
-	SpecularReflection(const geometry::color4f &color, const prim::HitInfo &info) :
+	SpecularReflection(const geometry::color4f &color, const ComputedIntersection &info) :
 		BRDF(info), Rs(color)
 	{
 	}
@@ -93,7 +93,7 @@ private:
 class Specular : BSDF
 {
 public:
-	Specular(const geometry::color4f &color, const prim::HitInfo &info, float etaOut, float etaIn) :
+	Specular(const geometry::color4f &color, const ComputedIntersection &info, float etaOut, float etaIn) :
 		BSDF(info), Ts(color), etaOut(etaOut), etaIn(etaIn)
 	{
 	}
@@ -118,7 +118,7 @@ public:
 		}
 		Schlick schlick(1.f, etaIn);
 		float R = schlick.evaluate(wi, normal);
-		float z = rand::rnd();
+		float z = Rand::sample<float>();
 		if (z <= R)
 		{ // Reflect
 			wo = reflected;
@@ -150,13 +150,13 @@ private:
 class MicrofacetReflection : BRDF
 {
 public:
-	MicrofacetReflection(const geometry::color4f &color, const prim::HitInfo &info, float roughness) :
+	MicrofacetReflection(const geometry::color4f &color, const ComputedIntersection &info, float roughness) :
 		BRDF(info), Rs(color), roughness(roughness)
 	{
 	}
 	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
 	{
-		geometry::vec3f m = sample::unitMicrofacet(roughness, rand::rnd(), rand::rnd());
+		geometry::vec3f m = sample::unitMicrofacet(roughness, Rand::sample<float>(), Rand::sample<float>());
 		transform::Onb onb(normal);
 		wo = onb(m);
 		pdf = this->PDF(wo);

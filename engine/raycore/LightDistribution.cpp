@@ -2,7 +2,6 @@
 #include "Scene.h"
 
 namespace raycore {
-namespace prim {
 
 LightDistribution::LightDistribution()
 {
@@ -18,7 +17,7 @@ void LightDistribution::addLight(Light * light)
 {
 	lights.push_back(light);
 }
-color4f LightDistribution::sampleOneLight(const HitInfo & info, const Scene & scene) const
+color4f LightDistribution::sampleOneLight(const ComputedIntersection & info, const Scene & scene) const
 {
 	unsigned int iLight;
 	float contribFactor = 1.f;
@@ -37,7 +36,7 @@ color4f LightDistribution::sampleOneLight(const HitInfo & info, const Scene & sc
 			contributions.push_back(light->contribution(info));
 			globalContribution += contributions.back();
 		}
-		float z = rand::rnd();
+		float z = Rand::sample<float>();
 		float cdf = 0.f;
 		for (size_t iContrib = 0; iContrib < contributions.size(); iContrib++)
 		{
@@ -58,6 +57,5 @@ color4f LightDistribution::sampleOneLight(const HitInfo & info, const Scene & sc
 	color4f brdf = sampledLight->shade();
 
 	return brdf * vec3f::dot(vec3f::normalize(ls), geometry::vec3f(info.normal)) / (pdf * contribFactor);
-}
 }
 }

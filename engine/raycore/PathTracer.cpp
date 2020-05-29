@@ -12,10 +12,10 @@ PathTracer::PathTracer()
 {
 }
 
-geometry::color4f sampleLights(const prim::HitInfo &info, const prim::Scene& scene)
+geometry::color4f sampleLights(const ComputedIntersection &info, const Scene& scene)
 {
 	geometry::color4f radiance(0.f);
-	const prim::LightDistribution *lightDistribution = scene.getLightDistribution();
+	//const prim::LightDistribution *lightDistribution = scene.getLightDistribution();
 	/*for (size_t iLight = 0; iLight < lightDistribution.; iLight++)
 	{
 		const Light *l = accelerator->getLight(iLight);
@@ -25,15 +25,16 @@ geometry::color4f sampleLights(const prim::HitInfo &info, const prim::Scene& sce
 			radiance = radiance + linfo.color * std::abs(dot(linfo.sample, info.normal));
 		}
 	}*/
-	return lightDistribution->sampleOneLight(info, scene);
+	//return lightDistribution->sampleOneLight(info, scene);
+	return radiance;
 }
 
-geometry::color4f PathTracer::castRay(const Ray & ray, const prim::Scene& scene, unsigned int depth) const
+geometry::color4f PathTracer::castRay(const Ray & ray, const Scene& scene, unsigned int depth) const
 {
 	if (depth == 0)
 		return geometry::color4f(0.f);
-	prim::HitInfo info;
-	if (!trace(ray, scene, info))
+	ComputedIntersection info;
+	if (!scene.intersect(ray, &info))
 		return miss(ray);
 
 	// if material is emissive, return emission
@@ -42,13 +43,13 @@ geometry::color4f PathTracer::castRay(const Ray & ray, const prim::Scene& scene,
 	// Scatter ray
 	float pdf;
 	geometry::vec3f wo;
-	prim::BSDFType type;
+	BSDFType type;
 	geometry::color4f brdf = info.material->sample(ray, info, wo, pdf, type) * info.color;
 	geometry::color4f reflectance = brdf * geometry::vec3f::dot(wo, geometry::vec3f(info.normal)) / pdf;
 
 	// Sample light (depending on type)
 	geometry::color4f lightRadiance(0.f);
-	if (!(type & prim::BSDF_SPECULAR))
+	if (!(type & BSDF_SPECULAR))
 	{
 		lightRadiance = reflectance * sampleLights(info, scene);
 	}
@@ -57,7 +58,7 @@ geometry::color4f PathTracer::castRay(const Ray & ray, const prim::Scene& scene,
 	if (depth < (RAY_DEFAULT_DEPTH / 2))
 	{
 		float probability = geometry::max(reflectance.r, geometry::max(reflectance.g, reflectance.b));
-		if (probability < rand::rnd())
+		if (probability < Rand::sample<float>())
 			return geometry::color4f(0.f);
 		reflectance = reflectance / probability;
 	}
@@ -68,10 +69,6 @@ geometry::color4f PathTracer::castRay(const Ray & ray, const prim::Scene& scene,
 	return ret;
 }
 
-bool PathTracer::trace(const Ray & ray, const prim::Scene& scene, prim::HitInfo &info) const
-{
-	return scene.intersect(ray, info);
-}
 geometry::color4f PathTracer::miss(const Ray & ray) const
 {
 	return geometry::color4f(0.9f);

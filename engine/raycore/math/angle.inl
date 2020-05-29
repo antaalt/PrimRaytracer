@@ -77,6 +77,12 @@ T &radian<T>::operator()()
 	return m_value;
 }
 
+template<typename T>
+T operator/(const radian<T>& lhs, const radian<T>& rhs)
+{
+	return lhs() / rhs();
+}
+
 template <typename T>
 radian<T> operator/(const radian<T> &rad, float value)
 {
@@ -89,6 +95,29 @@ template <typename T>
 radian<T> &operator/=(radian<T> &rad, float value)
 {
 	rad() /= value;
+	return rad;
+}
+
+template <typename T>
+radian<T> operator*(const radian<T> &rad, float value)
+{
+	radian<T> out(rad);
+	out *= value;
+	return out;
+}
+
+template <typename T>
+radian<T> operator*(float value, const radian<T> &rad)
+{
+	radian<T> out(rad);
+	out *= value;
+	return out;
+}
+
+template <typename T>
+radian<T> &operator*=(radian<T> &rad, float value)
+{
+	rad() *= value;
 	return rad;
 }
 

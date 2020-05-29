@@ -16,20 +16,11 @@
     <Filter Include="Header Files\Camera">
       <UniqueIdentifier>{aa192e70-9fa1-4a65-8d16-648963dfc979}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Lights">
-      <UniqueIdentifier>{5553454f-481c-4046-8745-39b0191093d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Primitives">
-      <UniqueIdentifier>{d1fb203f-c489-46eb-a923-dac41bc00260}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Sampler">
       <UniqueIdentifier>{8af80c32-6d9d-42ae-aeeb-5a8004786917}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Scene">
       <UniqueIdentifier>{3bc938a0-52c4-4a40-8d88-211e832ba33a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Scene\Acceleration">
-      <UniqueIdentifier>{4715e072-b89b-4ebd-b232-b1f2ab996eb1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Tracer">
       <UniqueIdentifier>{758eade0-92e6-40a7-854e-deaddb3f6095}</UniqueIdentifier>
@@ -40,35 +31,14 @@
     <Filter Include="Source Files\Camera">
       <UniqueIdentifier>{4d8ebcb6-e677-454f-8662-16798a6665e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Lights">
-      <UniqueIdentifier>{181e8d3f-7bf1-4fa4-8f85-5ad6c26c0a0c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Primitives">
-      <UniqueIdentifier>{2ed6ba05-8dbb-46a5-9ef4-31e2075f5ebc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Sampler">
       <UniqueIdentifier>{988c6c42-f9ba-4710-81b1-99f21afae3d6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{0864e4d0-5fb3-4800-9a1f-c22f75dd2e59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scene\Acceleration">
-      <UniqueIdentifier>{502d7cb1-7a56-453f-b93e-d347794a415f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Tracer">
       <UniqueIdentifier>{53dd5c97-19d3-443e-9120-69874a6c48d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Texture">
-      <UniqueIdentifier>{32f3abc8-3fbc-4db0-8032-43e071995adf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Texture">
-      <UniqueIdentifier>{de3aa7cd-2b87-41d4-be6f-71991aa87a06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Materials">
-      <UniqueIdentifier>{b4de70b7-492a-4f58-80d5-c08f64e220b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Materials">
-      <UniqueIdentifier>{ef023b32-e9ad-4290-be9d-d1f9e451eaf3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Geometry">
       <UniqueIdentifier>{606ca553-6e67-4931-ac13-caa58bd489f3}</UniqueIdentifier>
@@ -85,6 +55,30 @@
     <Filter Include="Header Files\Scene\Loader">
       <UniqueIdentifier>{fbc23e0e-5290-43ee-8386-fdaae9192e24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scene\Primitives">
+      <UniqueIdentifier>{d1fb203f-c489-46eb-a923-dac41bc00260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Primitives">
+      <UniqueIdentifier>{2ed6ba05-8dbb-46a5-9ef4-31e2075f5ebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Materials">
+      <UniqueIdentifier>{b4de70b7-492a-4f58-80d5-c08f64e220b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Lights">
+      <UniqueIdentifier>{181e8d3f-7bf1-4fa4-8f85-5ad6c26c0a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Texture">
+      <UniqueIdentifier>{32f3abc8-3fbc-4db0-8032-43e071995adf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Texture">
+      <UniqueIdentifier>{de3aa7cd-2b87-41d4-be6f-71991aa87a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Materials">
+      <UniqueIdentifier>{ef023b32-e9ad-4290-be9d-d1f9e451eaf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Lights">
+      <UniqueIdentifier>{5553454f-481c-4046-8745-39b0191093d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -94,40 +88,25 @@
       <Filter>Header Files\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Header Files\Scene\Lights</Filter>
     </ClInclude>
     <ClInclude Include="PointLight.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Header Files\Scene\Lights</Filter>
     </ClInclude>
     <ClInclude Include="BoundingBox.h">
-      <Filter>Header Files\Primitives</Filter>
+      <Filter>Header Files\Scene\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Hitable.h">
-      <Filter>Header Files\Primitives</Filter>
+      <Filter>Header Files\Scene\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
-      <Filter>Header Files\Primitives</Filter>
+      <Filter>Header Files\Scene\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelBuffer.h">
-      <Filter>Header Files\Scene</Filter>
+      <Filter>Header Files\Scene\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Accelerator.h">
-      <Filter>Header Files\Scene\Acceleration</Filter>
-    </ClInclude>
-    <ClInclude Include="BVH.h">
-      <Filter>Header Files\Scene\Acceleration</Filter>
-    </ClInclude>
-    <ClInclude Include="NoAccel.h">
-      <Filter>Header Files\Scene\Acceleration</Filter>
-    </ClInclude>
-    <ClInclude Include="Octree.h">
-      <Filter>Header Files\Scene\Acceleration</Filter>
     </ClInclude>
     <ClInclude Include="PathTracer.h">
       <Filter>Header Files\Tracer</Filter>
@@ -154,34 +133,34 @@
       <Filter>Header Files\Sampler</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Header Files\Texture</Filter>
+      <Filter>Header Files\Scene\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Checker.h">
-      <Filter>Header Files\Texture</Filter>
+      <Filter>Header Files\Scene\Texture</Filter>
     </ClInclude>
     <ClInclude Include="TextureMap.h">
-      <Filter>Header Files\Texture</Filter>
+      <Filter>Header Files\Scene\Texture</Filter>
     </ClInclude>
     <ClInclude Include="ConstantTexture.h">
-      <Filter>Header Files\Texture</Filter>
+      <Filter>Header Files\Scene\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Header Files\Materials</Filter>
+      <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="BSDF.h">
-      <Filter>Header Files\Materials</Filter>
+      <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Metal.h">
-      <Filter>Header Files\Materials</Filter>
+      <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Matte.h">
-      <Filter>Header Files\Materials</Filter>
+      <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Glass.h">
-      <Filter>Header Files\Materials</Filter>
+      <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Fresnel.h">
-      <Filter>Header Files\Materials</Filter>
+      <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Location.h">
       <Filter>Header Files\Utils</Filter>
@@ -193,13 +172,13 @@
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="ShapeLight.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Header Files\Scene\Lights</Filter>
     </ClInclude>
     <ClInclude Include="Sampling.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="LightDistribution.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Header Files\Scene\Lights</Filter>
     </ClInclude>
     <ClInclude Include="transform.h">
       <Filter>Header Files\Math</Filter>
@@ -267,6 +246,15 @@
     <ClInclude Include="math\scientific.h">
       <Filter>Header Files\Math\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Scene\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshBVH.h">
+      <Filter>Header Files\Scene\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshOctree.h">
+      <Filter>Header Files\Scene\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -276,37 +264,22 @@
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source Files\Scene\Lights</Filter>
     </ClCompile>
     <ClCompile Include="PointLight.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source Files\Scene\Lights</Filter>
     </ClCompile>
     <ClCompile Include="BoundingBox.cpp">
-      <Filter>Source Files\Primitives</Filter>
+      <Filter>Source Files\Scene\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="Sphere.cpp">
-      <Filter>Source Files\Primitives</Filter>
+      <Filter>Source Files\Scene\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="PixelBuffer.cpp">
-      <Filter>Source Files\Scene</Filter>
+      <Filter>Source Files\Scene\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Accelerator.cpp">
-      <Filter>Source Files\Scene\Acceleration</Filter>
-    </ClCompile>
-    <ClCompile Include="BVH.cpp">
-      <Filter>Source Files\Scene\Acceleration</Filter>
-    </ClCompile>
-    <ClCompile Include="NoAccel.cpp">
-      <Filter>Source Files\Scene\Acceleration</Filter>
-    </ClCompile>
-    <ClCompile Include="Octree.cpp">
-      <Filter>Source Files\Scene\Acceleration</Filter>
     </ClCompile>
     <ClCompile Include="PathTracer.cpp">
       <Filter>Source Files\Tracer</Filter>
@@ -324,34 +297,34 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Checker.cpp">
-      <Filter>Source Files\Texture</Filter>
+      <Filter>Source Files\Scene\Texture</Filter>
     </ClCompile>
     <ClCompile Include="TextureMap.cpp">
-      <Filter>Source Files\Texture</Filter>
+      <Filter>Source Files\Scene\Texture</Filter>
     </ClCompile>
     <ClCompile Include="ConstantTexture.cpp">
-      <Filter>Source Files\Texture</Filter>
+      <Filter>Source Files\Scene\Texture</Filter>
     </ClCompile>
     <ClCompile Include="BSDF.cpp">
-      <Filter>Source Files\Materials</Filter>
+      <Filter>Source Files\Scene\Materials</Filter>
     </ClCompile>
     <ClCompile Include="Matte.cpp">
-      <Filter>Source Files\Materials</Filter>
+      <Filter>Source Files\Scene\Materials</Filter>
     </ClCompile>
     <ClCompile Include="Metal.cpp">
-      <Filter>Source Files\Materials</Filter>
+      <Filter>Source Files\Scene\Materials</Filter>
     </ClCompile>
     <ClCompile Include="Glass.cpp">
-      <Filter>Source Files\Materials</Filter>
+      <Filter>Source Files\Scene\Materials</Filter>
     </ClCompile>
     <ClCompile Include="ShapeLight.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source Files\Scene\Lights</Filter>
     </ClCompile>
     <ClCompile Include="Sampling.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="LightDistribution.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source Files\Scene\Lights</Filter>
     </ClCompile>
     <ClCompile Include="Loader.cpp">
       <Filter>Source Files\Scene\Loader</Filter>
@@ -364,6 +337,18 @@
     </ClCompile>
     <ClCompile Include="math\test.cpp">
       <Filter>Header Files\Math\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Scene\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshBVH.cpp">
+      <Filter>Source Files\Scene\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshOctree.cpp">
+      <Filter>Source Files\Scene\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Hitable.cpp">
+      <Filter>Source Files\Scene\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 #include <sstream>
 #include <array>
 
-#include "Triangle.h"
+#include "MeshBVH.h"
 
 namespace raycore {
 
@@ -14,7 +14,7 @@ struct FaceID {
 	ID uvID;
 };
 
-bool OBJLoader::load(Reader & reader, prim::Scene &scene)
+bool OBJLoader::load(Reader & reader, Scene &scene)
 {
 	std::vector<point3f> positions;
 	std::vector<norm3f> normals;
@@ -106,45 +106,36 @@ bool OBJLoader::load(Reader & reader, prim::Scene &scene)
 	}
 	// TODO load mtl
 	Texture<float> *texture = new ConstantTexture<float>(color4f(0.5f, 0.5f, 0.5f, 1.f));
-	prim::Material *material = new prim::Matte(texture);
-	scene.addTexture(texture);
-	scene.addMaterial(material);
-	std::vector<prim::Hitable*> hitables;
+	Material *material = new Matte(texture);
+	MeshBVH *meshBVH = new MeshBVH(geometry::mat4f::identity(), material);
+	scene.textures.push_back(texture);
+	scene.materials.push_back(material);
+	scene.hitables.push_back(meshBVH);
 	for (size_t iTri = 0; iTri < faces.size(); iTri++)
 	{
 		FaceID &face = faces[iTri];
 		vec3f AB(positions[face.posID.data[1] - 1] - positions[face.posID.data[0] - 1]);
 		vec3f AC(positions[face.posID.data[2] - 1] - positions[face.posID.data[0] - 1]);
 		norm3f normal(vec3f::normalize(vec3f::cross(AB, AC)));
-		std::array<prim::Vertex, 3> vertices;
 		for (size_t iVert = 0; iVert < 3; iVert++)
 		{
-			prim::Vertex vert;
-			vert.position = coordinates(positions[face.posID.data[iVert] - 1]);
+			meshBVH->addPosition(coordinates(positions[face.posID.data[iVert] - 1]));
 			if (normals.size() > 0)
-				vert.normal = coordinatesN(normals[face.normID.data[iVert] - 1]);
+				meshBVH->addNormal(coordinatesN(normals[face.normID.data[iVert] - 1]));
 			else
-				vert.normal = coordinatesN(normal);
+				meshBVH->addNormal(coordinatesN(normal));
 			if (uvs.size() > 0)
-				vert.texcoord = uvs[face.uvID.data[iVert] - 1];
+				meshBVH->addUV(uvs[face.uvID.data[iVert] - 1]);
 			else
-				vert.texcoord = uv2f(0.f);
-			vert.color = color4f(1.f);
-			vertices[iVert] = vert;
+				meshBVH->addUV(uv2f(0.f));
+			meshBVH->addColor(color4f(1.f));
 		}
-		prim::Triangle *tri = new prim::Triangle(
-			vertices[0],
-			vertices[1],
-			vertices[2]
-		);
-		tri->material = material; 
-		hitables.push_back(tri);
+		meshBVH->addTriangle(MeshBVH::Triangle{
+			static_cast<uint32_t>(iTri) * 3 + 0,
+			static_cast<uint32_t>(iTri) * 3 + 1,
+			static_cast<uint32_t>(iTri) * 3 + 2
+		});
 	}
-	prim::Group * root = scene.getRoot();
-	ASSERT(root != nullptr, "Root is null");
-	prim::Geometry *geometry = new prim::Geometry(hitables);
-	geometry->setAcceleration(prim::Acceleration::BVH);
-	root->addChild(geometry);
 	return true;
 }
 

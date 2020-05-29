@@ -3,9 +3,6 @@
 #include "Ray.h"
 #include "Tracer.h"
 #include "Camera.h"
-#include "Octree.h"
-#include "NoAccel.h"
-#include "BVH.h"
 
 #include <ppl.h>
 
@@ -37,10 +34,10 @@ Renderer::~Renderer()
 		delete this->tracer;
 }
 
-bool Renderer::buildScene(prim::Scene &&scene, prim::Acceleration acceleration)
+void Renderer::setScene(Scene &&scene)
 {
 	this->scene = scene;
-	return this->scene.build();
+	this->scene.build();
 }
 
 bool Renderer::updateRays()
@@ -64,7 +61,7 @@ bool Renderer::renderPreview()
 			RayIndex(center.x, this->width, RaySampler::LINEAR),
 			RayIndex(center.y, this->height, RaySampler::LINEAR)
 		);
-		Pixel p = this->tracer->castRay(ray, this->scene, 5);
+		color4f p = this->tracer->castRay(ray, this->scene, 5);
 		for (unsigned int y = tile.min.y; y < tile.max.y; y++)
 			for (unsigned int x = tile.min.x; x < tile.max.x; x++)
 				m_output[y * this->width + x] = p;

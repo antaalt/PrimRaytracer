@@ -1,7 +1,7 @@
 #pragma once
 #include "Light.h"
+
 namespace raycore {
-namespace prim {
 
 struct Scene;
 
@@ -13,10 +13,9 @@ public:
 
 	void addLight(Light* light);
 
-	color4f sampleOneLight(const HitInfo &info, const Scene &scene) const;
+	color4f sampleOneLight(const ComputedIntersection &info, const Scene &scene) const;
 private:
 	std::vector<Light*> lights;
 };
-}
 }
 
