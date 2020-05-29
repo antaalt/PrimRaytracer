@@ -3,78 +3,38 @@
 #include "Config.h"
 #include "Tracer.h"
 #include "Camera.h"
+#include "ThreadPool.h"
 
 #include <string>
 
-#define PARALLEL_RENDERING
-
 namespace raycore {
-namespace tracer {
-
-using index2D = vec2<unsigned int>;
 
 struct Tile {
-	Tile(const index2D &min, const index2D &max): min(min), max(max) {}
-
-	unsigned int width() { return max.x - min.x; }
-	unsigned int height() { return max.y - min.y; }
-	index2D center() { 
-		index2D index(max - min);
-		index.x = (unsigned int)((float)index.x * 0.5f);
-		index.y = (unsigned int)((float)index.y * 0.5f);
-		return index; 
-	}
-
-	index2D min;
-	index2D max;
+	vec2u offset;
+	vec2u size;
 };
 
-struct Settings {
-	unsigned int tileSize;
-	unsigned int samplesX;
-	unsigned int samplesY;
-	RaySampler raySamplerX;
-	RaySampler raySamplerY;
-};
-
-class Renderer
-{
+class Renderer {
 public:
-	Renderer(unsigned int width, unsigned int height, const Settings &settings);
+	Renderer(tracer::Tracer * tracer, uint32_t width, uint32_t height);
 	~Renderer();
-	Renderer(const Renderer& other) = delete;
-	Renderer& operator=(const Renderer &other) = delete;
 
-	void setScene(Scene &&scene);
-
-	bool updateRays();
-
-	bool renderPreview();
-
-	bool render();
-
-	void resize(unsigned int width, unsigned int height);
-
-	void buildTiles(unsigned int tileSize);
-
-	void setTracer(tracer::Tracer* tracer);
-	void setCamera(tracer::Camera* camera);
-
-	const std::vector<color4f> &image() const;
-
+	void resize(uint32_t width, uint32_t height);
+	void reset();
+	bool isWaiting() const;
+	void launch(const Camera &camera, const Scene &scene);
+	void getOutput(color4f *data, size_t offset, size_t size);
 private:
-	Camera* camera;
-	Tracer* tracer; // TODO add a secondary quick tracer (whitted for example) for display
-	Scene scene;
-
-	std::vector<Tile> tiles;
-	unsigned int tileSize;
-	unsigned int width, height;
-	unsigned int samples;
-	unsigned int subSamplesX, subSamplesY;
-	RaySampler raySamplerX, raySamplerY;
+	void generateTiles();
+private:
+	RandomRaySampler m_sampler;
+	uint32_t m_samples;
+	tracer::Tracer *m_tracer;
+	std::vector<Tile> m_tiles;
+	std::mutex m_mutexOutput;
 	std::vector<color4f> m_output;
+	ThreadPool m_threadPool;
+	uint32_t m_width, m_height;
 };
 
-}
 }

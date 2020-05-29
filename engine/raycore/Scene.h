@@ -13,11 +13,19 @@
 #include "Matte.h"
 #include "Metal.h"
 #include "Glass.h"
+// Hitables
+#include "Sphere.h"
+#include "Triangle.h"
+#include "Mesh.h"
+#include "MeshBVH.h"
+#include "MeshOctree.h"
+// Others
+#include "Camera.h"
 
 namespace raycore {
 
 struct NodeBVH : Hitable {
-	// bbox bounding volume hierarchy
+	// bbox bounding volume hierarchy with transform
 };
 
 struct Scene {

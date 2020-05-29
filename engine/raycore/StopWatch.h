@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace Utils {
+namespace raycore {
 
 template <
 	typename TimeT = std::chrono::milliseconds,

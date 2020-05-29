@@ -1,17 +1,14 @@
 #pragma once
+
 #include "Camera.h"
 
 namespace raycore {
 
-struct PinholeCamera : public Camera
-{
-	norm3f u, v, w;
-	point3f eye;
+struct PerspectiveCamera : public Camera {
+	mat4f perspective;
 	float hFov;
-	float aperture, focalDist;
 
 	Ray generateRay(const RaySampler::Type &screenPos) const override;
 };
 
 }
-

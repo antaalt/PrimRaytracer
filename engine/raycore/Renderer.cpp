@@ -4,154 +4,96 @@
 #include "Tracer.h"
 #include "Camera.h"
 
-#include <ppl.h>
-
 
 namespace raycore {
-namespace tracer {
 
-Renderer::Renderer(unsigned int width, unsigned int height, const Settings &settings) :
-	width(width), 
-	height(height), 
-	camera(nullptr), 
-	tracer(nullptr),
-	tileSize(settings.tileSize),
-	samples(0),
+Renderer::Renderer(tracer::Tracer * tracer, uint32_t width, uint32_t height) :
+	m_samples(0),
+	m_tracer(tracer),
+	m_tiles(),
 	m_output(width * height),
-	subSamplesX(settings.samplesX),
-	subSamplesY(settings.samplesY),
-	raySamplerX(settings.raySamplerX),
-	raySamplerY(settings.raySamplerY)
+	m_threadPool(),
+	m_width(width), 
+	m_height(height)
 {
-	this->buildTiles(tileSize);
+	generateTiles();
+	m_threadPool.start();
 }
 
 Renderer::~Renderer()
 {
-	if (this->camera != nullptr)
-		delete this->camera;
-	if (this->tracer != nullptr)
-		delete this->tracer;
+	m_threadPool.stop();
 }
 
-void Renderer::setScene(Scene &&scene)
+void Renderer::resize(uint32_t width, uint32_t height)
 {
-	this->scene = scene;
-	this->scene.build();
+	m_threadPool.stop();
+	m_threadPool.start();
+	std::lock_guard<std::mutex> lock(m_mutexOutput);
+	m_output.resize(width * height);
+	m_width = width;
+	m_height = height;
+	generateTiles();
 }
 
-bool Renderer::updateRays()
+void Renderer::reset()
 {
-	if (!this->camera->computeTransform())
-		return false;
-	this->tracer->reset();
-	samples = 0;
-	return true;
+	m_samples = 0;
 }
 
-bool Renderer::renderPreview()
+bool Renderer::isWaiting() const
 {
-	Log::info("Rendering preview");
+	return m_threadPool.empty();
+}
 
-	for (auto it = tiles.begin(); it != tiles.end(); it++)
+void Renderer::launch(const Camera & camera, const Scene & scene)
+{
+	static uint32_t samples = 0;
+	samples = m_samples;
+	for (Tile &tile : m_tiles)
 	{
-		Tile &tile = (*it);
-		index2D center = tile.min + tile.center();
-		Ray ray = this->camera->generateRay(
-			RayIndex(center.x, this->width, RaySampler::LINEAR),
-			RayIndex(center.y, this->height, RaySampler::LINEAR)
-		);
-		color4f p = this->tracer->castRay(ray, this->scene, 5);
-		for (unsigned int y = tile.min.y; y < tile.max.y; y++)
-			for (unsigned int x = tile.min.x; x < tile.max.x; x++)
-				m_output[y * this->width + x] = p;
-	}
-	return true;
-}
-
-bool Renderer::render()
-{
-	Log::info("Rendering sample ", (samples + 1));
-#if defined(PARALLEL_RENDERING)
-	concurrency::parallel_for(size_t(0), tiles.size(), [&](size_t iTile)
-	{
-		Tile &tile = this->tiles[iTile];
-		const float c = (1.f / (this->subSamplesX * this->subSamplesY));
-		for (unsigned int y = tile.min.y; y < tile.max.y; y++)
-		{
-			for (unsigned int x = tile.min.x; x < tile.max.x; x++)
+		m_threadPool.addTask([&]() {
+			for (uint32_t y = tile.offset.y; y < tile.offset.y + tile.size.y; y++)
 			{
-				color4f p(0.f);
-				for (unsigned int sy = 0; sy < this->subSamplesY; sy++)
+				for (uint32_t x = tile.offset.x; x < tile.offset.x + tile.size.x; x++)
 				{
-					for (unsigned int sx = 0; sx < this->subSamplesX; sx++)
-					{
-						Ray ray = this->camera->generateRay(
-							RayIndex(x * this->subSamplesX + sx, this->width * this->subSamplesX, this->raySamplerX),
-							RayIndex(y * this->subSamplesY + sy, this->height * this->subSamplesY, this->raySamplerY)
-						);
-						p += this->tracer->castRay(ray, this->scene, Config::maxDepth) * c;
-					}
+					RaySampler::Type sample = m_sampler(vec2u(x, y), vec2u(m_width, m_height));
+					Ray ray = camera.generateRay(sample);
+					color4f p = m_tracer->castRay(ray, scene, Config::maxDepth);
+					std::lock_guard<std::mutex> lock(m_mutexOutput);
+					color4f &output = m_output[y * m_width + x];
+					m_output[y * m_width + x] = geometry::lerp(output, p, 1.f / (samples + 1.f));
 				}
-				color4f &output = m_output[y * this->width + x];
-				m_output[y * this->width + x] = geometry::lerp(output, p, 1.f / (samples + 1.f));
 			}
-		}
-	});
-#else
-	unsigned int index = 0;
-	for (unsigned int y = 0; y < this->height; y++)
-	{
-		for (unsigned int x = 0; x < this->width; x++, index++)
-		{
-			pixel[index] = this->tracer->castRay(this->rays[index], this->accelerator); // TODO average by samples
-		}
+		});
 	}
-#endif
-	samples++;
-	this->tracer->postProcess();
-	return true;
+	//m_threadPool.wait();
+	m_samples++;
 }
 
-
-void Renderer::resize(unsigned int width, unsigned int height)
+void Renderer::getOutput(color4f * data, size_t offset, size_t size)
 {
-	throw std::runtime_error("Not implemented");
+	std::lock_guard<std::mutex> lock(m_mutexOutput);
+	memcpy(data, m_output.data() + offset, size * sizeof(color4f));
 }
 
-void Renderer::buildTiles(unsigned int tileSize) {
-	index2D nTiles(
-		static_cast<int>(std::ceil(this->width / static_cast<float>(tileSize))),
-		static_cast<int>(std::ceil(this->height / static_cast<float>(tileSize)))
-	);
-	tiles.clear();
-	for (unsigned int y = 0; y < nTiles.y; y++)
+void Renderer::generateTiles()
+{
+	m_tiles.clear();
+	const vec2u tileSize(32, 32);
+	const vec2u imageSize(m_width, m_height);
+	const vec2u tileCount(vec2f(imageSize) / vec2f(tileSize));
+	const vec2u tileRemainderSize(imageSize - tileCount * tileSize);
+	for (uint32_t y = 0; y < tileCount.y; y++)
 	{
-		for (unsigned int x = 0; x < nTiles.x; x++)
-		{
-			this->tiles.push_back(Tile(
-				index2D(x * tileSize, y * tileSize),
-				index2D(geometry::min((x + 1) * tileSize, this->width), geometry::min((y + 1) * tileSize, this->height))
-			));
-		}
+		for (uint32_t x = 0; x < tileCount.x; x++)
+			m_tiles.push_back(Tile{ vec2u(tileSize.x * x, tileSize.y * y), tileSize });
+		if (tileRemainderSize.x > 0)
+			m_tiles.push_back(Tile{ vec2u(tileSize.x * tileCount.x, tileSize.y * y), vec2u(tileRemainderSize.x, tileSize.y) });
 	}
+	if (tileRemainderSize.y > 0)
+		for (uint32_t x = 0; x < tileCount.x; x++)
+			m_tiles.push_back(Tile{ vec2u(tileSize.x * x, tileSize.y * tileCount.y), vec2u(tileSize.x, tileRemainderSize.y) });
 }
 
-void Renderer::setTracer(tracer::Tracer* tracer)
-{
-	if (this->tracer != nullptr)
-		delete this->tracer;
-	this->tracer = tracer;
-}
-void Renderer::setCamera(tracer::Camera* camera)
-{
-	if (this->camera != nullptr)
-		delete this->camera;
-	this->camera = camera;
-}
-const std::vector<color4f> & Renderer::image() const
-{
-	return m_output;
-}
-}
 }

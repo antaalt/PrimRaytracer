@@ -26,8 +26,7 @@ namespace app {
 
 struct options {
 	raycore::tracer::Tracer *tracer;
-	raycore::tracer::Camera *camera;
-	raycore::tracer::Settings settings;
+	raycore::Camera *camera;
 };
 
 class Application
@@ -38,11 +37,11 @@ public:
 	Application(const Application &acc) = delete;
 	Application& operator=(const Application &other) = delete;
 
-	void run(raycore::Scene &scene, options &options);
+	void run(raycore::Scene &scene, raycore::Camera &camera, raycore::tracer::Tracer &tracer);
 
 private:
 	// Application loop
-	bool inputs(const Inputs &inputs);
+	bool inputs(raycore::Camera &camera, const Inputs &inputs);
 	// Utils
 	bool save(std::string path);
 public:
@@ -50,8 +49,8 @@ public:
 
 private:
 	GLFWwindow *m_window;
-	raycore::tracer::Renderer *m_renderer;
-	raycore::tracer::Camera *m_camera;
+	raycore::Renderer *m_renderer;
+	std::vector<color4f> m_output;
 	unsigned int m_width, m_height;
 	GUI m_gui;
 };

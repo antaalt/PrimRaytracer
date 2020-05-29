@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Camera">
-      <UniqueIdentifier>{aa192e70-9fa1-4a65-8d16-648963dfc979}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Sampler">
       <UniqueIdentifier>{8af80c32-6d9d-42ae-aeeb-5a8004786917}</UniqueIdentifier>
     </Filter>
@@ -27,9 +24,6 @@
     </Filter>
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{f8de84e6-a9f1-4507-bb30-fc0f001c1533}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Camera">
-      <UniqueIdentifier>{4d8ebcb6-e677-454f-8662-16798a6665e8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Sampler">
       <UniqueIdentifier>{988c6c42-f9ba-4710-81b1-99f21afae3d6}</UniqueIdentifier>
@@ -79,13 +73,19 @@
     <Filter Include="Header Files\Scene\Lights">
       <UniqueIdentifier>{5553454f-481c-4046-8745-39b0191093d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scene\Camera">
+      <UniqueIdentifier>{4d8ebcb6-e677-454f-8662-16798a6665e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Camera">
+      <UniqueIdentifier>{aa192e70-9fa1-4a65-8d16-648963dfc979}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\Camera</Filter>
+      <Filter>Header Files\Scene\Camera</Filter>
     </ClInclude>
     <ClInclude Include="PinholeCamera.h">
-      <Filter>Header Files\Camera</Filter>
+      <Filter>Header Files\Scene\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Header Files\Scene\Lights</Filter>
@@ -255,13 +255,22 @@
     <ClInclude Include="MeshOctree.h">
       <Filter>Header Files\Scene\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PerspectiveCamera.h">
+      <Filter>Header Files\Scene\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="OrthographicCamera.h">
+      <Filter>Header Files\Scene\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Camera</Filter>
+      <Filter>Source Files\Scene\Camera</Filter>
     </ClCompile>
     <ClCompile Include="PinholeCamera.cpp">
-      <Filter>Source Files\Camera</Filter>
+      <Filter>Source Files\Scene\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Scene\Lights</Filter>
@@ -349,6 +358,15 @@
     </ClCompile>
     <ClCompile Include="Hitable.cpp">
       <Filter>Source Files\Scene\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PerspectiveCamera.cpp">
+      <Filter>Source Files\Scene\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="OrthographicCamera.cpp">
+      <Filter>Source Files\Scene\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

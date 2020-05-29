@@ -3,43 +3,35 @@
 
 namespace raycore {
 
-namespace tracer {
-
-Camera::Camera() : m_transform(mat4f::identity()), m_fov(DEFAULT_FOV)
+RaySampler::Type LinearRaySampler::operator()(vec2u position, vec2u size)
 {
+	const vec2f texcoord = (vec2f(position) + vec2f(0.5f)) / vec2f(size);
+	const vec2f screenPos = texcoord * 2.f - vec2f(1.f);
+	return screenPos;
 }
 
+RaySampler::Type RandomRaySampler::operator()(vec2u position, vec2u size)
+{
+	uint32_t sample = 0; // TODO pass sample
 
-Camera::~Camera()
-{
-}
-void Camera::lookAt(const point3f & eye, const point3f & target, const vec3f &up)
-{
-	vec3f forward(transform::worldToScreen(target - eye));
-	vec3f right(vec3f::cross(transform::worldToScreen(up), forward));
-	vec3f upCoordinate(vec3f::cross(forward, right));
-	// screen space
-	m_transform = mat4f(
-		col4f(vec3f::normalize(right), 0.f),
-		col4f(vec3f::normalize(upCoordinate), 0.f),
-		col4f(vec3f::normalize(forward), 0.f),
-		col4f(transform::worldToScreen(eye), 1.f)
+	const uint32_t nbSamples = 16; // This value must be a power of two
+	const uint32_t rootNbSamples = geometry::sqrt(nbSamples);
+	const uint32_t strate = sample % nbSamples;
+	const uint32_t xStrate = strate % rootNbSamples;
+	const uint32_t yStrate = strate / rootNbSamples;
+	float r1 = Rand::sample<float>();
+	float r2 = Rand::sample<float>();
+	// Box filtering
+	// Value between [0.0, 1.0]
+	vec2f subpixelJitter = vec2f(
+		(float(xStrate) + r1) / float(rootNbSamples),
+		(float(yStrate) + r2) / float(rootNbSamples)
 	);
-	m_changed = true;
+
+
+	const vec2f texcoord = (vec2f(position) + subpixelJitter) / vec2f(size); 
+	const vec2f screenPos = texcoord * 2.f - vec2f(1.f);
+	return screenPos;
 }
-void Camera::rotate(const vec3f & axis, geometry::degreef angle)
-{
-	m_transform = m_transform * mat4f::rotate(axis,angle);
-	m_changed = true;
-}
-void Camera::translate(const vec3f & translation)
-{
-	m_transform = m_transform * mat4f::translate(translation);
-	m_changed = true;
-}
-void Camera::setFov(float fov)
-{
-	m_fov = fov;
-}
-}
+
 }

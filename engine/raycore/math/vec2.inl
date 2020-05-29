@@ -22,6 +22,12 @@ inline vec2<T>::vec2(T x, T y) : x(x), y(y)
 }
 
 template<typename T>
+template<typename U>
+inline vec2<T>::vec2(const vec2<U>& vec) : x(static_cast<T>(vec.x)), y(static_cast<T>(vec.y))
+{
+}
+
+template<typename T>
 inline vec2<T>::vec2(const uv2<T>& uv) : x(uv.u), y(uv.v)
 {
 }
@@ -88,11 +94,27 @@ inline vec2<T> operator*(T lhs, const vec2<T> &rhs)
 	return out;
 }
 
+template<typename T>
+vec2<T> operator*(const vec2<T>& lhs, const vec2<T>& rhs)
+{
+	vec2<T> out(lhs);
+	out *= rhs;
+	return out;
+}
+
 template <typename T>
 inline vec2<T> & operator*=(vec2<T> & lhs, T rhs)
 {
 	lhs.x *= rhs;
 	lhs.y *= rhs;
+	return lhs;
+}
+
+template<typename T>
+vec2<T>& operator*=(vec2<T>& lhs, const vec2<T>& rhs)
+{
+	lhs.x *= rhs.x;
+	lhs.y *= rhs.y;
 	return lhs;
 }
 
@@ -104,11 +126,27 @@ inline vec2<T> operator/(const vec2<T> &lhs, T rhs)
 	return out;
 }
 
+template<typename T>
+vec2<T> operator/(const vec2<T>& lhs, const vec2<T>& rhs)
+{
+	vec2<T> out(lhs);
+	out /= rhs;
+	return out;
+}
+
 template <typename T>
 inline vec2<T> & operator/=(vec2<T> & lhs, T rhs)
 {
 	lhs.x /= rhs;
 	lhs.y /= rhs;
+	return lhs;
+}
+
+template<typename T>
+vec2<T>& operator/=(vec2<T>& lhs, const vec2<T>& rhs)
+{
+	lhs.x /= rhs.x;
+	lhs.y /= rhs.y;
 	return lhs;
 }
 

@@ -123,7 +123,7 @@ T pow(T value, E exponent)
 template <typename T>
 inline T sqrt(T value)
 {
-	return std::sqrt(value);
+	return static_cast<T>(std::sqrt(value));
 }
 
 // Rounding and remainder

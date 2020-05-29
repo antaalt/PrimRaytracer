@@ -21,6 +21,8 @@ struct vec2 {
 	vec2();
 	explicit vec2(T value);
 	explicit vec2(T x, T y);
+	template <typename U>
+	explicit vec2(const vec2<U> &vec);
 	explicit vec2(const uv2<T> &uv);
 	explicit vec2(const vec3<T> &vec);
 	explicit vec2(const vec4<T> &vec);
@@ -43,12 +45,20 @@ vec2<T> operator*(const vec2<T> &lhs, T rhs);
 template <typename T>
 vec2<T> operator*(T lhs, const vec2<T> &rhs);
 template <typename T>
+vec2<T> operator*(const vec2<T> &lhs, const vec2<T> &rhs);
+template <typename T>
 vec2<T> &operator*=(vec2<T> &lhs, T rhs);
+template <typename T>
+vec2<T> &operator*=(vec2<T> &lhs, const vec2<T>& rhs);
 
 template <typename T>
 vec2<T> operator/(const vec2<T> &lhs, T rhs);
 template <typename T>
+vec2<T> operator/(const vec2<T> &lhs, const vec2<T> &rhs);
+template <typename T>
 vec2<T> &operator/=(vec2<T> &lhs, T rhs);
+template <typename T>
+vec2<T> &operator/=(vec2<T> &lhs, const vec2<T> &rhs);
 
 template <typename T>
 vec2<T> operator+(const vec2<T> &lhs, const vec2<T> &rhs);

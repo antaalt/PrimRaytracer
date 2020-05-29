@@ -174,7 +174,9 @@
     <ClInclude Include="MeshOctree.h" />
     <ClInclude Include="Metal.h" />
     <ClInclude Include="OBJLoader.h" />
+    <ClInclude Include="OrthographicCamera.h" />
     <ClInclude Include="PathTracer.h" />
+    <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RandomLib.h" />
@@ -189,6 +191,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMap.h" />
     <ClInclude Include="StopWatch.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Tracer.h" />
     <ClInclude Include="transform.h" />
     <ClInclude Include="Triangle.h" />
@@ -214,7 +217,9 @@
     <ClCompile Include="MeshOctree.cpp" />
     <ClCompile Include="Metal.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
+    <ClCompile Include="OrthographicCamera.cpp" />
     <ClCompile Include="PathTracer.cpp" />
+    <ClCompile Include="PerspectiveCamera.cpp" />
     <ClCompile Include="PinholeCamera.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -224,6 +229,7 @@
     <ClCompile Include="ShapeLight.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="TextureMap.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="WhittedTracer.cpp" />
   </ItemGroup>

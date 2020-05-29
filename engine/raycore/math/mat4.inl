@@ -128,12 +128,20 @@ inline const col4<T> & mat4<T>::operator[](size_t index) const
 template <typename T>
 inline mat4<T> operator*(const mat4<T>& lhs, const mat4<T> &rhs)
 {
+	mat4<T> out(lhs);
+	out *= rhs;
+	return out;
+}
+
+template <typename T>
+inline mat4<T> &operator*=(mat4<T>& lhs, const mat4<T> &rhs)
+{
 	mat4<T> out(0.f);
 	for (int iCol = 0; iCol < 4; iCol++)
 		for (int iRow = 0; iRow < 4; iRow++)
 			for (int k = 0; k < 4; k++)
 				out[iCol][iRow] += rhs[iCol][k] * lhs[k][iRow];
-	return out;
+	return (lhs = out);
 }
 
 template <typename T>
@@ -153,6 +161,17 @@ inline vec3<T> operator*(const mat4<T>& lhs, const vec3<T> &rhs)
 		lhs[0].x * rhs.x + lhs[1].x * rhs.y + lhs[2].x * rhs.z,
 		lhs[0].y * rhs.x + lhs[1].y * rhs.y + lhs[2].y * rhs.z,
 		lhs[0].z * rhs.x + lhs[1].z * rhs.y + lhs[2].z * rhs.z
+	);
+}
+
+template<typename T>
+vec4<T> operator*(const mat4<T>& lhs, const vec4<T>& rhs)
+{
+	return vec4<T>(
+		lhs[0].x * rhs.x + lhs[1].x * rhs.y + lhs[2].x * rhs.z + lhs[3].x * rhs.w,
+		lhs[0].y * rhs.x + lhs[1].y * rhs.y + lhs[2].y * rhs.z + lhs[3].y * rhs.w,
+		lhs[0].z * rhs.x + lhs[1].z * rhs.y + lhs[2].z * rhs.z + lhs[3].z * rhs.w,
+		lhs[0].w * rhs.x + lhs[1].w * rhs.y + lhs[2].w * rhs.z + lhs[3].w * rhs.w
 	);
 }
 
@@ -290,6 +309,21 @@ inline mat4<T> mat4<T>::perspective(const radian<T> &fov, float ratio, float nea
 		col4<T>(T(0), -f, T(0), T(0)),
 		col4<T>(T(0), T(0), (farZ + nearZ) * range, T(1)),
 		col4<T>(T(0), T(0), -(2.f * farZ * nearZ) * range, T(0))
+	);
+}
+
+template<typename T>
+inline mat4<T> mat4<T>::lookAt(const point3<T> & eye, const point3<T> & target, const norm3<T> & up)
+{
+	vec3f forward(target - eye);
+	vec3f right(vec3f::cross(vec3f(up), forward));
+	vec3f upCoordinate(vec3f::cross(forward, right));
+	// screen space
+	return mat4f(
+		col4f(vec3f::normalize(right), 0.f),
+		col4f(vec3f::normalize(upCoordinate), 0.f),
+		col4f(vec3f::normalize(forward), 0.f),
+		col4f(eye, 1.f)
 	);
 }
 

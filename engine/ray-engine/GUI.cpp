@@ -66,57 +66,202 @@ void GUI::startFrame()
 	ImGui::NewFrame();
 }
 
-void GUI::draw()
+enum class CameraType {
+	PERSPECTIVE,
+	UNDEFINED
+};
+
+enum class HitableType {
+	MESH,
+	MESH_BVH,
+	MESH_OCTREE,
+	SPHERE,
+	TRIANGLE,
+	UNDEFINED
+};
+enum class MaterialType {
+	MATTE,
+	METAL,
+	GLASS,
+	UNDEFINED
+};
+enum class TextureType {
+	CONSTANT,
+	CHECKER,
+	IMAGE,
+	IMAGE_HDR,
+	UNDEFINED
+};
+
+CameraType getType(const raycore::Camera &camera)
 {
-	if (ImGui::Begin("RayCore - Debug window"))
+	if (nullptr != dynamic_cast<const raycore::PerspectiveCamera*>(&camera))
+		return CameraType::PERSPECTIVE;
+	return CameraType::UNDEFINED;
+}
+
+HitableType getType(const raycore::Hitable &hitable)
+{
+	if (nullptr != dynamic_cast<const raycore::Mesh*>(&hitable))
+		return HitableType::MESH;
+	else if (nullptr != dynamic_cast<const raycore::MeshBVH*>(&hitable))
+		return HitableType::MESH_BVH;
+	else if (nullptr != dynamic_cast<const raycore::MeshOctree*>(&hitable))
+		return HitableType::MESH_OCTREE;
+	else if (nullptr != dynamic_cast<const raycore::Sphere*>(&hitable))
+		return HitableType::SPHERE;
+	else if (nullptr != dynamic_cast<const raycore::Triangle*>(&hitable))
+		return HitableType::TRIANGLE;
+	return HitableType::UNDEFINED;
+}
+
+MaterialType getType(const raycore::Material &material)
+{
+	if (nullptr != dynamic_cast<const raycore::Matte*>(&material))
+		return MaterialType::MATTE;
+	else if (nullptr != dynamic_cast<const raycore::Metal*>(&material))
+		return MaterialType::METAL;
+	else if (nullptr != dynamic_cast<const raycore::Glass*>(&material))
+		return MaterialType::GLASS;
+	return MaterialType::UNDEFINED;
+}
+
+TextureType getType(const raycore::Texture<float> &texture)
+{
+	if (nullptr != dynamic_cast<const raycore::TextureMapFloat*>(&texture))
+		return TextureType::IMAGE_HDR;
+	else if (nullptr != dynamic_cast<const raycore::TextureMapFloat32*>(&texture))
+		return TextureType::IMAGE;
+	else if (nullptr != dynamic_cast<const raycore::Checker<float>*>(&texture))
+		return TextureType::CHECKER;
+	else if (nullptr != dynamic_cast<const raycore::ConstantTexture<float>*>(&texture))
+		return TextureType::CONSTANT;
+	return TextureType::UNDEFINED;
+}
+
+bool GUI::draw(raycore::Scene &scene, raycore::Camera &camera)
+{
+	bool needUpdate = false;
+	if (ImGui::Begin("Prim"))
 	{
-
-		ImGui::Text("Debug console for raycore");
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-		ImGui::SliderFloat("Field of view", &raycore::Config::fov/*m_settings.fov*/, 1.0f, 180.0f);
-		ImGui::SliderInt("Depth", &raycore::Config::maxDepth/*m_settings.depth*/, 0, GLOBAL_MAX_DEPTH);
+		if (ImGui::CollapsingHeader("Settings"))
+		{
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::SliderInt("Depth", &raycore::Config::maxDepth, 0, 15);
+		}
+		if (ImGui::CollapsingHeader("Camera"))
+		{
+			CameraType type = getType(camera);
+			if (type == CameraType::PERSPECTIVE)
+			{
+				raycore::PerspectiveCamera &pCamera = dynamic_cast<raycore::PerspectiveCamera&>(camera);
+				static float zNear = 0.1f;
+				static float zFar = 1000.f;
+				bool projUpdated = false;
+				projUpdated |= ImGui::SliderFloat("Field of view", &pCamera.hFov, 1.0f, 180.0f);
+				projUpdated |= ImGui::SliderFloat("Near", &zNear, 0.001f, zFar - 0.1f);
+				projUpdated |= ImGui::SliderFloat("Far", &zFar, zNear + 0.1f, 1000.0f);
+				if (projUpdated)
+				{
+					pCamera.perspective = geometry::mat4f::perspective(geometry::degreef(pCamera.hFov), m_width / (float)m_height, zNear, zFar);
+					needUpdate = true;
+				}
+			}
+			
+			ImGui::Text("Transform");
+			geometry::mat4f &mat = camera.transform;
+			needUpdate |= ImGui::InputFloat4("##transformcol1", mat.cols[0].data);
+			needUpdate |= ImGui::InputFloat4("##transformcol2", mat.cols[1].data);
+			needUpdate |= ImGui::InputFloat4("##transformcol3", mat.cols[2].data);
+			needUpdate |= ImGui::InputFloat4("##transformcol4", mat.cols[3].data);
+			if (ImGui::Button("Identity"))
+			{
+				needUpdate = true;
+				camera.transform = geometry::mat4f::identity();
+			}
+		}
+		if (ImGui::CollapsingHeader("Scene"))
+		{
+			if (ImGui::TreeNode("Hitables", "Hitables (%d)", scene.hitables.size()))
+			{
+				for (raycore::Hitable *hitable : scene.hitables)
+				{
+					HitableType type = getType(*hitable);
+					switch (type)
+					{
+					case HitableType::MESH:
+					case HitableType::MESH_BVH:
+					case HitableType::MESH_OCTREE:
+						ImGui::Text("Mesh");
+						break;
+					case HitableType::SPHERE:
+						ImGui::Text("Sphere");
+						break;
+					default:
+						ImGui::Text("Nothing here");
+						break;
+					}
+					ImGui::Separator();
+				}
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Materials", "Materials (%d)", scene.hitables.size()))
+			{
+				for (raycore::Material *material : scene.materials)
+				{
+					MaterialType type = getType(*material);
+					switch (type)
+					{
+					case MaterialType::MATTE:
+						ImGui::Text("Matte");
+						break;
+					case MaterialType::METAL:
+						ImGui::Text("Metal");
+						break;
+					case MaterialType::GLASS:
+						ImGui::Text("Glass");
+						break;
+					default:
+						ImGui::Text("Nothing here");
+						break;
+					}
+					ImGui::Separator();
+				}
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Textures", "Textures (%d)", scene.textures.size()))
+			{
+				for (raycore::Texture<float> *texture : scene.textures)
+				{
+					TextureType type = getType(*texture);
+					switch (type)
+					{
+					case TextureType::IMAGE:
+						ImGui::Text("Image");
+						break;
+					case TextureType::IMAGE_HDR:
+						ImGui::Text("ImageHDR");
+						break;
+					case TextureType::CHECKER:
+						ImGui::Text("Checker");
+						break;
+					case TextureType::CONSTANT:
+						ImGui::Text("Constant");
+						break;
+					default:
+						ImGui::Text("Nothing here");
+						break;
+					}
+					ImGui::Separator();
+				}
+				ImGui::TreePop();
+			}
+		}
 
 		ImGui::SameLine();
-		/*if (ImGui::Button("Apply"))
-		{
-			changed = true;
-		}*/
-		// check bounds
-		ImVec2 size = ImGui::GetWindowSize();
-		if (size.x > m_width || size.y > m_height)
-			ImGui::SetWindowSize(ImVec2(geometry::min(size.x, static_cast<float>(m_width)), geometry::min(size.y, static_cast<float>(m_height))));
-
-		ImVec2 pos = ImGui::GetWindowPos();
-		if (pos.x < 0.f || pos.y < 0.f)
-			ImGui::SetWindowPos(ImVec2(geometry::max(pos.x, 0.f), geometry::max(pos.y, 0.f)));
-		if (pos.x + size.x > m_width || pos.y + size.y > m_height)
-			ImGui::SetWindowPos(ImVec2(geometry::min(pos.x, m_width - size.x), geometry::min(pos.y, m_height - size.y)));
-
-		// check mouse position
-		if (m_inputs.mouse.position[0] > pos.x &&
-			m_inputs.mouse.position[0] < pos.x + size.x &&
-			m_inputs.mouse.position[1] > pos.y &&
-			m_inputs.mouse.position[1] < pos.y + size.y)
-		{
-			m_inputs.mouse.relPos[0] = 0;
-			m_inputs.mouse.relPos[1] = 0;
-			/*m_inputs.mouse.mouse[0] = false;
-			m_inputs.mouse.mouse[1] = false;
-			m_inputs.mouse.mouse[2] = false;*/
-		}
 	}
 	ImGui::End();
-
-	// 3. Show another simple window.
-	/*if (secondWindow)
-	{
-		ImGui::Begin("Another Window", &secondWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-		secondWindow = false;
-		ImGui::End();
-	}*/
+	return needUpdate;
 }
 
 void GUI::render()
@@ -127,11 +272,11 @@ void GUI::render()
 
 bool isKeyDown(ImGuiIO &io, int key)
 {
-	return io.KeysDown[key] || io.KeysDownDuration[key] > 0.f;
+	return io.KeysDown[key] || io.KeysDownDuration[key] > 0.f && !io.WantCaptureKeyboard;
 }
 bool isMouseDown(ImGuiIO &io, int key)
 {
-	return io.MouseDown[key] ;
+	return io.MouseDown[key] && !io.WantCaptureMouse;
 }
 
 Inputs &GUI::events()

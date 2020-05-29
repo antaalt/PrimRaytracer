@@ -18,6 +18,9 @@
 #include <GLFW/glfw3.h>
 
 #include "Config.h"
+#include "Scene.h"
+#include "Camera.h"
+#include "PerspectiveCamera.h"
 
 #include <vector>
 #include <string>
@@ -63,7 +66,7 @@ public:
 	void destroy();
 
 	void startFrame();
-	void draw();
+	bool draw(raycore::Scene &scene, raycore::Camera &camera);
 	void render();
 	Inputs &events();
 

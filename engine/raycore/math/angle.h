@@ -9,9 +9,9 @@ template <typename T>
 struct degree {
 	explicit degree();
 	explicit degree(T value);
-	explicit degree(const radian<T> &rad);
+	degree(const radian<T> &rad);
 	template <typename U>
-	explicit degree(const radian<U> &rad);
+	degree(const radian<U> &rad);
 
 	const T &operator()() const;
 	T &operator()();

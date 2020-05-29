@@ -19,14 +19,14 @@ bool BoundingBox::intersect(const Ray & ray) const
 	double tx1 = (min.x - ray.origin.x) * -ray.direction.x;
 	double tx2 = (max.x - ray.origin.x) * -ray.direction.x;
 
-	double tmin = raycore::min(tx1, tx2);
-	double tmax = raycore::max(tx1, tx2);
+	double tmin = geometry::min(tx1, tx2);
+	double tmax = geometry::max(tx1, tx2);
 
 	double ty1 = (min.y - ray.origin.y) * -ray.direction.y;
 	double ty2 = (max.y - ray.origin.y) * -ray.direction.y;
 
-	tmin = raycore::max(tmin, raycore::min(ty1, ty2));
-	tmax = raycore::min(tmax, raycore::max(ty1, ty2));
+	tmin = geometry::max(tmin, geometry::min(ty1, ty2));
+	tmax = geometry::min(tmax, geometry::max(ty1, ty2));
 
 	return tmax >= tmin;
 #else

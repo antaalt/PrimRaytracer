@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "WhittedTracer.h"
 #include "PathTracer.h"
-#include "PinholeCamera.h"
+#include "PerspectiveCamera.h"
 #include "Loader.h"
 #include "Sphere.h"
 #include "OBJLoader.h"
@@ -56,33 +56,26 @@ int main(int argc, char *argv[])
 {
 	unsigned int width = 800;
 	unsigned int height = 600;
-	app::Application application(width, height);
-	// Set options
-	app::options options;
-	options.tracer = new raycore::tracer::PathTracer();
-	options.camera = new raycore::tracer::PinholeCamera(0.f, 0.f);
-	/*options.camera->lookAt(point3f(
-		1.f,
-		1.f,
-		0.f
-	), point3f(0.f, 2.f, 0.f));*/
-	options.camera->lookAt(geometry::point3f(
+	
+	// Set parameters
+	raycore::tracer::PathTracer tracer;
+	raycore::Scene scene;
+	raycore::PerspectiveCamera camera;
+	camera.perspective = geometry::mat4f::perspective(geometry::degreef(60.f), width / (float)height, 0.1f, 1000.f);
+	camera.hFov = 60.f;
+	camera.transform = geometry::mat4f::lookAt(geometry::point3f(
 		0.f,
 		4.f,
 		4.f
 	), geometry::point3f(0.f, 0.f, 0.f));
-	options.settings.raySamplerX = raycore::tracer::RaySampler::RANDOM;
-	options.settings.raySamplerY = raycore::tracer::RaySampler::RANDOM;
-	options.settings.samplesX = 1;
-	options.settings.samplesY = 1;
-	options.settings.tileSize = 32;
 
 	// Load Scene
 	Log::info("Loading scene");
-	raycore::Scene scene;
 	setScene(scene);
-	application.run(scene, options);
 
-	system("pause");
+	// Launch app
+	app::Application application(width, height);
+	application.run(scene, camera, tracer);
+
 	return 1;
 }

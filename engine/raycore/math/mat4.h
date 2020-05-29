@@ -52,14 +52,19 @@ struct mat4 {
 	static mat4 TRS(const vec3<T> & t, const quat<T> & r, const vec3<T> & s);
 	static mat4 inverse(const mat4 &mat);
 	static mat4 perspective(const radian<T> &fov, float ratio, float nearZ, float farZ);
+	static mat4 lookAt(const point3<T> & eye, const point3<T> & target, const norm3<T> &up = norm3<T>(0, 1, 0));
 	float det() const;
 };
 
 template <typename T>
 mat4<T> operator*(const mat4<T>& lhs, const mat4<T> &rhs);
 template <typename T>
+mat4<T> &operator*=(mat4<T>& lhs, const mat4<T> &rhs);
+template <typename T>
 point3<T> operator*(const mat4<T>& lhs, const point3<T> &rhs);
 template <typename T>
 vec3<T> operator*(const mat4<T>& lhs, const vec3<T> &rhs);
+template <typename T>
+vec4<T> operator*(const mat4<T>& lhs, const vec4<T> &rhs);
 
 }
