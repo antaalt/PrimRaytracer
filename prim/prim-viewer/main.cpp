@@ -34,7 +34,7 @@ void setScene(prim::Scene &scene)
 	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, 0.f, -30.f)), 29.f, scene.materials[3]));
 	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.f, 0.2f)), 0.6f, scene.materials[4]));
 
-	{
+	/*{
 		OBJLoader loader;
 		std::vector<uint8_t> data;
 		{
@@ -49,7 +49,7 @@ void setScene(prim::Scene &scene)
 		MemoryReader reader(data);
 		loader.load(reader, scene);
 		scene.hitables.back()->setTransform(geometry::mat4f::scale(vec3f(15.f)));
-	}
+	}*/
 }
 
 int main(int argc, char *argv[])
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	unsigned int height = 600;
 	
 	// Set parameters
-	prim::tracer::PathTracer tracer;
+	prim::PathTracer tracer(6);
 	prim::Scene scene;
 	prim::PerspectiveCamera camera;
 	camera.perspective = geometry::mat4f::perspective(geometry::degreef(60.f), width / (float)height, 0.1f, 1000.f);

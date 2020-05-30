@@ -2,21 +2,16 @@
 #include "Tracer.h"
 
 namespace prim {
-namespace tracer {
 
-class WhittedTracer : public Tracer
-{
+class WhittedTracer : public Tracer {
 public:
-	WhittedTracer();
-	~WhittedTracer();
+	WhittedTracer(uint32_t maxDepth);
 
-	virtual geometry::color4f castRay(const Ray &ray, const Scene &scene, unsigned int depth = RAY_DEFAULT_DEPTH) const;
+	geometry::color4f render(const Ray &ray, const Scene &scene) const override;
 
 private:
-	virtual geometry::color4f miss(const Ray &ray) const;
-
+	uint32_t m_maxDepth;
 };
 
-}
 }
 

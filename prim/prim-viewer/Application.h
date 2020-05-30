@@ -24,20 +24,15 @@
 
 namespace app {
 
-struct options {
-	prim::tracer::Tracer *tracer;
-	prim::Camera *camera;
-};
-
 class Application
 {
 public:
 	Application(unsigned int p_width, unsigned int p_height);
 	~Application();
-	Application(const Application &acc) = delete;
-	Application& operator=(const Application &other) = delete;
+	Application(const Application &) = delete;
+	Application& operator=(const Application &) = delete;
 
-	void run(prim::Scene &scene, prim::Camera &camera, prim::tracer::Tracer &tracer);
+	void run(prim::Scene &scene, prim::Camera &camera, prim::Tracer &tracer);
 
 private:
 	// Application loop

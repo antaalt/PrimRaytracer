@@ -3,22 +3,17 @@
 #include "Light.h"
 
 namespace prim {
-namespace tracer {
 
-WhittedTracer::WhittedTracer()
+WhittedTracer::WhittedTracer(uint32_t maxDepth) :
+	m_maxDepth(maxDepth)
 {
 }
 
-WhittedTracer::~WhittedTracer()
+geometry::color4f WhittedTracer::render(const Ray & ray, const Scene & scene) const
 {
-}
-geometry::color4f WhittedTracer::castRay(const Ray & ray, const Scene &scene, unsigned int depth) const
-{
-	if (depth == 0)
-		return miss(ray);
 	ComputedIntersection info;
 	if (!scene.intersect(ray, &info))
-		return miss(ray); 
+		return geometry::color4f(1.f);
 			
 	float pdf = 0;
 	return geometry::color4f();
@@ -73,13 +68,5 @@ geometry::color4f WhittedTracer::castRay(const Ray & ray, const Scene &scene, un
 	}*/
 }
 
-geometry::color4f WhittedTracer::miss(const Ray & ray) const
-{
-	//return Pixel((ray.direction.x + 1.f) / 2.f, (ray.direction.y + 1.f) / 2.f, (ray.direction.z + 1.f) / 2.f, 1.f);
-	return BACKGROUND_COLOR;
-	//return Pixel(vec3::dot(ray.direction, vec3(0.f, 1.f, 0.f)));
-}
-
-}
 }
 

@@ -16,7 +16,7 @@ struct Tile {
 
 class Renderer {
 public:
-	Renderer(tracer::Tracer * tracer, uint32_t width, uint32_t height);
+	Renderer(Tracer &tracer, uint32_t width, uint32_t height);
 	~Renderer();
 
 	void resize(uint32_t width, uint32_t height);
@@ -29,7 +29,7 @@ private:
 private:
 	RandomRaySampler m_sampler;
 	uint32_t m_samples;
-	tracer::Tracer *m_tracer;
+	Tracer &m_tracer;
 	std::vector<Tile> m_tiles;
 	std::mutex m_mutexOutput;
 	std::vector<color4f> m_output;

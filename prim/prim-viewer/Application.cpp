@@ -78,6 +78,7 @@ Application::~Application()
 	m_gui.destroy();
 	glFinish();
 	glfwTerminate();
+	delete m_renderer;
 }
 
 bool Application::save(std::string path)
@@ -108,11 +109,11 @@ void Application::resize(unsigned int width, unsigned int height)
 	glViewport(0, 0, width, height);
 }
 
-void Application::run(prim::Scene &scene, prim::Camera &camera, prim::tracer::Tracer &tracer)
+void Application::run(prim::Scene &scene, prim::Camera &camera, prim::Tracer &tracer)
 {
 	prim::StopWatch<> stopWatch;
 
-	m_renderer = new prim::Renderer(&tracer, m_width, m_height);
+	m_renderer = new prim::Renderer(tracer, m_width, m_height);
 	scene.build();
 	// LOOP
 	do
