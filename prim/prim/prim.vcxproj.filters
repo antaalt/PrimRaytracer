@@ -34,9 +34,6 @@
     <Filter Include="Source Files\Tracer">
       <UniqueIdentifier>{53dd5c97-19d3-443e-9120-69874a6c48d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Geometry">
-      <UniqueIdentifier>{606ca553-6e67-4931-ac13-caa58bd489f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Math">
       <UniqueIdentifier>{3f836c4c-8e88-479a-b01d-305be72e336a}</UniqueIdentifier>
     </Filter>
@@ -174,14 +171,8 @@
     <ClInclude Include="ShapeLight.h">
       <Filter>Header Files\Scene\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="Sampling.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
     <ClInclude Include="LightDistribution.h">
       <Filter>Header Files\Scene\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="transform.h">
-      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="math\mat3.h">
       <Filter>Header Files\Math\Geometry</Filter>
@@ -264,6 +255,9 @@
     <ClInclude Include="OrthographicCamera.h">
       <Filter>Header Files\Scene\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -328,9 +322,6 @@
     </ClCompile>
     <ClCompile Include="ShapeLight.cpp">
       <Filter>Source Files\Scene\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="Sampling.cpp">
-      <Filter>Source Files\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="LightDistribution.cpp">
       <Filter>Source Files\Scene\Lights</Filter>

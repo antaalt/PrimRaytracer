@@ -4,11 +4,13 @@
 #include "Config.h"
 
 #include <climits>
+#include <functional>
 
 namespace prim {
 
 class Material;
 class Hitable;
+struct Intersection;
 
 struct ComputedIntersection {
 	vec3f direction;
@@ -18,6 +20,8 @@ struct ComputedIntersection {
 	color4f color;
 	Material *material;
 };
+
+using AnyHit = std::function<void(const Intersection &)>;
 
 struct Intersection {
 	Intersection();

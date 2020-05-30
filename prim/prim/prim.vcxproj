@@ -183,7 +183,6 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Random.h" />
-    <ClInclude Include="Sampling.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShapeLight.h" />
     <ClInclude Include="Sphere.h" />
@@ -193,7 +192,7 @@
     <ClInclude Include="StopWatch.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Tracer.h" />
-    <ClInclude Include="transform.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="WhittedTracer.h" />
   </ItemGroup>
@@ -224,7 +223,6 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Random.cpp" />
-    <ClCompile Include="Sampling.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShapeLight.cpp" />
     <ClCompile Include="Sphere.cpp" />

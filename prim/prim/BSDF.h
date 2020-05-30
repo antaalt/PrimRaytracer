@@ -3,14 +3,17 @@
 #include "Ray.h"
 #include "Hitable.h"
 #include "Random.h"
-#include "transform.h"
+#include "Transform.h"
 #include "Fresnel.h"
-#include "Sampling.h"
 
 namespace prim {
 
-geometry::vec3f reflect(const geometry::vec3f &wi, const geometry::norm3f &normal);
-bool refract(geometry::vec3f &out, const geometry::vec3f &wi, const geometry::norm3f &normal, float eta);
+// TODO clean bsdf
+struct BSDF2 {
+	virtual vec3f scatter(const vec3f &wi, const norm3f &normal) = 0;
+	virtual float pdf(const vec3f &wo) = 0;
+	virtual color4f evaluate(const geometry::vec3f &wo) = 0;
+};
 
 class BSDF
 {

@@ -1,8 +1,8 @@
 #pragma once
 #include "Config.h"
-#include "Sampling.h"
 #include "Random.h"
 #include "Light.h"
+
 namespace prim {
 
 namespace shape

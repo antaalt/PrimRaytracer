@@ -1,5 +1,5 @@
 #include "Sphere.h"
-#include "transform.h"
+#include "Transform.h"
 
 namespace prim {
 

@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "transform.h"
+#include "Transform.h"
 
 namespace prim {
 

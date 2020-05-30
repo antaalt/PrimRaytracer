@@ -1,6 +1,6 @@
 #include "PinholeCamera.h"
 
-#include "transform.h"
+#include "Transform.h"
 
 namespace prim {
 
