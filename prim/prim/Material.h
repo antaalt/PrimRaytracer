@@ -31,11 +31,11 @@ enum BSDFType {
 class Material
 {
 public:
-	Material(Texture<float> *color, BSDFType type) : type(type), colorTexture(color) {}
-	virtual geometry::color4f sample(const Ray &in, const ComputedIntersection &info, geometry::vec3f &wo, float &pdf, BSDFType &type) const = 0;
+	Material(Texture<float> *color, BSDFType type) : m_type(type), m_texture(color) {}
+	virtual geometry::color4f sample(const ComputedIntersection &info, vec3f *wo, float *pdf, BSDFType *type) const = 0;
 protected:
-	Texture<float> *colorTexture;
-	BSDFType type;
+	Texture<float> *m_texture;
+	BSDFType m_type;
 };
 
 }

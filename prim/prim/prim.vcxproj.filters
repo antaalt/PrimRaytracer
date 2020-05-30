@@ -76,25 +76,19 @@
     <Filter Include="Header Files\Scene\Camera">
       <UniqueIdentifier>{aa192e70-9fa1-4a65-8d16-648963dfc979}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\BSDF">
+      <UniqueIdentifier>{b12407f0-96fa-430e-b15e-5c8f1d5312d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Core">
+      <UniqueIdentifier>{04fbe1b3-74de-41e8-a6a5-2b68c1cc3277}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Scene\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="PinholeCamera.h">
       <Filter>Header Files\Scene\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files\Scene\Lights</Filter>
-    </ClInclude>
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Scene\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="BoundingBox.h">
-      <Filter>Header Files\Scene\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Hitable.h">
-      <Filter>Header Files\Scene\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\Scene\Primitives</Filter>
@@ -123,14 +117,8 @@
     <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RandomLib.h">
-      <Filter>Header Files\Sampler</Filter>
-    </ClInclude>
     <ClInclude Include="Random.h">
       <Filter>Header Files\Sampler</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Scene\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Checker.h">
       <Filter>Header Files\Scene\Texture</Filter>
@@ -141,12 +129,6 @@
     <ClInclude Include="ConstantTexture.h">
       <Filter>Header Files\Scene\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files\Scene\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="BSDF.h">
-      <Filter>Header Files\Scene\Materials</Filter>
-    </ClInclude>
     <ClInclude Include="Metal.h">
       <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
@@ -154,9 +136,6 @@
       <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Glass.h">
-      <Filter>Header Files\Scene\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="Fresnel.h">
       <Filter>Header Files\Scene\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Location.h">
@@ -207,9 +186,6 @@
     <ClInclude Include="OBJLoader.h">
       <Filter>Header Files\Scene\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Loader.h">
-      <Filter>Header Files\Scene\Loader</Filter>
-    </ClInclude>
     <ClInclude Include="GLTFLoader.h">
       <Filter>Header Files\Scene\Loader</Filter>
     </ClInclude>
@@ -257,6 +233,33 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="BSDF.h">
+      <Filter>Header Files\BSDF</Filter>
+    </ClInclude>
+    <ClInclude Include="Fresnel.h">
+      <Filter>Header Files\BSDF</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Loader.h">
+      <Filter>Header Files\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Hitable.h">
+      <Filter>Header Files\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Header Files\Scene\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Scene\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

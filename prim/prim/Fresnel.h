@@ -13,11 +13,9 @@ public:
 class Schlick : public Fresnel
 {
 public:
-	Schlick(float eta1, float eta2) : eta1(eta1), eta2(eta2)
-	{
-	}
+	Schlick(float eta1, float eta2) : eta1(eta1), eta2(eta2) {}
 
-	virtual float evaluate(const vec3f &direction, const norm3f &normal) const
+	float evaluate(const vec3f &direction, const norm3f &normal) const override
 	{
 		bool inside = vec3f::dot(direction, vec3f(normal)) >= 0.f;
 		float n1 = eta2;

@@ -179,7 +179,6 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="PointLight.h" />
-    <ClInclude Include="RandomLib.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Random.h" />

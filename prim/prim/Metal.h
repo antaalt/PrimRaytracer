@@ -7,9 +7,9 @@ class Metal : public Material {
 public:
 	Metal(Texture<float> *color, Texture<float> *roughness);
 
-	virtual geometry::color4f sample(const Ray &in, const ComputedIntersection &info, geometry::vec3f &wo, float &pdf, BSDFType &type) const;
+	color4f sample(const ComputedIntersection &info, geometry::vec3f *wo, float *pdf, BSDFType *type) const override;
 private:
-	Texture<float> *roughness;
+	Texture<float> *m_roughness;
 };
 
 }

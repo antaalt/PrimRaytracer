@@ -47,8 +47,7 @@ geometry::color4f prim::PathTracer::render(const Ray & ray, const Scene & scene)
 		float pdf;
 		geometry::vec3f wo;
 		BSDFType type;
-		// TODO pass vertex color ? or remove them.
-		const geometry::color4f brdf = info.material->sample(rayBounce, info, wo, pdf, type);// *info.color;
+		const geometry::color4f brdf = info.material->sample(info, &wo, &pdf, &type);
 		reflectance *= brdf * geometry::vec3f::dot(wo, geometry::vec3f(info.normal)) / pdf;
 
 		// Sample light (depending on type)
@@ -59,13 +58,13 @@ geometry::color4f prim::PathTracer::render(const Ray & ray, const Scene & scene)
 		}
 
 		// Russian roulette
-		/*if (bounces > (m_maxDepth / 2))
+		if (bounces > (m_maxDepth / 2))
 		{
 			float probability = geometry::max(reflectance.r, geometry::max(reflectance.g, reflectance.b));
 			if (probability < Rand::sample<float>())
 				return geometry::color4f(0.f);
 			reflectance = reflectance / probability;
-		}*/
+		}
 
 		output += lightRadiance * reflectance;
 		rayBounce.direction = wo;

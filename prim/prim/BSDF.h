@@ -8,176 +8,113 @@
 
 namespace prim {
 
-// TODO clean bsdf
-struct BSDF2 {
-	virtual vec3f scatter(const vec3f &wi, const norm3f &normal) = 0;
-	virtual float pdf(const vec3f &wo) = 0;
-	virtual color4f evaluate(const geometry::vec3f &wo) = 0;
+struct BSDF {
+	virtual vec3f scatter(const vec3f &wi, const norm3f &normal) const = 0; // add const
+	virtual float pdf(const vec3f &wo, const norm3f &normal) const = 0; // add const
+	virtual color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const = 0; // add const
 };
 
-class BSDF
-{
-public:
-	BSDF(const ComputedIntersection &info) : normal(info.normal), wi(info.direction) {}
-	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const = 0;
-protected:
-	virtual float PDF(const geometry::vec3f &wo) const = 0;
-	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const = 0;
-protected:
-	geometry::norm3f normal;
-	geometry::vec3f wi;
-};
-
-class BRDF : protected BSDF {
-public:
-	BRDF(const ComputedIntersection &info) : BSDF(info) {}
-};
-
-class BTDF : protected BSDF {
-public:
-	BTDF(const ComputedIntersection &info) : BSDF(info) {}
+struct BRDF : BSDF {
 
 };
 
-class LambertianReflection : BRDF
-{
-public:
-	LambertianReflection(const geometry::color4f &color, const ComputedIntersection &info) : BRDF(info), Rd(color) {}
-		
-	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
+struct BTDF : BSDF {
+
+};
+
+struct LambertianReflection : BRDF {
+	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
 		float r1 = Rand::sample<float>();
 		float r2 = Rand::sample<float>();
 		geometry::vec3f randomDirection = sample::unitHemisphere(r1, r2);
 		transform::Onb onb(normal);
-		wo = onb(randomDirection);
-		pdf = this->PDF(wo);
-		return this->evaluate(wo);
+		return onb(randomDirection);
 	}
-protected:
-	virtual float PDF(const geometry::vec3f &wo) const
+	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
 		return geometry::vec3f::dot(wo, geometry::vec3f(normal)) / geometry::pi<float>();
 	}
-	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return Rd / geometry::pi<float>();
+		return albedo / geometry::pi<float>();
 	}
-private:
-	geometry::color4f Rd;
 };
 
-class SpecularReflection : BRDF
-{
-public:
-	SpecularReflection(const geometry::color4f &color, const ComputedIntersection &info) :
-		BRDF(info), Rs(color)
+struct SpecularReflection : BRDF {
+	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
+		return reflect(wi, normal);
 	}
-	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
-	{
-		wo = reflect(wi, normal);
-		pdf = this->PDF(wo);
-		return this->evaluate(wo);
-	}
-protected:
-	virtual float PDF(const geometry::vec3f &wo) const
+	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
 		return 1.f;
 	}
-	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return Rs / geometry::vec3f::dot(wo, geometry::vec3f(normal));
+		return albedo / geometry::vec3f::dot(wo, geometry::vec3f(normal));
 	}
-private:
-	geometry::color4f Rs;
 };
 
-class Specular : BSDF
-{
-public:
-	Specular(const geometry::color4f &color, const ComputedIntersection &info, float etaOut, float etaIn) :
-		BSDF(info), Ts(color), etaOut(etaOut), etaIn(etaIn)
-	{
-	}
-	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
+
+struct Specular : BSDF {
+	Specular(float eta) : m_eta(eta) {}
+	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
 		geometry::norm3f nn = normal;
 
-		float etar = 1.f / etaIn;
+		float etar = 1.f / m_eta;
 		if (geometry::vec3f::dot(wi, geometry::vec3f(normal)) >= 0.f)
 		{
-			etar = etaIn;
+			etar = m_eta;
 			nn = -normal;
 		}
 
 		geometry::vec3f refracted;
 		geometry::vec3f reflected = reflect(wi, normal);
 		if (refract(refracted, wi, nn, etar)) // TIR
-		{
-			wo = reflected;
-			pdf = this->PDF(wo);
-			return this->evaluate(wo);
-		}
-		Schlick schlick(1.f, etaIn);
+			return reflected;
+
+		Schlick schlick(1.f, m_eta);
 		float R = schlick.evaluate(wi, normal);
 		float z = Rand::sample<float>();
 		if (z <= R)
-		{ // Reflect
-			wo = reflected;
-			pdf = this->PDF(wo);
-			return R * this->evaluate(wo);
-		}
+			return reflected;
 		else
-		{ // Refract
-			wo = refracted;
-			pdf = this->PDF(wo);
-			return (1.f - R) * this->evaluate(wo);
-		}
+			return refracted;
 	}
-protected:
-	virtual float PDF(const geometry::vec3f &wo) const
+	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
 		return 1.f;
 	}
-	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	geometry::color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return Ts / geometry::vec3f::dot(wo, geometry::vec3f(normal));
+		return albedo / geometry::vec3f::dot(wo, geometry::vec3f(normal));
 	}
 private:
-	geometry::color4f Ts;
-	float etaOut;
-	float etaIn;
+	float m_eta;
 };
 
-class MicrofacetReflection : BRDF
+struct MicrofacetReflection : BRDF
 {
-public:
-	MicrofacetReflection(const geometry::color4f &color, const ComputedIntersection &info, float roughness) :
-		BRDF(info), Rs(color), roughness(roughness)
+	MicrofacetReflection(float roughness) : m_roughness(roughness) {}
+
+	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
-	}
-	virtual geometry::color4f sample(geometry::vec3f &wo, float &pdf) const
-	{
-		geometry::vec3f m = sample::unitMicrofacet(roughness, Rand::sample<float>(), Rand::sample<float>());
+		geometry::vec3f m = sample::unitMicrofacet(m_roughness, Rand::sample<float>(), Rand::sample<float>());
 		transform::Onb onb(normal);
-		wo = onb(m);
-		pdf = this->PDF(wo);
-		return this->evaluate(wo);
+		return onb(m);
 	}
-protected:
-	virtual float PDF(const geometry::vec3f &wo) const
+	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
 		return geometry::vec3f::dot(wo, geometry::vec3f(normal)) / geometry::pi<float>();
 	}
-	virtual geometry::color4f evaluate(const geometry::vec3f &wo) const
+	geometry::color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return Rs / geometry::pi<float>();
+		return albedo / geometry::pi<float>();
 	}
 private:
-	geometry::color4f Rs;
-	float roughness;
-	Fresnel *fresnel;
+	float m_roughness;
 };
 
 }

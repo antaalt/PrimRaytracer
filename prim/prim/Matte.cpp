@@ -7,11 +7,13 @@ Matte::Matte(Texture<float> * color) :
 {
 }
 
-color4f Matte::sample(const Ray & in, const ComputedIntersection & info, vec3f & wo, float & pdf, BSDFType &type) const
+color4f Matte::sample(const ComputedIntersection & info, vec3f * wo, float * pdf, BSDFType * type) const
 {
-	LambertianReflection brdf(colorTexture->evaluate(info.texcoord), info);
-	type = this->type;
-	return brdf.sample(wo, pdf);
+	LambertianReflection matte;
+	*wo = matte.scatter(info.direction, info.normal);
+	*pdf = matte.pdf(*wo, info.normal);
+	*type = m_type;
+	return matte.evaluate(info.color * m_texture->evaluate(info.texcoord), *wo, info.normal);
 }
 
 }

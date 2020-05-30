@@ -3,13 +3,12 @@
 
 namespace prim {
 
-class Glass : public Material {
-public:
+struct Glass : public Material {
 	Glass(Texture<float> *texture, float eta);
 
-	virtual color4f sample(const Ray &in, const ComputedIntersection &info, vec3f &wo, float &pdf, BSDFType &type) const;
+	color4f sample(const ComputedIntersection &info, vec3f *wo, float *pdf, BSDFType *type) const override;
 private:
-	float ior;
+	float m_ior;
 };
 
 }

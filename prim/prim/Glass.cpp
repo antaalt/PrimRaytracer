@@ -4,14 +4,17 @@ namespace prim {
 
 Glass::Glass(Texture<float> * color, float ior) : 
 	Material(color, BSDFType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_SPECULAR)),
-	ior(ior)
+	m_ior(ior)
 {
 }
-color4f Glass::sample(const Ray & in, const ComputedIntersection & info, vec3f & wo, float & pdf, BSDFType &type) const
+
+color4f Glass::sample(const ComputedIntersection & info, vec3f *wo, float *pdf, BSDFType *type) const
 {
-	Specular specular(colorTexture->evaluate(info.texcoord), info, 1.f, ior);
-	type = this->type;
-	return specular.sample(wo, pdf);
+	Specular specular(m_ior);
+	*wo = specular.scatter(info.direction, info.normal);
+	*pdf = specular.pdf(*wo, info.normal);
+	*type = m_type;
+	return specular.evaluate(info.color * m_texture->evaluate(info.texcoord), *wo, info.normal);
 }
 
 }
