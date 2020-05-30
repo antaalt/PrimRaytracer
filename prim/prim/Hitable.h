@@ -4,19 +4,11 @@
 #include "Config.h"
 
 #include <climits>
-#include <functional>
 
 namespace prim {
 
 class Material;
 class Hitable;
-
-/*struct SBT {
-	std::function<bool(const Intersection &intersection)> m_anyHit;
-	std::function<void(const Intersection &intersection)> m_closestHit;
-	std::function<void()> m_miss;
-};*/
-
 
 struct ComputedIntersection {
 	vec3f direction;
@@ -67,6 +59,7 @@ public:
 
 	virtual ComputedIntersection compute(const Ray &ray, const Intersection &intersection) const = 0;
 
+	virtual void include(BoundingBox &boundingBox) = 0;
 public:
 	void setTransform(const mat4f &transform);
 	const mat4f &getTransform() const;

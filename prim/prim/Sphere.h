@@ -12,6 +12,7 @@ public:
 
 	ComputedIntersection compute(const Ray &ray, const Intersection &intersection) const override;
 
+	void include(BoundingBox &boundingBox) override;
 protected:
 	float area() const override;
 protected:

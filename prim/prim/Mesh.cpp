@@ -38,6 +38,11 @@ ComputedIntersection Mesh::compute(const Ray & ray, const Intersection & interse
 	return computedIntersection;
 }
 
+void Mesh::include(BoundingBox &boundingBox)
+{
+	boundingBox.include(m_bbox);
+}
+
 geometry::point3f Mesh::center(const Mesh::Triangle & tri)
 {
 	return (m_transform * m_positions[tri.A] + m_transform * m_positions[tri.B] + m_transform * m_positions[tri.C]) / 3.f;

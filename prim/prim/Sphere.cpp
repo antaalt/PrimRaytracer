@@ -53,4 +53,11 @@ float Sphere::area() const
 	return 4.f * geometry::pi<float>() * m_radius * m_radius;
 }
 
+void Sphere::include(BoundingBox &boundingBox)
+{
+	point3f center = point3f(m_transform[3]);
+	boundingBox.include(center + point3f(m_radius));
+	boundingBox.include(center - point3f(m_radius));
+}
+
 }

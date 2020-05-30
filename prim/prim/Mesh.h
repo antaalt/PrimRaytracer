@@ -38,6 +38,8 @@ public:
 	bool intersect(const Ray &ray, Intersection *intersection) const override;
 
 	ComputedIntersection compute(const Ray &ray, const Intersection &intersection) const override;
+
+	void include(BoundingBox &boundingBox) override;
 protected:
 	geometry::point3f center(const Mesh::Triangle &tri);
 	float area(const Mesh::Triangle &tri);

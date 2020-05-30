@@ -8,12 +8,14 @@ void Scene::build()
 {
 	for (Hitable *hitable : this->hitables)
 	{
-		// TODO fill bbox
 		hitable->build();
+		hitable->include(bbox);
 	}
 }
 bool Scene::intersect(const Ray &ray, ComputedIntersection *info) const
 {
+	if (!bbox.intersect(ray))
+		return false;
 	Intersection intersection;
 	for (Hitable *hitable : this->hitables)
 		hitable->intersect(ray, &intersection);
