@@ -19,7 +19,7 @@ bool PointLight::sample(const ComputedIntersection & info, const Scene & scene, 
 float PointLight::contribution(const ComputedIntersection & info) const
 {
 	float d = point3f::distance(info.point, center);
-	return intensity / (d * d);
+	return m_intensity / (d * d);
 }
 }
 

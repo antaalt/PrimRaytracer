@@ -33,6 +33,13 @@ inline const T & color4<T>::operator[](size_t index) const
 }
 
 template<typename T>
+inline T color4<T>::luminance() const
+{
+	static const vec3f l(0.2126f, 0.7152f, 0.0722f);
+	return r * l.x + g * l.y + b * l.z;
+}
+
+template<typename T>
 inline T srgb2linear(T value)
 {
 	// TODO assert float

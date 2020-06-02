@@ -22,7 +22,7 @@ private:
 template <typename T>
 struct radian {
 	explicit radian();
-	explicit radian(T value);
+	constexpr explicit radian(T value);
 	radian(const degree<T> &deg);
 	template <typename U>
 	radian(const degree<U> &deg);

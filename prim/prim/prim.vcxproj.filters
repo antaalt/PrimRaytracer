@@ -82,6 +82,12 @@
     <Filter Include="Header Files\Scene\Core">
       <UniqueIdentifier>{04fbe1b3-74de-41e8-a6a5-2b68c1cc3277}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Shapes">
+      <UniqueIdentifier>{f29e0853-c4c4-4173-9a0f-fde9b942a8f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shapes">
+      <UniqueIdentifier>{49a4abf7-e2da-4ada-8c4b-8cbf2d2e15de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PinholeCamera.h">
@@ -261,6 +267,18 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Scene\Core</Filter>
     </ClInclude>
+    <ClInclude Include="SunLight.h">
+      <Filter>Header Files\Scene\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>Header Files\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeDisk.h">
+      <Filter>Header Files\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeSphere.h">
+      <Filter>Header Files\Shapes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -361,6 +379,15 @@
     </ClCompile>
     <ClCompile Include="OrthographicCamera.cpp">
       <Filter>Source Files\Scene\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SunLight.cpp">
+      <Filter>Source Files\Scene\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeSphere.cpp">
+      <Filter>Source Files\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeDisk.cpp">
+      <Filter>Source Files\Shapes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

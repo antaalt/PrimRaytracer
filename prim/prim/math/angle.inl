@@ -47,7 +47,7 @@ inline radian<T>::radian() :
 {
 }
 template <typename T>
-inline radian<T>::radian(T value) :
+inline constexpr radian<T>::radian(T value) :
 	m_value(value)
 {
 }

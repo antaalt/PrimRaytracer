@@ -183,9 +183,13 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Shape.h" />
+    <ClInclude Include="ShapeDisk.h" />
     <ClInclude Include="ShapeLight.h" />
+    <ClInclude Include="ShapeSphere.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="StrictType.h" />
+    <ClInclude Include="SunLight.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMap.h" />
     <ClInclude Include="StopWatch.h" />
@@ -223,8 +227,11 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ShapeDisk.cpp" />
     <ClCompile Include="ShapeLight.cpp" />
+    <ClCompile Include="ShapeSphere.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="SunLight.cpp" />
     <ClCompile Include="TextureMap.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="Triangle.cpp" />

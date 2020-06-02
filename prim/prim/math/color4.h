@@ -21,6 +21,8 @@ struct color4 {
 	T &operator[](size_t index);
 	const T &operator[](size_t index) const;
 
+	T luminance() const;
+
 	static color4<T> srgb2linear(const color4<T> &color);
 	static color4<T> linear2srgb(const color4<T> &color);
 };

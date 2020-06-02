@@ -2,7 +2,7 @@
 
 namespace prim {
 
-Light::Light(color4f albedo, float intensity) : albedo(albedo), intensity(intensity)
+Light::Light(const color4f &albedo, float intensity) : m_albedo(albedo), m_intensity(intensity)
 {
 }
 
