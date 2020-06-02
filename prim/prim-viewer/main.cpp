@@ -29,10 +29,10 @@ void setScene(prim::Scene &scene)
 	scene.materials.push_back(new Matte(scene.textures[4]));
 
 	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f)), 0.4f, scene.materials[0]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, -1.0f, 0.1f)), 0.5f, scene.materials[1]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.f, 0.2f)), 0.6f, scene.materials[2]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, 0.f, -30.f)), 29.f, scene.materials[3]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.f, 0.2f)), 0.6f, scene.materials[4]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, 0.1f, -1.0f)), 0.5f, scene.materials[1]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.2f, 0.f)), 0.6f, scene.materials[2]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, -30.f, 0.f)), 29.f, scene.materials[3]));
+	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.2f, 0.f)), 0.6f, scene.materials[4]));
 #if 0
 	{
 		OBJLoader loader;

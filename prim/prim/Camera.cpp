@@ -7,7 +7,7 @@ RaySampler::Type LinearRaySampler::operator()(vec2u position, vec2u size)
 {
 	const vec2f texcoord = (vec2f(position) + vec2f(0.5f)) / vec2f(size);
 	const vec2f screenPos = texcoord * 2.f - vec2f(1.f);
-	return screenPos;
+	return Type(screenPos.x, -screenPos.y);
 }
 
 RaySampler::Type RandomRaySampler::operator()(vec2u position, vec2u size)
@@ -28,10 +28,9 @@ RaySampler::Type RandomRaySampler::operator()(vec2u position, vec2u size)
 		(float(yStrate) + r2) / float(rootNbSamples)
 	);
 
-
 	const vec2f texcoord = (vec2f(position) + subpixelJitter) / vec2f(size); 
 	const vec2f screenPos = texcoord * 2.f - vec2f(1.f);
-	return screenPos;
+	return Type(screenPos.x, -screenPos.y);
 }
 
 }

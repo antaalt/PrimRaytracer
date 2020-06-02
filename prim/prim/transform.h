@@ -36,10 +36,10 @@ struct Onb {
 #if defined(SCREEN_SPACE) // screen space
 		normal = vec3f(n);
 		if (std::fabs(n.x) > std::fabs(n.y))
-			tangent = normalize(vec3f(n.z, 0, -n.x));
+			tangent = vec3f::normalize(vec3f(n.z, 0, -n.x));
 		else
-			tangent = normalize(vec3f(0, -n.z, n.y));
-		bitangent = normalize(cross(normal, tangent));
+			tangent = vec3f::normalize(vec3f(0, -n.z, n.y));
+		bitangent = vec3f::normalize(vec3f::cross(normal, tangent));
 #else
 		normal = vec3f(n);
 		if (geometry::abs(n.x) > geometry::abs(n.z))

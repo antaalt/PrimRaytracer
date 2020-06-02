@@ -11,7 +11,7 @@ Renderer::Renderer(Tracer &tracer, uint32_t width, uint32_t height) :
 	m_samples(0),
 	m_tracer(tracer),
 	m_tiles(),
-	m_output(width * height),
+	m_output(width * height, color4f(0.f)),
 	m_threadPool(),
 	m_width(width), 
 	m_height(height)
@@ -30,7 +30,7 @@ void Renderer::resize(uint32_t width, uint32_t height)
 	m_threadPool.stop();
 	m_threadPool.start();
 	std::lock_guard<std::mutex> lock(m_mutexOutput);
-	m_output.resize(width * height);
+	m_output.resize(width * height, color4f(0.f));
 	m_width = width;
 	m_height = height;
 	generateTiles();

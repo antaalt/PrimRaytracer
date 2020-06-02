@@ -147,7 +147,8 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 		if (ImGui::CollapsingHeader("Settings"))
 		{
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::SliderInt("Depth", &prim::Config::maxDepth, 0, 15);
+			static int depth = 10;
+			ImGui::SliderInt("Depth", &depth, 0, 15);
 		}
 		if (ImGui::CollapsingHeader("Camera"))
 		{

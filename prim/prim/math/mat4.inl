@@ -315,14 +315,14 @@ inline mat4<T> mat4<T>::perspective(const radian<T> &fov, float ratio, float nea
 template<typename T>
 inline mat4<T> mat4<T>::lookAt(const point3<T> & eye, const point3<T> & target, const norm3<T> & up)
 {
-	vec3f forward(target - eye);
-	vec3f right(vec3f::cross(vec3f(up), forward));
-	vec3f upCoordinate(vec3f::cross(forward, right));
+	vec3f forward(vec3f::normalize(vec3f(target - eye)));
+	vec3f right(vec3f::normalize(vec3f::cross(vec3f(up), forward)));
+	vec3f upCoordinate(vec3f::normalize(vec3f::cross(forward, right)));
 	// screen space
 	return mat4f(
-		col4f(vec3f::normalize(right), 0.f),
-		col4f(vec3f::normalize(upCoordinate), 0.f),
-		col4f(vec3f::normalize(forward), 0.f),
+		col4f(right, 0.f),
+		col4f(upCoordinate, 0.f),
+		col4f(forward, 0.f),
 		col4f(eye, 1.f)
 	);
 }
