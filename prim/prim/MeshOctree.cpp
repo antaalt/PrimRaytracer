@@ -22,7 +22,7 @@ void MeshOctree::build()
 	m_rootNode.build(triangles, maxOctreeDepth);
 }
 
-bool MeshOctree::intersect(const Ray & ray, Intersection * intersection) const
+bool MeshOctree::intersect(const Ray & ray, Intersection &intersection) const
 {
 	if (!m_bbox.intersect(ray))
 		return false;
@@ -101,21 +101,25 @@ uint32_t MeshOctree::Node::build(const std::vector<const Triangle*> &triangles, 
 	return created;
 }
 
-bool MeshOctree::Node::intersect(const Ray & ray, Intersection * intersection) const
+bool MeshOctree::Node::intersect(const Ray & ray, Intersection &intersection) const
 {
 	if (!m_bbox.intersect(ray))
 		return false;
 	if (isLeaf())
 	{
+		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (const Triangle *triangle : m_triangles)
-			m_mesh->intersectTri(*triangle, ray, intersection);
-		return intersection->valid();
+			if (m_mesh->intersectTri(*triangle, ray, intersection) && terminateOnFirstHit)
+				return true;
+		return intersection.valid();
 	}
 	else
 	{
+		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (uint32_t i = 0; i < octreeChildCount; i++)
-			m_childrens[i]->intersect(ray, intersection);
-		return intersection->valid();
+			if (m_childrens[i]->intersect(ray, intersection) && terminateOnFirstHit)
+				return true;
+		return intersection.valid();
 	}
 }
 

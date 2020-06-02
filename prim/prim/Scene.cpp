@@ -12,20 +12,13 @@ void Scene::build()
 		hitable->include(bbox);
 	}
 }
-bool Scene::intersect(const Ray &ray, ComputedIntersection *info) const
+bool Scene::intersect(const Ray &ray, Intersection &intersection) const
 {
 	if (!bbox.intersect(ray))
 		return false;
-	Intersection intersection;
 	for (Hitable *hitable : this->hitables)
-		hitable->intersect(ray, &intersection);
-	if (intersection.valid())
-	{
-		const Hitable *hitable = intersection.hitable;
-		*info = hitable->compute(ray, intersection);
-		return true;
-	}
-	return false;
+		hitable->intersect(ray, intersection);
+	return intersection.valid();
 }
 
 }

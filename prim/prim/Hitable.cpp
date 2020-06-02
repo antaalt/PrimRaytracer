@@ -2,24 +2,6 @@
 
 namespace prim {
 
-Intersection::Intersection() :
-	hitable(nullptr),
-	distance(std::numeric_limits<float>::max()),
-	barycentric(0.f)
-{
-}
-
-bool Intersection::report(float distance, vec2f barycentric, const Hitable * hitable, const void *data)
-{
-	if (this->distance <= distance)
-		return false;
-	this->distance = distance;
-	this->barycentric = barycentric;
-	this->hitable = hitable;
-	this->data = data;
-	return true;
-}
-
 void Hitable::setTransform(const mat4f & transform)
 {
 	m_transform = transform;
@@ -28,6 +10,16 @@ void Hitable::setTransform(const mat4f & transform)
 const mat4f & Hitable::getTransform() const
 {
 	return m_transform;
+}
+
+void Hitable::setMaterial(Material * material)
+{
+	m_material = material;
+}
+
+Material * Hitable::getMaterial() const
+{
+	return m_material;
 }
 
 }

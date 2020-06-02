@@ -11,9 +11,11 @@ WhittedTracer::WhittedTracer(uint32_t maxDepth) :
 
 geometry::color4f WhittedTracer::render(const Ray & ray, const Scene & scene) const
 {
-	ComputedIntersection info;
-	if (!scene.intersect(ray, &info))
+	BackCulling culling;
+	Intersection intersection(culling, false);
+	if (!scene.intersect(ray, intersection))
 		return geometry::color4f(1.f);
+	ComputedIntersection info = intersection.compute(ray);
 			
 	float pdf = 0;
 	return geometry::color4f();

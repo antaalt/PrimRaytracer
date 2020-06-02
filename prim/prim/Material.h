@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "Random.h"
 #include "BSDF.h"
+#include "Intersection.h"
 
 namespace prim {
 

@@ -30,7 +30,7 @@ struct NodeBVH : Hitable {
 
 struct Scene {
 	void build();
-	bool intersect(const Ray &ray, ComputedIntersection *info) const;
+	bool intersect(const Ray &ray, Intersection &intersection) const;
 
 	std::vector<Hitable*> hitables;
 	std::vector<Material*> materials;

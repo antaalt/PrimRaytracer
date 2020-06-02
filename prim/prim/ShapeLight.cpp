@@ -13,8 +13,10 @@ ShapeLight::~ShapeLight()
 bool ShapeLight::sample(const ComputedIntersection & info, const Scene & scene, float * pdf, vec3f * sample) const
 {
 	vec3f s = m_shape->sample(info.point);
-	ComputedIntersection info2;
-	if (scene.intersect(Ray(info.point, vec3f::normalize(s), EPSILON, sample->norm()), &info2))
+	BackCulling culling;
+	Intersection intersection(culling, true);
+	Ray shadowRay(info.point, vec3f::normalize(s), EPSILON, sample->norm());
+	if (scene.intersect(shadowRay, intersection))
 		return false;
 	*pdf = m_shape->pdf();
 	*sample = s;

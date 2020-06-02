@@ -20,8 +20,9 @@ bool SunLight::sample(const ComputedIntersection & info, const Scene & scene, fl
 	const vec3f lightSample = onb(vec3f::normalize(vec3f(unitSunRadius * sample::unitDisk(Rand::sample<float>(), Rand::sample<float>()), 1.f)));
 	
 	Ray shadowRay(info.point, lightSample);
-	ComputedIntersection intersection;
-	if (scene.intersect(shadowRay, &intersection))
+	BackCulling culling;
+	Intersection intersection(culling, true);
+	if (scene.intersect(shadowRay, intersection))
 		return false;
 	*pdf = 1.f / (2.f * pi<float>() * (1.f - cos(sunAngle))); // output near 19000.f
 	*sample = lightSample;

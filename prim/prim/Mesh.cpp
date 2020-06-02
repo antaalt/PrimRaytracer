@@ -15,27 +15,24 @@ void Mesh::build()
 		m_bbox.include(m_transform * position);
 }
 
-bool Mesh::intersect(const Ray & ray, Intersection * intersection) const
+bool Mesh::intersect(const Ray & ray, Intersection &intersection) const
 {
 	if (!m_bbox.intersect(ray)) // TODO transform ray with inverse mat
 		return false;
-	for (uint32_t iTri = 0; iTri < m_triangles.size(); iTri ++)
-		intersectTri(m_triangles[iTri], ray, intersection);
+	bool terminateOnFirstHit = intersection.terminateOnFirstHit();
+	for (const Triangle &tri : m_triangles)
+		if (intersectTri(tri, ray, intersection) && terminateOnFirstHit)
+			return true;
 
-	return intersection->valid();
+	return intersection.valid();
 }
 
-ComputedIntersection Mesh::compute(const Ray & ray, const Intersection & intersection) const
+void Mesh::compute(const point3f &hitPoint, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord, color4f * color) const
 {
-	const Triangle *tri = static_cast<const Triangle*>(intersection.data);
-	ComputedIntersection computedIntersection;
-	computedIntersection.direction = ray.direction;
-	computedIntersection.point = ray(intersection.distance);
-	computedIntersection.normal = interpolate(m_normals[tri->A], m_normals[tri->B], m_normals[tri->C], intersection.barycentric);
-	computedIntersection.texcoord = interpolate(m_uvs[tri->A], m_uvs[tri->B], m_uvs[tri->C], intersection.barycentric);
-	computedIntersection.color = interpolate(m_colors[tri->A], m_colors[tri->B], m_colors[tri->C], intersection.barycentric);
-	computedIntersection.material = m_material;
-	return computedIntersection;
+	const Triangle &tri = m_triangles[indice];
+	*normal = interpolate(m_normals[tri.A], m_normals[tri.B], m_normals[tri.C], barycentric);
+	*texCoord = interpolate(m_uvs[tri.A], m_uvs[tri.B], m_uvs[tri.C], barycentric);
+	*color = interpolate(m_colors[tri.A], m_colors[tri.B], m_colors[tri.C], barycentric);
 }
 
 void Mesh::include(BoundingBox &boundingBox)
@@ -43,12 +40,12 @@ void Mesh::include(BoundingBox &boundingBox)
 	boundingBox.include(m_bbox);
 }
 
-geometry::point3f Mesh::center(const Mesh::Triangle & tri)
+geometry::point3f Mesh::center(const Mesh::Triangle & tri) const
 {
 	return (m_transform * m_positions[tri.A] + m_transform * m_positions[tri.B] + m_transform * m_positions[tri.C]) / 3.f;
 }
 
-float Mesh::area(const Mesh::Triangle & tri)
+float Mesh::area(const Mesh::Triangle & tri) const
 {
 	const point3f &A = m_transform * m_positions[tri.A];
 	const point3f &B = m_transform * m_positions[tri.B];
@@ -56,7 +53,7 @@ float Mesh::area(const Mesh::Triangle & tri)
 	return geometry::vec3f::cross(geometry::vec3f(B - A), geometry::vec3f(C - A)).norm() / 2.f;
 }
 
-bool Mesh::intersectTri(const Mesh::Triangle & tri, const Ray & ray, Intersection * intersection) const
+bool Mesh::intersectTri(const Mesh::Triangle & tri, const Ray & ray, Intersection &intersection) const
 {
 	const point3f &A = m_transform * m_positions[tri.A];
 	const point3f &B = m_transform * m_positions[tri.B];
@@ -67,8 +64,7 @@ bool Mesh::intersectTri(const Mesh::Triangle & tri, const Ray & ray, Intersectio
 	geometry::vec3f h = geometry::vec3f::cross(ray.direction, AC);
 	float a = geometry::vec3f::dot(AB, h);
 
-	BackCulling backCulling; // TODO pass as tempalte ?
-	if (backCulling(a))
+	if (intersection.cull(a))
 		return false;
 
 	float f = 1.f / a;
@@ -84,7 +80,8 @@ bool Mesh::intersectTri(const Mesh::Triangle & tri, const Ray & ray, Intersectio
 	float t = f * geometry::vec3f::dot(AC, q);
 	if (t > std::numeric_limits<float>::epsilon() && t > ray.tmin && t < ray.tmax)
 	{
-		return intersection->report(t, vec2f(u, v), this, &tri);
+		uint32_t iTri = static_cast<uint32_t>(&tri - m_triangles.data());
+		return intersection.report(t, vec2f(u, v), this, iTri);
 	}
 	else
 	{

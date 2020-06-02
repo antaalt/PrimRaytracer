@@ -18,7 +18,7 @@ geometry::color4f interpolate(const geometry::color4f &cA, const geometry::color
 	return cB * barycentric.x + cC * barycentric.y + cA * (1.f - barycentric.x - barycentric.y);
 }
 
-bool Triangle::intersect(const Ray & ray, Intersection * intersection) const
+bool Triangle::intersect(const Ray & ray, Intersection &intersection) const
 {
 	// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 	const float epsilon = 0.0000001f;
@@ -27,8 +27,7 @@ bool Triangle::intersect(const Ray & ray, Intersection * intersection) const
 	geometry::vec3f h = geometry::vec3f::cross(ray.direction, AC);
 	float a = geometry::vec3f::dot(AB, h);
 
-	BackCulling culling;
-	if (culling(a))
+	if (intersection.cull(a))
 		return false;
 
 	float f = 1.f / a;
@@ -43,9 +42,9 @@ bool Triangle::intersect(const Ray & ray, Intersection * intersection) const
 		return false;
 	float t = f * geometry::vec3f::dot(AC, q);
 	if (t > epsilon && t > ray.tmin && t < ray.tmax)
-		return intersection->report(t, vec2f(u, v), this);
+		return intersection.report(t, vec2f(u, v), this);
 	else
-		return false;
+		return true;
 }
 
 geometry::norm3f interpolatenormal(const geometry::norm3f &nA, const geometry::norm3f &nB, const geometry::norm3f &nC, vec2f barycentric)
@@ -63,16 +62,11 @@ geometry::color4f interpolateColors(const geometry::color4f &cA, const geometry:
 	return cB * barycentric.x + cC * barycentric.y + cA * (1.f - barycentric.x - barycentric.y);
 }
 
-ComputedIntersection Triangle::compute(const Ray & ray, const Intersection &intersection) const
+void Triangle::compute(const point3f & hitPoint, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord, color4f * color) const
 {
-	ComputedIntersection computedIntersection;
-	computedIntersection.direction = ray.direction;
-	computedIntersection.point = ray(intersection.distance);
-	computedIntersection.normal = interpolatenormal(A.normal, B.normal, C.normal, intersection.barycentric);
-	computedIntersection.texcoord = interpolateTexCoord(A.texcoord, B.texcoord, C.texcoord, intersection.barycentric);
-	computedIntersection.color = interpolateColors(A.color, B.color, C.color, intersection.barycentric);
-	computedIntersection.material = m_material;
-	return computedIntersection;
+	*normal = interpolatenormal(A.normal, B.normal, C.normal, barycentric);
+	*texCoord = interpolateTexCoord(A.texcoord, B.texcoord, C.texcoord, barycentric);
+	*color = interpolateColors(A.color, B.color, C.color, barycentric);
 }
 
 float Triangle::area() const

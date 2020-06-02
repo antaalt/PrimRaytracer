@@ -9,8 +9,10 @@ PointLight::PointLight(const point3f & center, color4f albedo, float intensity) 
 bool PointLight::sample(const ComputedIntersection & info, const Scene & scene, float * pdf, vec3f * sample) const
 {
 	vec3f s(center - info.point);
-	ComputedIntersection info2;
-	if (scene.intersect(Ray(info.point, vec3f::normalize(s), EPSILON, s.norm()), &info2))
+	BackCulling culling;
+	Intersection intersection(culling, true);
+	Ray shadowRay(info.point, vec3f::normalize(s), EPSILON, s.norm());
+	if (scene.intersect(shadowRay, intersection))
 		return false;
 	*sample = s;
 	*pdf = 1.f;

@@ -6,6 +6,7 @@
 #include "math/geometry.h"
 #include "Log.h"
 using namespace geometry;
+namespace geo = geometry;
 
 #include <cassert>
 // ------- DEFINES -------

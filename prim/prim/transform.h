@@ -5,8 +5,6 @@
 
 namespace transform {
 
-using namespace geometry;
-
 // World coordinates have z as up
 // Screen coordinates have y as up to fit screen
 // All coordinates are left handed

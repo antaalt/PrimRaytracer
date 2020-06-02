@@ -145,6 +145,7 @@
     <ClInclude Include="Glass.h" />
     <ClInclude Include="GLTFLoader.h" />
     <ClInclude Include="Hitable.h" />
+    <ClInclude Include="Intersection.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightDistribution.h" />
     <ClInclude Include="Loader.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="Glass.cpp" />
     <ClCompile Include="GLTFLoader.cpp" />
     <ClCompile Include="Hitable.cpp" />
+    <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightDistribution.cpp" />
     <ClCompile Include="Loader.cpp" />

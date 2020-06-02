@@ -6,7 +6,7 @@
 namespace prim {
 
 
-static const uint32_t maxChildHitable = 5; // max element in child node
+static const uint32_t maxChildHitable = 10; // max element in child node
 static const uint32_t childCount = 2;
 static const uint32_t maxKmeanDepth = 15;
 static const float kmeanEpsilon = 0.001f;
@@ -28,7 +28,7 @@ void MeshBVH::build()
 	m_rootNode.build(triangles, 20);
 }
 
-bool MeshBVH::intersect(const Ray & ray, Intersection * intersection) const
+bool MeshBVH::intersect(const Ray & ray, Intersection &intersection) const
 {
 	if (!m_bbox.intersect(ray))
 		return false;
@@ -148,21 +148,25 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 	}
 }
 
-bool MeshBVH::Node::intersect(const Ray & ray, Intersection * intersection) const
+bool MeshBVH::Node::intersect(const Ray & ray, Intersection &intersection) const
 {
 	if (!m_bbox.intersect(ray))
 		return false;
 	if (isLeaf())
 	{
+		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (const Triangle *triangle : m_triangles)
-			m_mesh->intersectTri(*triangle, ray, intersection);
-		return intersection->valid();
+			if (m_mesh->intersectTri(*triangle, ray, intersection) && terminateOnFirstHit)
+				return true;
+		return intersection.valid();
 	}
 	else
 	{
+		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (uint32_t i = 0; i < childCount; i++)
-			m_childrens[i]->intersect(ray, intersection);
-		return intersection->valid();
+			if (m_childrens[i]->intersect(ray, intersection) && terminateOnFirstHit)
+				return true;
+		return intersection.valid();
 	}
 }
 
