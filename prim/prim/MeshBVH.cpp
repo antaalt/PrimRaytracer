@@ -54,9 +54,9 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 	// 0. Compute bbox
 	for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 	{
-		m_bbox.include(m_mesh->m_transform * m_mesh->m_positions[triangles[iTri]->A]);
-		m_bbox.include(m_mesh->m_transform * m_mesh->m_positions[triangles[iTri]->B]);
-		m_bbox.include(m_mesh->m_transform * m_mesh->m_positions[triangles[iTri]->C]);
+		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->A]));
+		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->B]));
+		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->C]));
 	}
 
 	// 1. check the depth and add element

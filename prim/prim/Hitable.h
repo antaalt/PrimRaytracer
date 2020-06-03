@@ -3,6 +3,7 @@
 #include "BoundingBox.h"
 #include "Config.h"
 #include "Intersection.h"
+#include "Transform.h"
 
 #include <climits>
 #include <functional>
@@ -24,9 +25,9 @@ public:
 
 	// Set the transform of the hitable
 	// TODO move this to external node ?
-	void setTransform(const mat4f &transform);
+	void setTransform(const Transform &transform);
 	// Get the transform of the hitable
-	const mat4f &getTransform() const;
+	const Transform &getTransform() const;
 	// Set the material of the hitable
 	void setMaterial(Material *material);
 	// Get the material of the hitable
@@ -36,7 +37,7 @@ protected:
 	// Compute the intersection for the primitive at indice.
 	virtual void compute(const point3f &hitPoint, const vec2f &barycentric, Intersection::Indice indice, norm3f *normal, uv2f *texCoord, color4f *color) const = 0;
 protected:
-	mat4f m_transform;
-	Material *m_material;
+	Transform m_transform; // Transform local to world of the hitable
+	Material *m_material; // Material of the hitable
 };
 }

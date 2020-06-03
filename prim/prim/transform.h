@@ -2,73 +2,75 @@
 #include "Config.h"
 
 #include "math/geometry.h"
+#include "BoundingBox.h"
 
-namespace transform {
+namespace prim {
 
 // World coordinates have z as up
 // Screen coordinates have y as up to fit screen
 // All coordinates are left handed
+struct Transform {
+	explicit Transform() : Transform(mat4f::identity()) {}
+	explicit Transform(const mat4f &matrix) : Transform(matrix, mat4f::inverse(matrix)) {}
+	explicit Transform(const mat4f &matrix, const mat4f &inverse) : m_matrix(matrix), m_inverse(inverse) {}
 
-inline vec3f localToWorld(const vec3f &vec)
-{
-	return vec3f(vec.x, -vec.z, vec.y);
-}
-inline vec3f screenToWorld(const vec3f &vec)
-{
-	return vec3f(vec.x, -vec.z, vec.y);
-}
-inline point3f screenToWorld(const point3f &vec)
-{
-	return point3f(vec.x, -vec.z, vec.y);
-}
-inline vec3f worldToScreen(const vec3f &vec)
-{
-	return vec3f(vec.x, vec.z, -vec.y);
-}
-inline point3f worldToScreen(const point3f &vec)
-{
-	return point3f(vec.x, vec.z, -vec.y);
-}
+	const mat4f &getMatrix() const { return m_matrix; }
+	const mat4f &getInverseMatrix() const { return m_inverse; }
 
-struct Onb {
-	Onb(const norm3f &n)
-	{
-#if defined(SCREEN_SPACE) // screen space
-		normal = vec3f(n);
-		if (std::fabs(n.x) > std::fabs(n.y))
-			tangent = vec3f::normalize(vec3f(n.z, 0, -n.x));
-		else
-			tangent = vec3f::normalize(vec3f(0, -n.z, n.y));
-		bitangent = vec3f::normalize(vec3f::cross(normal, tangent));
-#else
-		normal = vec3f(n);
-		if (geometry::abs(n.x) > geometry::abs(n.z))
-			tangent = vec3f::normalize(vec3f(-n.y, n.x, 0.f));
-		else
-			tangent = vec3f::normalize(vec3f(0, -n.z, n.y));
-		bitangent = vec3f::normalize(vec3f::cross(tangent, normal));
-#endif
-	}
-	vec3f operator()(const vec3f &n)
-	{
-#if defined(SCREEN_SPACE) // screen space
-		return vec3f(n.x * bitangent + n.y * normal + n.z * tangent);
-#else
-		return vec3f(n.x * bitangent + n.y * tangent + n.z * normal);
-#endif
-	}
-	norm3f operator()(const norm3f &n)
-	{
-#if defined(SCREEN_SPACE) // screen space
-		return norm3f(n.x * bitangent + n.y * normal + n.z * tangent);
-#else
-		return norm3f(n.x * bitangent + n.y * tangent + n.z * normal);
-#endif
-	}
+	template <typename T>
+	vec3<T> operator()(const vec3<T> &) const;
+	template <typename T>
+	vec4<T> operator()(const vec4<T> &) const;
+	template <typename T>
+	point3<T> operator()(const point3<T> &) const;
+	template <typename T>
+	norm3<T> operator()(const norm3<T> &) const;
+
+	BoundingBox operator()(const BoundingBox &) const;
 private:
-	vec3f normal;
-	vec3f tangent;
-	vec3f bitangent;
+	mat4f m_matrix;
+	mat4f m_inverse;
 };
+
+// Is Onb needed now as we have transform ?
+struct Onb {
+	Onb(const norm3f &n);
+	vec3f operator()(const vec3f &n);
+	norm3f operator()(const norm3f &n);
+private:
+	vec3f m_normal;
+	vec3f m_tangent;
+	vec3f m_bitangent;
+};
+
+
+template<typename T>
+inline vec3<T> Transform::operator()(const vec3<T>& vec) const
+{
+	return m_matrix * vec3f(vec);
+}
+
+template<typename T>
+inline vec4<T> Transform::operator()(const vec4<T>& vec) const
+{
+	return m_matrix * vec4f(vec);
+}
+
+template<typename T>
+inline point3<T> Transform::operator()(const point3<T>& point) const
+{
+	return m_matrix * point3f(point);
+}
+
+template<typename T>
+inline norm3<T> Transform::operator()(const norm3<T>& norm) const
+{
+	// We compute normal with transpose of inverse.
+	return norm3<T>(
+		m_inverse[0].x * norm.x + m_inverse[0].y * norm.y + m_inverse[0].z * norm.z,
+		m_inverse[1].x * norm.x + m_inverse[1].y * norm.y + m_inverse[1].z * norm.z,
+		m_inverse[2].x * norm.x + m_inverse[2].y * norm.y + m_inverse[2].z * norm.z
+	);
+}
 
 }

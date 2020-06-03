@@ -12,7 +12,7 @@ Mesh::Mesh(const mat4f &transform, Material *material) :
 void Mesh::build()
 {
 	for (const point3f &position : m_positions)
-		m_bbox.include(m_transform * position);
+		m_bbox.include(m_transform(position));
 }
 
 bool Mesh::intersect(const Ray & ray, Intersection &intersection) const
@@ -42,22 +42,22 @@ void Mesh::include(BoundingBox &boundingBox)
 
 geometry::point3f Mesh::center(const Mesh::Triangle & tri) const
 {
-	return (m_transform * m_positions[tri.A] + m_transform * m_positions[tri.B] + m_transform * m_positions[tri.C]) / 3.f;
+	return (m_transform(m_positions[tri.A]) + m_transform(m_positions[tri.B]) + m_transform(m_positions[tri.C])) / 3.f;
 }
 
 float Mesh::area(const Mesh::Triangle & tri) const
 {
-	const point3f &A = m_transform * m_positions[tri.A];
-	const point3f &B = m_transform * m_positions[tri.B];
-	const point3f &C = m_transform * m_positions[tri.C];
+	const point3f &A = m_transform(m_positions[tri.A]);
+	const point3f &B = m_transform(m_positions[tri.B]);
+	const point3f &C = m_transform(m_positions[tri.C]);
 	return geometry::vec3f::cross(geometry::vec3f(B - A), geometry::vec3f(C - A)).norm() / 2.f;
 }
 
 bool Mesh::intersectTri(const Mesh::Triangle & tri, const Ray & ray, Intersection &intersection) const
 {
-	const point3f &A = m_transform * m_positions[tri.A];
-	const point3f &B = m_transform * m_positions[tri.B];
-	const point3f &C = m_transform * m_positions[tri.C];
+	const point3f &A = m_transform(m_positions[tri.A]);
+	const point3f &B = m_transform(m_positions[tri.B]);
+	const point3f &C = m_transform(m_positions[tri.C]);
 	// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 	geometry::vec3f AB(B - A);
 	geometry::vec3f AC(C - A);

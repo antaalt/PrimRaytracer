@@ -28,7 +28,7 @@ struct LambertianReflection : BRDF {
 		float r1 = Rand::sample<float>();
 		float r2 = Rand::sample<float>();
 		geometry::vec3f randomDirection = sample::unitHemisphere(r1, r2);
-		transform::Onb onb(normal);
+		Onb onb(normal);
 		return onb(randomDirection);
 	}
 	float pdf(const vec3f &wo, const norm3f &normal) const override
@@ -102,7 +102,7 @@ struct MicrofacetReflection : BRDF
 	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
 		geometry::vec3f m = sample::unitMicrofacet(m_roughness, Rand::sample<float>(), Rand::sample<float>());
-		transform::Onb onb(normal);
+		Onb onb(normal);
 		return onb(m);
 	}
 	float pdf(const vec3f &wo, const norm3f &normal) const override

@@ -2,12 +2,12 @@
 
 namespace prim {
 
-void Hitable::setTransform(const mat4f & transform)
+void Hitable::setTransform(const Transform & transform)
 {
 	m_transform = transform;
 }
 
-const mat4f & Hitable::getTransform() const
+const Transform & Hitable::getTransform() const
 {
 	return m_transform;
 }

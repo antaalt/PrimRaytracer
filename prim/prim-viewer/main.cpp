@@ -48,9 +48,10 @@ void setScene(prim::Scene &scene)
 		}
 		MemoryReader reader(data);
 		loader.load(reader, scene);
-		scene.hitables.back()->setTransform(geometry::mat4f::scale(vec3f(15.f)));
+		scene.hitables.back()->setTransform(Transform(mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))));
 	}
 #endif
+	scene.lights.push_back(new SunLight(norm3f(0.f, 1.f, 0.f), color4f(1.f), 19000.f));
 }
 
 int main(int argc, char *argv[])

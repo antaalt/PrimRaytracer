@@ -16,7 +16,7 @@ SunLight::SunLight(const norm3f &direction, const color4f &albedo, float intensi
 
 bool SunLight::sample(const ComputedIntersection & info, const Scene & scene, float * pdf, vec3f * sample) const
 {
-	transform::Onb onb(m_direction);
+	Onb onb(m_direction);
 	const vec3f lightSample = onb(vec3f::normalize(vec3f(unitSunRadius * sample::unitDisk(Rand::sample<float>(), Rand::sample<float>()), 1.f)));
 	
 	Ray shadowRay(info.point, lightSample);

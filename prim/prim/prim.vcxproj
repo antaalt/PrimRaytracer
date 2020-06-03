@@ -236,6 +236,7 @@
     <ClCompile Include="SunLight.cpp" />
     <ClCompile Include="TextureMap.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="WhittedTracer.cpp" />
   </ItemGroup>

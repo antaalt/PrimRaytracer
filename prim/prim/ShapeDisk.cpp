@@ -12,7 +12,7 @@ ShapeDisk::ShapeDisk(const point3f & center, float radius, const norm3f &up) : m
 vec3f ShapeDisk::sample(const point3f & from) const
 {
 	vec3f sample = vec3f(sample::unitDisk(Rand::sample<float>(), Rand::sample<float>()), 1.f);
-	transform::Onb onb(m_up);
+	Onb onb(m_up);
 	return vec3f(m_center) + onb(sample * m_radius);
 }
 

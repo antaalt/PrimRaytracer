@@ -36,7 +36,7 @@ geometry::color4f prim::PathTracer::render(const Ray & ray, const Scene & scene)
 	Ray rayBounce(ray);
 	do
 	{
-		BackCulling culling;
+		Culling culling;
 		Intersection intersection(culling, false);
 		if (!scene.intersect(rayBounce, intersection))
 			return reflectance * color4f(0.9f);
