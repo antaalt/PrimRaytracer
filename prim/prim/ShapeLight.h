@@ -10,9 +10,9 @@ class ShapeLight : public Light
 {
 public:
 	ShapeLight(Shape *shape, color4f albedo, float intensity);
-	~ShapeLight();
-	virtual bool sample(const ComputedIntersection &info, const Scene &scene, float *pdf, vec3f *sample) const;
-	float contribution(const ComputedIntersection &info) const;
+
+	Ray sample(const point3f &hitPoint) const override;
+	float pdf(const Ray &ray) const override;
 private:
 	Shape *m_shape;
 };

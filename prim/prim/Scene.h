@@ -19,7 +19,12 @@
 #include "Mesh.h"
 #include "MeshBVH.h"
 #include "MeshOctree.h"
-// Others
+// Lights
+#include "PointLight.h"
+#include "SunLight.h"
+#include "PointLight.h"
+#include "ShapeLight.h"
+// Camera
 #include "Camera.h"
 
 namespace prim {
@@ -32,6 +37,7 @@ struct Scene {
 	void build();
 	bool intersect(const Ray &ray, Intersection &intersection) const;
 
+	std::vector<Light*> lights;
 	std::vector<Hitable*> hitables;
 	std::vector<Material*> materials;
 	std::vector<Texture<float>*> textures;

@@ -19,7 +19,7 @@ void LightDistribution::addLight(Light * light)
 }
 color4f LightDistribution::sampleOneLight(const ComputedIntersection & info, const Scene & scene) const
 {
-	unsigned int iLight;
+	/*unsigned int iLight;
 	float contribFactor = 1.f;
 	if (lights.size() == 0)
 		return color4f(0.f);
@@ -56,6 +56,7 @@ color4f LightDistribution::sampleOneLight(const ComputedIntersection & info, con
 		return color4f(0.f);
 	color4f brdf = sampledLight->shade();
 
-	return brdf * vec3f::dot(vec3f::normalize(ls), geometry::vec3f(info.normal)) / (pdf * contribFactor);
+	return brdf * vec3f::dot(vec3f::normalize(ls), geometry::vec3f(info.normal)) / (pdf * contribFactor);*/
+	return color4f();
 }
 }

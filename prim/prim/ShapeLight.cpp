@@ -1,32 +1,32 @@
 #include "ShapeLight.h"
 
-
+#include "Scene.h"
 
 namespace prim {
 
 ShapeLight::ShapeLight(Shape * shape, color4f albedo, float intensity) : Light(albedo, intensity), m_shape(shape)
 {
 }
-ShapeLight::~ShapeLight()
+Ray ShapeLight::sample(const point3f & hitPoint) const
 {
+	Ray ray;
+	ray.origin = hitPoint;
+	ray.direction = m_shape->sample(hitPoint);
+	ray.tmax = ray.direction.norm();
+	ray.direction /= ray.tmax;
+	return ray;
 }
-bool ShapeLight::sample(const ComputedIntersection & info, const Scene & scene, float * pdf, vec3f * sample) const
+
+float ShapeLight::pdf(const Ray & ray) const
 {
-	vec3f s = m_shape->sample(info.point);
-	BackCulling culling;
-	Intersection intersection(culling, true);
-	Ray shadowRay(info.point, vec3f::normalize(s), EPSILON, sample->norm());
-	if (scene.intersect(shadowRay, intersection))
-		return false;
-	*pdf = m_shape->pdf();
-	*sample = s;
-	return true;
+	return m_shape->pdf();
 }
-float ShapeLight::contribution(const ComputedIntersection & info) const
+
+/*float ShapeLight::contribution(const ComputedIntersection & info) const
 {
 	float d = point3f::distance(info.point, m_shape->position());
 	return m_intensity / (d * d);
-}
+}*/
 
 }
 

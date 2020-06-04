@@ -1,6 +1,8 @@
 #pragma once
 #include "Light.h"
 
+#include <vector>
+
 namespace prim {
 
 struct Scene;

@@ -4,15 +4,14 @@
 
 namespace prim {
 
-class SunLight : Light
+class SunLight : public Light
 {
 public:
 	SunLight(const norm3f &direction, const color4f &albedo, float intensity);
 
-	// Sample the light from the given intersection, and check if it's occluded.
-	bool sample(const ComputedIntersection &info, const Scene &scene, float *pdf, vec3f *sample) const override;
-	// Get contribution of light 
-	float contribution(const ComputedIntersection &info) const override;
+	Ray sample(const point3f &hitPoint) const override;
+
+	float pdf(const Ray &ray) const override;
 private:
 	norm3f m_direction;
 };

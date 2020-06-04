@@ -40,7 +40,7 @@ Application::Application(unsigned int width, unsigned int height) :
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
-	m_window = glfwCreateWindow(width, height, "Raycore", NULL, NULL);
+	m_window = glfwCreateWindow(width, height, "Prim", NULL, NULL);
 
 	if (m_window == NULL) {
 		glfwTerminate();
@@ -112,6 +112,7 @@ void Application::resize(unsigned int width, unsigned int height)
 void Application::run(prim::Scene &scene, prim::Camera &camera, prim::Tracer &tracer)
 {
 	prim::StopWatch<> stopWatch;
+	prim::StopWatch<> renderStopWatch;
 
 	m_renderer = new prim::Renderer(tracer, m_width, m_height);
 	scene.build();
@@ -132,7 +133,8 @@ void Application::run(prim::Scene &scene, prim::Camera &camera, prim::Tracer &tr
 			
 		if (m_renderer->isWaiting())
 		{
-			Log::info("Launching render");
+			Log::info("Launching render (", renderStopWatch.elapsed(), "ms)");
+			renderStopWatch.start();
 			m_renderer->getOutput(m_output.data(), 0, m_output.size());
 			m_renderer->launch(camera, scene);
 		}

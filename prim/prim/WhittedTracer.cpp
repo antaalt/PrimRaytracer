@@ -11,63 +11,75 @@ WhittedTracer::WhittedTracer(uint32_t maxDepth) :
 
 geometry::color4f WhittedTracer::render(const Ray & ray, const Scene & scene) const
 {
-	BackCulling culling;
-	Intersection intersection(culling, false);
-	if (!scene.intersect(ray, intersection))
-		return geometry::color4f(1.f);
-	ComputedIntersection info = intersection.compute(ray);
-			
-	float pdf = 0;
-	return geometry::color4f();
-	/*colorHDR reflectance = info.material->color(info.texcoord.x, info.texcoord.y) * info.color;
-	colorHDR radiance(0.f);
-	for (size_t iLight = 0; iLight < accelerator->getLightsCount(); iLight++)
+	static uint32_t depth = 0;
+	depth++;
+	uint32_t bounces = 0;
+	color4f output(0);
+	do
 	{
-		const Light *l = accelerator->getLight(iLight);
-		LightInfo linfo;
-		if (l->sample(info, accelerator, linfo))
+		Culling culling;
+		Intersection intersection(culling, false);
+		if (!scene.intersect(ray, intersection))
 		{
-			radiance = linfo.color * std::abs(vec3::dot(linfo.sample, info.normal));
+			depth--;
+			return geometry::color4f(1.f);
 		}
-	}
-	reflectance = reflectance + reflectance * radiance;
-	switch (info.material->type())
-	{
-	case prim::MaterialType::DIFFUSE:
-		return reflectance;
-	case prim::MaterialType::DIELECTRIC:
-	{
-		vec3 refractedDirection;
-		vec3 reflectedDirection = prim::reflect(ray.direction, info.normal);
-		float eta = 1.1f;
-		bool inside = (vec3::dot(ray.direction, info.normal) > 0.f);
-		norm3 n;
-		if (inside)
-		{
-			eta = 1.f / eta;
-			n = info.normal;
-		}
-		else
-		{
-			n = -info.normal;
-		}
-		if (prim::refract(refractedDirection, ray.direction, n, eta))
-			return castRay(Ray(info.point, reflectedDirection), accelerator, depth - 1);
+		ComputedIntersection info = intersection.compute(ray);
+		float pdf;
+		vec3f wo;
+		BSDFType type;
+		color4f color = info.material->sample(info, &wo, &pdf, &type);
+		output += info.color * color * vec3f::dot(wo, vec3f(0,1,0));
 
-		float R = physics::fresnel_schlick(vec3::dot(ray.direction, n));
-		Ray refractedRay(info.point, refractedDirection);
-		Ray reflectedRay(info.point, reflectedDirection);
-		return R * castRay(reflectedRay, accelerator, depth - 1) + (1.f - R) * castRay(refractedRay, accelerator, depth - 1);
-	}
-	case prim::MaterialType::SPECULAR:
-	{
-		Ray nextRay(info.point, prim::reflect(ray.direction, info.normal));
-		return Pixel(reflectance) + castRay(nextRay, accelerator, depth - 1);
-	}
-	case prim::MaterialType::METAL:
-	default:
-		return miss(ray);
-	}*/
+
+		switch (info.material->getType())
+		{
+		default:
+		case prim::BSDFType::BSDF_GLOSSY:
+		case prim::BSDFType::BSDF_DIFFUSE:
+			depth--;
+			return output;
+		case prim::BSDFType::BSDF_SPECULAR:
+		case prim::BSDFType::BSDF_REFLECTION:
+		{
+			vec3f refractedDirection;
+			vec3f reflectedDirection = geo::reflect(ray.direction, info.normal);
+			float eta = 1.1f;
+			bool inside = (vec3f::dot(ray.direction, vec3f(info.normal)) > 0.f);
+			norm3f n;
+			if (inside)
+			{
+				eta = 1.f / eta;
+				n = info.normal;
+			}
+			else
+			{
+				n = -info.normal;
+			}
+			if (geo::refract(refractedDirection, ray.direction, n, eta))
+			{
+				depth--;
+				return render(Ray(info.point, reflectedDirection), scene);
+			}
+			Schlick schlick(eta, 1.f / eta);
+			float R = schlick.evaluate(ray.direction, n);
+			//float R = physics::fresnel_schlick(vec3f::dot(ray.direction, vec3f(n)));
+			Ray refractedRay(info.point, refractedDirection);
+			Ray reflectedRay(info.point, reflectedDirection);
+			depth--;
+			return R * render(reflectedRay, scene) + (1.f - R) * render(refractedRay, scene);
+		}
+		case prim::BSDFType::BSDF_TRANSMISSION:
+		{
+			Ray nextRay(info.point, geo::reflect(ray.direction, info.normal));
+			depth--;
+			return output * render(nextRay, scene);
+		}
+		}
+	} while (++bounces < m_maxDepth && depth < 5);
+
+	depth--;
+	return output;
 }
 
 }
