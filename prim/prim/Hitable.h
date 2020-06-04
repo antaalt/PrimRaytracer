@@ -14,7 +14,11 @@ class Material;
 
 class Hitable {
 public:
-	Hitable(const mat4f &transform, Material *material) : m_transform(transform), m_material(material) {}
+	Hitable(const mat4f &transform, Material *material) : 
+		m_localToWorld(transform), 
+		m_worldToLocal(m_localToWorld.inverse()),
+		m_material(material) 
+	{}
 
 	// Build the hitable if needed
 	virtual void build() {}
@@ -37,7 +41,8 @@ protected:
 	// Compute the intersection for the primitive at indice.
 	virtual void compute(const point3f &hitPoint, const vec2f &barycentric, Intersection::Indice indice, norm3f *normal, uv2f *texCoord, color4f *color) const = 0;
 protected:
-	Transform m_transform; // Transform local to world of the hitable
+	Transform m_localToWorld; // Transform local to world of the hitable
+	Transform m_worldToLocal; // Transform world to local of the hitable
 	Material *m_material; // Material of the hitable
 };
 }

@@ -28,11 +28,24 @@ void MeshBVH::build()
 	m_rootNode.build(triangles, 20);
 }
 
-bool MeshBVH::intersect(const Ray & ray, Intersection &intersection) const
+bool MeshBVH::intersect(const Ray & worldRay, Intersection &intersection) const
 {
-	if (!m_bbox.intersect(ray))
+	Ray localRay = m_worldToLocal(worldRay);
+	if (!m_bbox.intersect(localRay))
 		return false;
-	return m_rootNode.intersect(ray, intersection);
+	bool terminateOnFirstHit = intersection.terminateOnFirstHit();
+	Intersection localIntersection(intersection.getCulling(), terminateOnFirstHit);
+	if (m_rootNode.intersect(localRay, localIntersection))
+	{
+		// local Intersection to world intersection
+		point3f localHit = localRay(localIntersection.getDistance());
+		point3f worldHit = m_localToWorld(localHit);
+		return intersection.report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
+	}
+	else
+	{
+		return false;
+	}
 }
 
 MeshBVH::Node::Node(MeshBVH * mesh) : 
@@ -54,9 +67,9 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 	// 0. Compute bbox
 	for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 	{
-		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->A]));
-		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->B]));
-		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->C]));
+		m_bbox.include(m_mesh->m_positions[triangles[iTri]->A]);
+		m_bbox.include(m_mesh->m_positions[triangles[iTri]->B]);
+		m_bbox.include(m_mesh->m_positions[triangles[iTri]->C]);
 	}
 
 	// 1. check the depth and add element
@@ -148,15 +161,15 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 	}
 }
 
-bool MeshBVH::Node::intersect(const Ray & ray, Intersection &intersection) const
+bool MeshBVH::Node::intersect(const Ray & localRay, Intersection &intersection) const
 {
-	if (!m_bbox.intersect(ray))
+	if (!m_bbox.intersect(localRay))
 		return false;
 	if (isLeaf())
 	{
 		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (const Triangle *triangle : m_triangles)
-			if (m_mesh->intersectTri(*triangle, ray, intersection) && terminateOnFirstHit)
+			if (m_mesh->intersectTri(*triangle, localRay, intersection) && terminateOnFirstHit)
 				return true;
 		return intersection.valid();
 	}
@@ -164,7 +177,7 @@ bool MeshBVH::Node::intersect(const Ray & ray, Intersection &intersection) const
 	{
 		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (uint32_t i = 0; i < childCount; i++)
-			if (m_childrens[i]->intersect(ray, intersection) && terminateOnFirstHit)
+			if (m_childrens[i]->intersect(localRay, intersection) && terminateOnFirstHit)
 				return true;
 		return intersection.valid();
 	}

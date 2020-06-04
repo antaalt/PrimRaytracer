@@ -5,11 +5,11 @@
 namespace prim {
 
 BoundingBox::BoundingBox() :
-	BoundingBox(geometry::point3f(std::numeric_limits<float>::max()), geometry::point3f(-std::numeric_limits<float>::max()))
+	BoundingBox(point3f(std::numeric_limits<float>::max()), point3f(-std::numeric_limits<float>::max()))
 {
 }
 
-BoundingBox::BoundingBox(const geometry::point3f &min, const geometry::point3f &max) : min(min), max(max)
+BoundingBox::BoundingBox(const point3f &min, const point3f &max) : min(min), max(max)
 {
 }
 
@@ -72,17 +72,17 @@ bool BoundingBox::valid() const
 	return (min.x < max.x && min.y < max.y && min.z < max.z);
 }
 
-float BoundingBox::extent() const
+vec3f BoundingBox::extent() const
 {
-	return geometry::vec3f(max - min).norm();
+	return vec3f(max - min);
 }
 
-geometry::point3f BoundingBox::center() const
+point3f BoundingBox::center() const
 {
 	return (max + min) / 2.f;
 }
 
-void BoundingBox::include(const geometry::point3f & vec)
+void BoundingBox::include(const point3f & vec)
 {
 	if (min.x > vec.x) min.x = vec.x;
 	if (min.y > vec.y) min.y = vec.y;
@@ -98,7 +98,7 @@ void BoundingBox::include(const BoundingBox & bbox)
 	include(bbox.min);
 }
 
-bool BoundingBox::contain(const geometry::point3f & point) const
+bool BoundingBox::contain(const point3f & point) const
 {
 	return (
 		point.x <= max.x &&

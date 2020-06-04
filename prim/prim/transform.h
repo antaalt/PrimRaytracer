@@ -17,6 +17,8 @@ struct Transform {
 	const mat4f &getMatrix() const { return m_matrix; }
 	const mat4f &getInverseMatrix() const { return m_inverse; }
 
+	Transform inverse() const;
+
 	template <typename T>
 	vec3<T> operator()(const vec3<T> &) const;
 	template <typename T>
@@ -26,7 +28,14 @@ struct Transform {
 	template <typename T>
 	norm3<T> operator()(const norm3<T> &) const;
 
+	Ray operator()(const Ray &) const;
+
 	BoundingBox operator()(const BoundingBox &) const;
+
+	bool swapHandedness() const;
+
+	Transform operator*(const Transform &rhs) const;
+	Transform &operator*=(const Transform &rhs);
 private:
 	mat4f m_matrix;
 	mat4f m_inverse;
@@ -43,23 +52,35 @@ private:
 	vec3f m_bitangent;
 };
 
-
 template<typename T>
 inline vec3<T> Transform::operator()(const vec3<T>& vec) const
 {
-	return m_matrix * vec3f(vec);
+	return vec3<T>(
+		m_matrix[0].x * vec.x + m_matrix[1].x * vec.y + m_matrix[2].x * vec.z,
+		m_matrix[0].y * vec.x + m_matrix[1].y * vec.y + m_matrix[2].y * vec.z,
+		m_matrix[0].z * vec.x + m_matrix[1].z * vec.y + m_matrix[2].z * vec.z
+	);
 }
 
 template<typename T>
 inline vec4<T> Transform::operator()(const vec4<T>& vec) const
 {
-	return m_matrix * vec4f(vec);
+	return vec4<T>(
+		m_matrix[0].x * vec.x + m_matrix[1].x * vec.y + m_matrix[2].x * vec.z + m_matrix[3].x * vec.w,
+		m_matrix[0].y * vec.x + m_matrix[1].y * vec.y + m_matrix[2].y * vec.z + m_matrix[3].y * vec.w,
+		m_matrix[0].z * vec.x + m_matrix[1].z * vec.y + m_matrix[2].z * vec.z + m_matrix[3].z * vec.w,
+		m_matrix[0].w * vec.x + m_matrix[1].w * vec.y + m_matrix[2].w * vec.z + m_matrix[3].w * vec.w
+	);
 }
 
 template<typename T>
 inline point3<T> Transform::operator()(const point3<T>& point) const
 {
-	return m_matrix * point3f(point);
+	return point3<T>(
+		m_matrix[0].x * point.x + m_matrix[1].x * point.y + m_matrix[2].x * point.z + m_matrix[3].x,
+		m_matrix[0].y * point.x + m_matrix[1].y * point.y + m_matrix[2].y * point.z + m_matrix[3].y,
+		m_matrix[0].z * point.x + m_matrix[1].z * point.y + m_matrix[2].z * point.z + m_matrix[3].z
+	);
 }
 
 template<typename T>

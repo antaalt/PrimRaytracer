@@ -7,18 +7,18 @@
 
 namespace prim {
 
-geometry::norm3f interpolate(const geometry::norm3f &nA, const geometry::norm3f &nB, const geometry::norm3f &nC, vec2f barycentric);
-geometry::uv2f interpolate(const geometry::uv2f &tA, const geometry::uv2f &tB, const geometry::uv2f &tC, vec2f barycentric);
-geometry::color4f interpolate(const geometry::color4f &cA, const geometry::color4f &cB, const geometry::color4f &cC, vec2f barycentric);
+norm3f interpolate(const norm3f &nA, const norm3f &nB, const norm3f &nC, vec2f barycentric);
+uv2f interpolate(const uv2f &tA, const uv2f &tB, const uv2f &tC, vec2f barycentric);
+color4f interpolate(const color4f &cA, const color4f &cB, const color4f &cC, vec2f barycentric);
 
 class Triangle : public Hitable
 {
 public:
 	struct Vertex {
-		geometry::point3f position;
-		geometry::norm3f normal;
-		geometry::uv2f texcoord;
-		geometry::color4f color;
+		point3f position;
+		norm3f normal;
+		uv2f texcoord;
+		color4f color;
 	};
 public:
 	bool intersect(const Ray &ray, Intersection &intersection) const override;

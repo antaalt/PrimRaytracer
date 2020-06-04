@@ -48,9 +48,9 @@ uint32_t MeshOctree::Node::build(const std::vector<const Triangle*> &triangles, 
 	// Compute bbox
 	for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 	{
-		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->A]));
-		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->B]));
-		m_bbox.include(m_mesh->m_transform(m_mesh->m_positions[triangles[iTri]->C]));
+		m_bbox.include(m_mesh->m_positions[triangles[iTri]->A]);
+		m_bbox.include(m_mesh->m_positions[triangles[iTri]->B]);
+		m_bbox.include(m_mesh->m_positions[triangles[iTri]->C]);
 	}
 
 	if (--depth == 0 || triangles.size() <= maxChildHitable)

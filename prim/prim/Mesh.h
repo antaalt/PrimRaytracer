@@ -6,9 +6,9 @@
 
 namespace prim {
 
-geometry::norm3f interpolate(const geometry::norm3f &nA, const geometry::norm3f &nB, const geometry::norm3f &nC, vec2f barycentric);
-geometry::uv2f interpolate(const geometry::uv2f &tA, const geometry::uv2f &tB, const geometry::uv2f &tC, vec2f barycentric);
-geometry::color4f interpolate(const geometry::color4f &cA, const geometry::color4f &cB, const geometry::color4f &cC, vec2f barycentric);
+norm3f interpolate(const norm3f &nA, const norm3f &nB, const norm3f &nC, vec2f barycentric);
+uv2f interpolate(const uv2f &tA, const uv2f &tB, const uv2f &tC, vec2f barycentric);
+color4f interpolate(const color4f &cA, const color4f &cB, const color4f &cC, vec2f barycentric);
 
 class Mesh : public Hitable {
 public:
@@ -40,7 +40,7 @@ public:
 	void include(BoundingBox &boundingBox) override;
 protected:
 	void compute(const point3f &hitPoint, const vec2f &barycentric, Intersection::Indice indice, norm3f *normal, uv2f *texCoord, color4f *color) const override;
-	geometry::point3f center(const Mesh::Triangle &tri) const;
+	point3f center(const Mesh::Triangle &tri) const;
 	float area(const Mesh::Triangle &tri) const;
 	bool intersectTri(const Mesh::Triangle &tri, const Ray &ray, Intersection &intersection) const;
 protected:

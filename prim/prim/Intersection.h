@@ -23,9 +23,11 @@ struct BackCulling : Culling {
 };
 
 struct ComputedIntersection {
-	vec3f direction;
-	point3f point;
-	norm3f normal;
+	// Ray info
+	vec3f direction; // incident ray direction
+	point3f point; // hit point of ray
+	// Object info
+	norm3f normal; 
 	uv2f texcoord;
 	color4f color;
 	Material *material;
@@ -46,6 +48,14 @@ struct Intersection {
 	bool report(float distance, vec2f barycentric, const Hitable *hitable, Indice indice = 0);
 	// Compute the intersection.
 	ComputedIntersection compute(const Ray &ray) const;
+	// Get the culling
+	Culling &getCulling() const { return m_culling; }
+	// Get the distance
+	float getDistance() const { return m_distance; }
+	// Get the distance
+	vec2f getBarycentric() const { return m_barycentric; }
+	// Get the distance
+	Indice getIndice() const { return m_indice; }
 private:
 	bool m_terminateOnFirstHit; // Terminate on first hit
 	Culling &m_culling;

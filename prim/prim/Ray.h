@@ -7,13 +7,14 @@ namespace prim {
 
 struct Ray {
 	Ray();
-	Ray(geometry::point3f origin, geometry::vec3f direction, float tmin = std::numeric_limits<float>::epsilon(), float tmax = (std::numeric_limits<float>::max)());
+	Ray(point3f origin, vec3f direction, float tmin = std::numeric_limits<float>::epsilon(), float tmax = (std::numeric_limits<float>::max)());
 
-	geometry::point3f operator()(float distance) const;
+	point3f operator()(float distance) const;
 
-	geometry::point3f origin;
-	geometry::vec3f direction;
-	float tmin, tmax;
+	point3f origin; // Origin of the ray
+	vec3f direction; // Direction of the ray
+	float tmin; // Minimal distance to avoid self intersection
+	mutable float tmax; // Maximum distance. Mutable so that it can register last hit to get closest hit.
 };
 
 inline Ray::Ray() :

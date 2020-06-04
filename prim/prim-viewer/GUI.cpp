@@ -187,22 +187,39 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 			{
 				for (prim::Hitable *hitable : scene.hitables)
 				{
-					HitableType type = getType(*hitable);
-					switch (type)
+					char buffer[256];
+					snprintf(buffer, 256, "Hitable%p", hitable);
+					if (ImGui::TreeNode(buffer))
 					{
-					case HitableType::MESH:
-					case HitableType::MESH_BVH:
-					case HitableType::MESH_OCTREE:
-						ImGui::Text("Mesh");
-						break;
-					case HitableType::SPHERE:
-						ImGui::Text("Sphere");
-						break;
-					default:
-						ImGui::Text("Nothing here");
-						break;
+						HitableType type = getType(*hitable);
+						switch (type)
+						{
+						case HitableType::MESH:
+						case HitableType::MESH_BVH:
+						case HitableType::MESH_OCTREE:
+							ImGui::Text("Mesh");
+							break;
+						case HitableType::SPHERE:
+							ImGui::Text("Sphere");
+							break;
+						default:
+							ImGui::Text("Nothing here");
+							break;
+						}
+						mat4f mat = hitable->getTransform().getMatrix();
+						bool matUpdated = false;
+						matUpdated |= ImGui::InputFloat4("##modeltransformcol1", mat.cols[0].data);
+						matUpdated |= ImGui::InputFloat4("##modeltransformcol2", mat.cols[1].data);
+						matUpdated |= ImGui::InputFloat4("##modeltransformcol3", mat.cols[2].data);
+						matUpdated |= ImGui::InputFloat4("##modeltransformcol4", mat.cols[3].data);
+						if (matUpdated)
+						{
+							needUpdate = true;
+							hitable->setTransform(prim::Transform(mat));
+						}
+						ImGui::TreePop();
 					}
-					ImGui::Separator();
+					//ImGui::Separator();
 				}
 				ImGui::TreePop();
 			}
