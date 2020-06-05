@@ -124,6 +124,7 @@ void Application::run(prim::Scene &scene, prim::Camera &camera, prim::Tracer &tr
 		stopWatch.start();
 
 		m_gui.startFrame();
+		m_gui.setProgress(m_renderer->getCompletedTileCount(), m_renderer->getTileCount());
 		bool inputsUpdated = inputs(camera, m_gui.events());
 		bool sceneUpdated = m_gui.draw(scene, camera);
 		if (inputsUpdated || sceneUpdated)

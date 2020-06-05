@@ -21,6 +21,10 @@ public:
 		uint32_t build(const std::vector<const Triangle*> &triangles, uint32_t depth);
 		// Intersect the node
 		bool intersect(const Ray &ray, Intersection &intersection) const;
+
+		const Node &getChild(uint32_t iChild) const { return *m_childrens[iChild]; }
+		const BoundingBox &getBbox() const { return m_bbox; }
+		const std::vector<const Triangle*> &getTri() const { return m_triangles; }
 	private:
 		MeshBVH *m_mesh;
 		BoundingBox m_bbox;
@@ -35,6 +39,8 @@ public:
 	void build() override;
 	// Intersect the BVH
 	bool intersect(const Ray &ray, Intersection &intersection) const override;
+
+	const Node &getRoot() const { return m_rootNode; }
 private:
 	Node m_rootNode;
 };

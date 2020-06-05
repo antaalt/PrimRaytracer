@@ -17,6 +17,8 @@ public:
 	bool empty() const;
 	// Wait for thread pool to be idle
 	void wait();
+	// Reset the queue
+	void reset();
 	// Add a task to the pool
 	void addTask(Task task);
 	// Start the thread pool

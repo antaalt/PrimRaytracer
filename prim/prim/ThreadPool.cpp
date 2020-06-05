@@ -30,6 +30,12 @@ void ThreadPool::wait()
 	m_condition.wait(lock, [&] { return m_queue.empty(); });*/
 }
 
+void ThreadPool::reset()
+{
+	std::lock_guard<std::mutex> lock(m_mutex);
+	std::queue<Task>().swap(m_queue);
+}
+
 void ThreadPool::addTask(Task task)
 {
 	std::unique_lock<std::mutex> lock(m_mutex);

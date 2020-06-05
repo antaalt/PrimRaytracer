@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
 	prim::PathTracer tracer(6);
 	prim::Scene scene;
 	prim::PerspectiveCamera camera;
-	camera.perspective = geometry::mat4f::perspective(geometry::degreef(60.f), width / (float)height, 0.1f, 1000.f);
+	camera.perspective = mat4f::perspective(degreef(60.f), width / (float)height, 0.1f, 1000.f);
 	camera.hFov = 60.f;
-	camera.transform = geometry::mat4f::lookAt(geometry::point3f(
+	camera.transform = mat4f::translate(vec3f(
 		0.f,
-		4.f,
-		4.f
-	), geometry::point3f(0.f, 0.f, 0.f));
+		10.f,
+		0.f
+	)) * mat4f::rotate(vec3f(0.f, 1.f, 0.f), degreef(90.f));
 
 	// Load Scene
 	Log::info("Loading scene");

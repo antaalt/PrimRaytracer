@@ -70,7 +70,10 @@ public:
 	void render();
 	Inputs &events();
 
+	void setProgress(size_t tileComplete, size_t tileCount);
+
 private:
+	size_t m_tileComplete, m_tileCount;
 	GLFWwindow *m_window;
 	unsigned int m_width, m_height;
 	Inputs m_inputs;

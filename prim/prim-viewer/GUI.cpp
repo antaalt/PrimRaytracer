@@ -89,7 +89,6 @@ enum class TextureType {
 	CONSTANT,
 	CHECKER,
 	IMAGE,
-	IMAGE_HDR,
 	UNDEFINED
 };
 
@@ -102,12 +101,12 @@ CameraType getType(const prim::Camera &camera)
 
 HitableType getType(const prim::Hitable &hitable)
 {
-	if (nullptr != dynamic_cast<const prim::Mesh*>(&hitable))
-		return HitableType::MESH;
-	else if (nullptr != dynamic_cast<const prim::MeshBVH*>(&hitable))
+	if (nullptr != dynamic_cast<const prim::MeshBVH*>(&hitable))
 		return HitableType::MESH_BVH;
 	else if (nullptr != dynamic_cast<const prim::MeshOctree*>(&hitable))
 		return HitableType::MESH_OCTREE;
+	else if (nullptr != dynamic_cast<const prim::Mesh*>(&hitable))
+		return HitableType::MESH;
 	else if (nullptr != dynamic_cast<const prim::Sphere*>(&hitable))
 		return HitableType::SPHERE;
 	else if (nullptr != dynamic_cast<const prim::Triangle*>(&hitable))
@@ -126,18 +125,62 @@ MaterialType getType(const prim::Material &material)
 	return MaterialType::UNDEFINED;
 }
 
-TextureType getType(const prim::Texture<float> &texture)
+TextureType getType(const prim::Texture4f &texture)
 {
-	if (nullptr != dynamic_cast<const prim::TextureMapFloat*>(&texture))
-		return TextureType::IMAGE_HDR;
-	else if (nullptr != dynamic_cast<const prim::TextureMapFloat32*>(&texture))
+	if (nullptr != dynamic_cast<const prim::ImageTexture4f*>(&texture))
 		return TextureType::IMAGE;
-	else if (nullptr != dynamic_cast<const prim::Checker<float>*>(&texture))
+	else if (nullptr != dynamic_cast<const prim::CheckerTexture4f*>(&texture))
 		return TextureType::CHECKER;
-	else if (nullptr != dynamic_cast<const prim::ConstantTexture<float>*>(&texture))
+	else if (nullptr != dynamic_cast<const prim::ConstantTexture4f*>(&texture))
 		return TextureType::CONSTANT;
 	return TextureType::UNDEFINED;
 }
+
+void displayNode(const prim::MeshBVH &mesh, const prim::MeshBVH::Node &node)
+{
+	char buffer[256];
+	snprintf(buffer, 256, "Root##%p", &node);
+	if (ImGui::TreeNodeEx(buffer, ImGuiTreeNodeFlags_None))
+	{
+		point3f min = node.getBbox().min;
+		point3f max = node.getBbox().max;
+		ImGui::Text("min (%f, %f, %f)", min.x, min.y, min.z);
+		ImGui::Text("max (%f, %f, %f)", max.x, max.y, max.z);
+		ImGui::Text("extent : %f", node.getBbox().extent().norm());
+		if (node.isLeaf())
+		{
+			const std::vector<const prim::MeshBVH::Triangle*> &tris = node.getTri();
+			for (const prim::MeshBVH::Triangle *tri : tris)
+			{
+				snprintf(buffer, 256, "tri##%p", tri);
+				if (ImGui::TreeNodeEx(buffer, ImGuiTreeNodeFlags_None))
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						point3f pos = mesh.getPosition(tri->data[i]);
+						norm3f norm = mesh.getNormal(tri->data[i]);
+						uv2f uv = mesh.getUV(tri->data[i]);
+						color4f color = mesh.getColor(tri->data[i]);
+						ImGui::Text("pos  (%f, %f, %f)", pos.x, pos.y, pos.z);
+						ImGui::Text("norm (%f, %f, %f)", norm.x, norm.y, norm.z);
+						ImGui::Text("uv   (%f, %f)", uv.u, uv.v);
+						ImGui::Text("col  (%f, %f, %f, %f)", color.r, color.g, color.b, color.a);
+						ImGui::Separator();
+					}
+					ImGui::TreePop();
+				}
+			}
+		}
+		else
+		{
+			ImGui::Separator();
+			displayNode(mesh, node.getChild(0));
+			ImGui::Separator();
+			displayNode(mesh, node.getChild(1));
+		}
+		ImGui::TreePop();
+	}
+};
 
 bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 {
@@ -149,6 +192,7 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			static int depth = 10;
 			ImGui::SliderInt("Depth", &depth, 0, 15);
+			ImGui::Text("Progress %d/%d tiles completed", m_tileComplete, m_tileCount);
 		}
 		if (ImGui::CollapsingHeader("Camera"))
 		{
@@ -188,17 +232,21 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 				for (prim::Hitable *hitable : scene.hitables)
 				{
 					char buffer[256];
-					snprintf(buffer, 256, "Hitable%p", hitable);
+					snprintf(buffer, 256, "Hitable##%p", hitable);
 					if (ImGui::TreeNode(buffer))
 					{
 						HitableType type = getType(*hitable);
 						switch (type)
 						{
 						case HitableType::MESH:
-						case HitableType::MESH_BVH:
 						case HitableType::MESH_OCTREE:
 							ImGui::Text("Mesh");
 							break;
+						case HitableType::MESH_BVH: {
+							prim::MeshBVH* meshBVH = dynamic_cast<prim::MeshBVH*>(hitable);
+							displayNode(*meshBVH, meshBVH->getRoot());
+							break;
+						}
 						case HitableType::SPHERE:
 							ImGui::Text("Sphere");
 							break;
@@ -249,16 +297,13 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 			}
 			if (ImGui::TreeNode("Textures", "Textures (%d)", scene.textures.size()))
 			{
-				for (prim::Texture<float> *texture : scene.textures)
+				for (prim::Texture4f *texture : scene.textures)
 				{
 					TextureType type = getType(*texture);
 					switch (type)
 					{
 					case TextureType::IMAGE:
 						ImGui::Text("Image");
-						break;
-					case TextureType::IMAGE_HDR:
-						ImGui::Text("ImageHDR");
 						break;
 					case TextureType::CHECKER:
 						ImGui::Text("Checker");
@@ -329,6 +374,12 @@ Inputs &GUI::events()
 	m_inputs.mouse.wheel = (int)io.MouseWheel;
 
 	return m_inputs;
+}
+
+void GUI::setProgress(size_t tileComplete, size_t tileCount)
+{
+	m_tileComplete = tileComplete;
+	m_tileCount = tileCount;
 }
 
 }

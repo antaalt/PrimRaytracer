@@ -39,6 +39,7 @@ void Renderer::resize(uint32_t width, uint32_t height)
 void Renderer::reset()
 {
 	m_samples = 0;
+	m_threadPool.reset();
 }
 
 bool Renderer::isWaiting() const
@@ -50,6 +51,7 @@ void Renderer::launch(const Camera & camera, const Scene & scene)
 {
 	static uint32_t samples = 0;
 	samples = m_samples;
+	m_completedTiles = 0;
 	for (Tile &tile : m_tiles)
 	{
 		m_threadPool.addTask([&]() {
@@ -65,6 +67,7 @@ void Renderer::launch(const Camera & camera, const Scene & scene)
 					m_output[y * m_width + x] = geometry::lerp(output, p, 1.f / (samples + 1.f));
 				}
 			}
+			m_completedTiles++;
 		});
 	}
 	//m_threadPool.wait();

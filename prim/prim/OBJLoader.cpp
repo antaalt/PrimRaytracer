@@ -205,7 +205,7 @@ bool OBJLoader::load(Reader & reader, Scene &scene)
 		Texture4f *texture = new ImageTexture4f("../prim/data/textures/1.jpg");
 		//Texture4f *texture = new ImageTexture4f("../prim/data/models/aya/tex/091_W_Aya_2K_01.jpg");
 		Material *material = new Matte(texture);
-		MeshBVH *meshBVH = new MeshBVH(object.name, geometry::mat4f::identity(), material);
+		MeshBVH *meshBVH = new MeshBVH(geometry::mat4f::identity(), material);
 		scene.textures.push_back(texture);
 		scene.materials.push_back(material);
 		scene.hitables.push_back(meshBVH);

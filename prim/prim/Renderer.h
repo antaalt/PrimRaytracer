@@ -6,6 +6,7 @@
 #include "ThreadPool.h"
 
 #include <string>
+#include <atomic>
 
 namespace prim {
 
@@ -24,6 +25,8 @@ public:
 	bool isWaiting() const;
 	void launch(const Camera &camera, const Scene &scene);
 	void getOutput(color4f *data, size_t offset, size_t size);
+	size_t getTileCount() const { return m_tiles.size(); }
+	size_t getCompletedTileCount() const { return m_completedTiles; }
 private:
 	void generateTiles();
 private:
@@ -31,6 +34,7 @@ private:
 	uint32_t m_samples;
 	Tracer &m_tracer;
 	std::vector<Tile> m_tiles;
+	std::atomic<size_t> m_completedTiles;
 	std::mutex m_mutexOutput;
 	std::vector<color4f> m_output;
 	ThreadPool m_threadPool;
