@@ -138,7 +138,7 @@
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="BSDF.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Checker.h" />
+    <ClInclude Include="CheckerTexture.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConstantTexture.h" />
     <ClInclude Include="Fresnel.h" />
@@ -192,7 +192,7 @@
     <ClInclude Include="StrictType.h" />
     <ClInclude Include="SunLight.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureMap.h" />
+    <ClInclude Include="ImageTexture.h" />
     <ClInclude Include="StopWatch.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Tracer.h" />
@@ -204,7 +204,7 @@
     <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="BSDF.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Checker.cpp" />
+    <ClCompile Include="CheckerTexture.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="ConstantTexture.cpp" />
     <ClCompile Include="Glass.cpp" />
@@ -234,7 +234,7 @@
     <ClCompile Include="ShapeSphere.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SunLight.cpp" />
-    <ClCompile Include="TextureMap.cpp" />
+    <ClCompile Include="ImageTexture.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Triangle.cpp" />

@@ -5,11 +5,11 @@ namespace prim {
 
 class Metal : public Material {
 public:
-	Metal(Texture<float> *color, Texture<float> *roughness);
+	Metal(Texture4f *color, TextureFloat *roughness);
 
 	color4f sample(const ComputedIntersection &info, geometry::vec3f *wo, float *pdf, BSDFType *type) const override;
 private:
-	Texture<float> *m_roughness;
+	TextureFloat *m_roughness;
 };
 
 }

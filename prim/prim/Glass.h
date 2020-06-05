@@ -4,7 +4,7 @@
 namespace prim {
 
 struct Glass : public Material {
-	Glass(Texture<float> *texture, float eta);
+	Glass(Texture4f *texture, float eta);
 
 	color4f sample(const ComputedIntersection &info, vec3f *wo, float *pdf, BSDFType *type) const override;
 private:

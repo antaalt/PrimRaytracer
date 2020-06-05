@@ -106,7 +106,7 @@ inline color4<T> operator*(const color4<T> &lhs, const color4<T> &rhs)
 }
 
 template <typename T>
-inline color4<T> operator*(const color4<T> &lhs, T rhs)
+inline color4<T> operator*(const color4<T> &lhs, real_t rhs)
 {
 	color4<T> out(lhs);
 	out *= rhs;
@@ -132,28 +132,28 @@ color4<T> & operator*=(color4<T> & lhs, const color4<T> & rhs)
 }
 
 template <typename T>
-color4<T> & operator*=(color4<T> & lhs, T rhs)
+color4<T> & operator*=(color4<T> & lhs, real_t rhs)
 {
-	lhs.r *= rhs;
-	lhs.g *= rhs;
-	lhs.b *= rhs;
-	lhs.a *= rhs;
+	lhs.r = static_cast<T>(lhs.r * rhs);
+	lhs.g = static_cast<T>(lhs.g * rhs);
+	lhs.b = static_cast<T>(lhs.b * rhs);
+	lhs.a = static_cast<T>(lhs.a * rhs);
 	return lhs;
 }
 
 template <typename T>
-inline color4<T> operator/(const color4<T> &lhs, T rhs)
+inline color4<T> operator/(const color4<T> &lhs, real_t rhs)
 {
 	return color4<T>(lhs.r / rhs, lhs.g / rhs, lhs.b / rhs, lhs.a / rhs);
 }
 
 template <typename T>
-color4<T> & operator/=(color4<T> & lhs, T rhs)
+color4<T> & operator/=(color4<T> & lhs, real_t rhs)
 {
-	lhs.r /= rhs;
-	lhs.g /= rhs;
-	lhs.b /= rhs;
-	lhs.a /= rhs;
+	lhs.r = static_cast<T>(lhs.r / rhs);
+	lhs.g = static_cast<T>(lhs.g / rhs);
+	lhs.b = static_cast<T>(lhs.b / rhs);
+	lhs.a = static_cast<T>(lhs.a / rhs);
 	return lhs;
 }
 

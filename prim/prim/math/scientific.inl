@@ -8,7 +8,7 @@
 namespace geometry {
 
 template <typename T>
-inline T lerp(T a, T b, float t)
+inline T lerp(T a, T b, real_t t)
 {
 	return a + (b - a) * t;
 }
@@ -109,13 +109,7 @@ inline T log10(T value)
 
 // Power functions
 template <typename T>
-inline T pow(T value, T exponent)
-{
-	return std::pow(value, exponent);
-}
-
-template<typename T, typename E>
-T pow(T value, E exponent)
+inline T pow(T value, real_t exponent)
 {
 	return std::pow(value, exponent);
 }

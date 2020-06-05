@@ -35,18 +35,18 @@ bool operator!=(const color4<T> &lhs, const color4<T> &rhs);
 template <typename T>
 color4<T> operator*(const color4<T> &lhs, const color4<T> &rhs);
 template <typename T>
-color4<T> operator*(const color4<T> &lhs, T rhs);
+color4<T> operator*(const color4<T> &lhs, real_t rhs);
 template <typename T>
 color4<T> operator*(T rhs, const color4<T> &lhs);
 template <typename T>
 color4<T> &operator*=(color4<T> &lhs, const color4<T> &rhs);
 template <typename T>
-color4<T> &operator*=(color4<T> &lhs, T rhs);
+color4<T> &operator*=(color4<T> &lhs, real_t rhs);
 
 template <typename T>
-color4<T> operator/(const color4<T> &lhs, T rhs);
+color4<T> operator/(const color4<T> &lhs, real_t rhs);
 template <typename T>
-color4<T> &operator/=(color4<T> &lhs, T rhs);
+color4<T> &operator/=(color4<T> &lhs, real_t rhs);
 
 template <typename T>
 color4<T> operator+(const color4<T> &lhs, const color4<T> &rhs);

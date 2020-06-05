@@ -4,22 +4,17 @@
 namespace prim {
 
 template <typename T>
-ConstantTexture<T>::ConstantTexture(geometry::color4<T> albedo) : albedo(albedo)
+ConstantTexture<T>::ConstantTexture(T albedo) : m_albedo(albedo)
 {
 }
 
 template <typename T>
-geometry::color4<T> ConstantTexture<T>::evaluate(const geometry::uv2f &uv = geometry::uv2f(0.f)) const
+T ConstantTexture<T>::evaluate(const uv2f &uv = uv2f(0.f)) const
 {
-	return albedo;
-}
-
-template <typename T>
-Texture<T> * ConstantTexture<T>::clone() const
-{
-	return new ConstantTexture(*this);
+	return m_albedo;
 }
 
 template class ConstantTexture<float>;
+template class ConstantTexture<color4f>;
 
 }

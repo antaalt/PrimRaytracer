@@ -6,12 +6,16 @@ namespace prim {
 template <typename T>
 class ConstantTexture : public Texture<T> {
 public:
-	ConstantTexture(geometry::color4<T> albedo);
-	virtual geometry::color4<T> evaluate(const geometry::uv2f &uv = geometry::uv2f(0.f)) const;
-	virtual Texture* clone() const;
+	ConstantTexture(T albedo);
+
+	T evaluate(const uv2f &uv = uv2f(0.f)) const override;
+
 private:
-	geometry::color4<T> albedo;
+	T m_albedo;
 };
+
+using ConstantTextureFloat = ConstantTexture<float>;
+using ConstantTexture4f = ConstantTexture<color4f>;
 
 }
 

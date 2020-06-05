@@ -2,14 +2,14 @@
 
 namespace prim {
 
-Metal::Metal(Texture<float> * color, Texture<float> *roughness) : 
+Metal::Metal(Texture4f * color, TextureFloat *roughness) : 
 	Material(color, BSDFType(BSDF_SPECULAR | BSDF_REFLECTION | BSDF_GLOSSY)),
 	m_roughness(roughness)
 {
 }
 color4f Metal::sample(const ComputedIntersection & info, geometry::vec3f * wo, float * pdf, BSDFType * type) const
 {
-	MicrofacetReflection microfacet(m_roughness->evaluate(info.texcoord).r);
+	MicrofacetReflection microfacet(m_roughness->evaluate(info.texcoord));
 	*wo = microfacet.scatter(info.direction, info.normal);
 	*pdf = microfacet.pdf(*wo, info.normal);
 	*type = m_type;

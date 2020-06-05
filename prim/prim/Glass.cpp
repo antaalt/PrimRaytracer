@@ -2,7 +2,7 @@
 
 namespace prim {
 
-Glass::Glass(Texture<float> * color, float ior) : 
+Glass::Glass(Texture4f * color, float ior) : 
 	Material(color, BSDFType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_SPECULAR)),
 	m_ior(ior)
 {

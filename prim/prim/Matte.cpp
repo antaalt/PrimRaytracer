@@ -2,7 +2,7 @@
 
 namespace prim {
 
-Matte::Matte(Texture<float> * color) :
+Matte::Matte(Texture4f * color) :
 	Material(color, BSDFType(BSDF_DIFFUSE | BSDF_REFLECTION))
 {
 }

@@ -6,9 +6,9 @@
 
 // Textures
 #include "Texture.h"
-#include "TextureMap.h"
+#include "ImageTexture.h"
 #include "ConstantTexture.h"
-#include "Checker.h"
+#include "CheckerTexture.h"
 // Materials
 #include "Matte.h"
 #include "Metal.h"
@@ -40,7 +40,7 @@ struct Scene {
 	std::vector<Light*> lights;
 	std::vector<Hitable*> hitables;
 	std::vector<Material*> materials;
-	std::vector<Texture<float>*> textures;
+	std::vector<Texture4f*> textures;
 	BoundingBox bbox;
 };
 

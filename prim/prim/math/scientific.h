@@ -6,7 +6,9 @@
 
 namespace geometry {
 
-template <typename T> T lerp(T a, T b, float t);
+using real_t = float;
+
+template <typename T> T lerp(T a, T b, real_t t);
 template <typename T> T max(T a, T b);
 template <typename T> T min(T a, T b);
 template <typename T> T clamp(T value, T min, T max);
@@ -29,8 +31,7 @@ template <typename T> T exp(T value);
 template <typename T> T log(T value);
 template <typename T> T log10(T value);
 // Power functions
-template <typename T> T pow(T value, T exponent);
-template <typename T, typename E> T pow(T value, E exponent);
+template <typename T> T pow(T value, real_t exponent);
 template <typename T> T sqrt(T value);
 // Rounding and remainder
 template <typename T> T ceil(T value);

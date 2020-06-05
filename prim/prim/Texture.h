@@ -4,17 +4,28 @@
 
 #include "math/geometry.h"
 
-#define BILINEAR_FILTER_TEXTURE
-#define TEXTURE_REPEAT
-
 namespace prim {
 
 template <typename T>
 class Texture
 {
 public:
-	virtual geometry::color4<T> evaluate(const geometry::uv2f &uv = geometry::uv2f(0.f)) const = 0;
-	virtual Texture* clone() const = 0;
+	Texture() {}
+	Texture(const Texture &) = delete;
+	Texture &operator=(const Texture &) = delete;
+	virtual ~Texture() {}
+
+	virtual T evaluate(const uv2f &uv = uv2f(0.f)) const = 0;
+
+	template <typename U>
+	U evaluate(const uv2f &uv = uv2f(0.f)) const {
+		return 0.f;
+	}
 };
+
+using Texture32 = Texture<color4<uint8_t>>;
+using Texture4f = Texture<color4<float>>;
+using TextureFloat = Texture<float>;
+using TextureByte = Texture<uint8_t>;
 
 }

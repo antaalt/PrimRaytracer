@@ -126,12 +126,6 @@
     <ClInclude Include="Random.h">
       <Filter>Header Files\Sampler</Filter>
     </ClInclude>
-    <ClInclude Include="Checker.h">
-      <Filter>Header Files\Scene\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureMap.h">
-      <Filter>Header Files\Scene\Texture</Filter>
-    </ClInclude>
     <ClInclude Include="ConstantTexture.h">
       <Filter>Header Files\Scene\Texture</Filter>
     </ClInclude>
@@ -282,6 +276,12 @@
     <ClInclude Include="Intersection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ImageTexture.h">
+      <Filter>Header Files\Scene\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckerTexture.h">
+      <Filter>Header Files\Scene\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -322,12 +322,6 @@
     </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Checker.cpp">
-      <Filter>Source Files\Scene\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureMap.cpp">
-      <Filter>Source Files\Scene\Texture</Filter>
     </ClCompile>
     <ClCompile Include="ConstantTexture.cpp">
       <Filter>Source Files\Scene\Texture</Filter>
@@ -397,6 +391,12 @@
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckerTexture.cpp">
+      <Filter>Source Files\Scene\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageTexture.cpp">
+      <Filter>Source Files\Scene\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
