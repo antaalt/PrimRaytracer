@@ -10,7 +10,7 @@ Sphere::Sphere(const mat4f & transform, float radius, Material * material) :
 {
 }
 
-bool Sphere::intersect(const Ray &worldRay, Intersection &intersection) const
+bool Sphere::intersect(const Ray &worldRay, Intersection *intersection) const
 {
 	// World to local transform
 	const Ray localRay = m_worldToLocal(worldRay);
@@ -37,7 +37,7 @@ bool Sphere::intersect(const Ray &worldRay, Intersection &intersection) const
 		localHit *= m_radius / point3f::distance(localHit, point3f(0)); // Refine hit
 		point3f worldHit = m_localToWorld(localHit);
 		float dist = point3f::distance(worldHit, worldRay.origin);
-		return intersection.report(dist, vec2f(0.f), this);
+		return intersection->report(dist, vec2f(0.f), this);
 	}
 	else if (t2 > localRay.tmin && t2 < localRay.tmax)
 	{
@@ -45,13 +45,13 @@ bool Sphere::intersect(const Ray &worldRay, Intersection &intersection) const
 		localHit *= m_radius / point3f::distance(localHit, point3f(0)); // Refine hit
 		point3f worldHit = m_localToWorld(localHit);
 		float dist = point3f::distance(worldHit, worldRay.origin);
-		return intersection.report(dist, vec2f(0.f), this);
+		return intersection->report(dist, vec2f(0.f), this);
 	}
 	else
 		return false;
 }
 
-void Sphere::compute(const point3f &worldHit, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord, color4f * color) const
+void Sphere::compute(const point3f &worldHit, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord) const
 {
 	// Local to world transform
 	const point3f center(0);
@@ -62,7 +62,6 @@ void Sphere::compute(const point3f &worldHit, const vec2f & barycentric, Interse
 	const float u = 0.5f + geometry::arctan2(-localNormal.z, -localNormal.x) / (2.f * geometry::pi<float>);
 	const float v = 0.5f - geometry::arcsin(-localNormal.y)() / geometry::pi<float>();
 	*texCoord = uv2f(u, v);
-	*color = color4f(1.f);
 }
 
 float Sphere::area() const

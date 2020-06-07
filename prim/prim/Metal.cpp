@@ -13,7 +13,7 @@ color4f Metal::sample(const ComputedIntersection & info, geometry::vec3f * wo, f
 	*wo = microfacet.scatter(info.direction, info.normal);
 	*pdf = microfacet.pdf(*wo, info.normal);
 	*type = m_type;
-	return microfacet.evaluate(info.color * m_texture->evaluate(info.texcoord), *wo, info.normal);
+	return microfacet.evaluate(m_texture->evaluate(info.texcoord), *wo, info.normal);
 }
 
 }

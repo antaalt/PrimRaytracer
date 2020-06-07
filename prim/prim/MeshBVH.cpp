@@ -28,19 +28,19 @@ void MeshBVH::build()
 	m_rootNode.build(triangles, 20);
 }
 
-bool MeshBVH::intersect(const Ray & worldRay, Intersection &intersection) const
+bool MeshBVH::intersect(const Ray & worldRay, Intersection *intersection) const
 {
 	Ray localRay = m_worldToLocal(worldRay);
 	if (!m_bbox.intersect(localRay))
 		return false;
-	bool terminateOnFirstHit = intersection.terminateOnFirstHit();
-	Intersection localIntersection(intersection.getCulling(), terminateOnFirstHit);
+	bool terminateOnFirstHit = intersection->terminateOnFirstHit();
+	Intersection localIntersection(terminateOnFirstHit);
 	if (m_rootNode.intersect(localRay, localIntersection))
 	{
 		// local Intersection to world intersection
 		point3f localHit = localRay(localIntersection.getDistance());
 		point3f worldHit = m_localToWorld(localHit);
-		return intersection.report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
+		return intersection->report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
 	}
 	else
 	{

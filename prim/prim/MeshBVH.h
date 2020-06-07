@@ -38,7 +38,7 @@ public:
 	// Build the BVH
 	void build() override;
 	// Intersect the BVH
-	bool intersect(const Ray &ray, Intersection &intersection) const override;
+	bool intersect(const Ray &ray, Intersection *intersection) const override;
 
 	const Node &getRoot() const { return m_rootNode; }
 private:

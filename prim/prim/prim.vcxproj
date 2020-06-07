@@ -226,6 +226,7 @@
     <ClCompile Include="PerspectiveCamera.cpp" />
     <ClCompile Include="PinholeCamera.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />

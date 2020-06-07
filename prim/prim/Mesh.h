@@ -35,11 +35,11 @@ public:
 
 	void build() override;
 
-	bool intersect(const Ray &ray, Intersection &intersection) const override;
+	bool intersect(const Ray &ray, Intersection *intersection) const override;
 
 	void include(BoundingBox &boundingBox) override;
 protected:
-	void compute(const point3f &hitPoint, const vec2f &barycentric, Intersection::Indice indice, norm3f *normal, uv2f *texCoord, color4f *color) const override;
+	void compute(const point3f &hitPoint, const vec2f &barycentric, Intersection::Indice indice, norm3f *normal, uv2f *texCoord) const override;
 	point3f center(const Mesh::Triangle &tri) const;
 	float area(const Mesh::Triangle &tri) const;
 	bool intersectTri(const Mesh::Triangle &tri, const Ray &ray, Intersection &intersection) const;

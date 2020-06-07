@@ -14,7 +14,7 @@ color4f Glass::sample(const ComputedIntersection & info, vec3f *wo, float *pdf, 
 	*wo = specular.scatter(info.direction, info.normal);
 	*pdf = specular.pdf(*wo, info.normal);
 	*type = m_type;
-	return specular.evaluate(info.color * m_texture->evaluate(info.texcoord), *wo, info.normal);
+	return specular.evaluate(m_texture->evaluate(info.texcoord), *wo, info.normal);
 }
 
 }

@@ -22,11 +22,11 @@ void MeshOctree::build()
 	m_rootNode.build(triangles, maxOctreeDepth);
 }
 
-bool MeshOctree::intersect(const Ray & ray, Intersection &intersection) const
+bool MeshOctree::intersect(const Ray & ray, Intersection *intersection) const
 {
 	if (!m_bbox.intersect(ray))
 		return false;
-	return m_rootNode.intersect(ray, intersection);
+	return m_rootNode.intersect(ray, *intersection);
 }
 
 MeshOctree::Node::Node(MeshOctree * mesh) :

@@ -2,6 +2,13 @@
 
 namespace prim {
 
+Hitable::Hitable(const mat4f & transform, Material * material) :
+	m_localToWorld(transform),
+	m_worldToLocal(m_localToWorld.inverse()),
+	m_material(material)
+{
+}
+
 void Hitable::setTransform(const Transform & transform)
 {
 	m_localToWorld = transform;

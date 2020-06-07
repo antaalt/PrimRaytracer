@@ -17,9 +17,10 @@ color4f sampleLights(const ComputedIntersection &info, const Scene& scene)
 	// TODO sample one light function that return lightID
 	for (Light *light : scene.lights)
 	{
-		Ray shadowRay(light->sample(info.point));
 		Culling culling;
-		Intersection intersection(culling, true);
+		Ray shadowRay(light->sample(info.point));
+		shadowRay.culling = &culling;
+		Intersection intersection(true);
 		if (scene.intersect(shadowRay, intersection))
 			return color4f(0.f);
 		float pdf = light->pdf(shadowRay);
@@ -33,11 +34,12 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 	uint32_t bounces = 0;
 	color4f output(0.f);
 	color4f reflectance(1.f);
+	Culling culling;
 	Ray rayBounce(ray);
+	rayBounce.culling = &culling;
 	do
 	{
-		Culling culling;
-		Intersection intersection(culling, false);
+		Intersection intersection(false);
 		if (!scene.intersect(rayBounce, intersection))
 		{
 			// Miss
@@ -61,7 +63,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 		color4f lightRadiance(0.f);		
 		//if (!(type & BSDF_SPECULAR))
 		{
-			lightRadiance = sampleLights(info, scene);
+			//lightRadiance = sampleLights(info, scene);
 		}
 
 		// Russian roulette

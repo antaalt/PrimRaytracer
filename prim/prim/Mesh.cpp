@@ -15,14 +15,14 @@ void Mesh::build()
 		m_bbox.include(position);
 }
 
-bool Mesh::intersect(const Ray & worldRay, Intersection &intersection) const
+bool Mesh::intersect(const Ray & worldRay, Intersection *intersection) const
 {
 	// World to local transform
 	Ray localRay = m_worldToLocal(worldRay);
 	if (!m_bbox.intersect(localRay))
 		return false;
-	bool terminateOnFirstHit = intersection.terminateOnFirstHit();
-	Intersection localIntersection(intersection.getCulling(), terminateOnFirstHit);
+	bool terminateOnFirstHit = intersection->terminateOnFirstHit();
+	Intersection localIntersection(terminateOnFirstHit);
 	for (const Triangle &tri : m_triangles)
 	{
 		if (intersectTri(tri, localRay, localIntersection) && terminateOnFirstHit)
@@ -30,7 +30,7 @@ bool Mesh::intersect(const Ray & worldRay, Intersection &intersection) const
 			// local Intersection to world intersection
 			point3f localHit = localRay(localIntersection.getDistance());
 			point3f worldHit = m_localToWorld(localHit);
-			return intersection.report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
+			return intersection->report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
 		}
 	}
 	if (localIntersection.valid())
@@ -38,7 +38,7 @@ bool Mesh::intersect(const Ray & worldRay, Intersection &intersection) const
 		// local Intersection to world intersection
 		point3f localHit = localRay(localIntersection.getDistance());
 		point3f worldHit = m_localToWorld(localHit);
-		return intersection.report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
+		return intersection->report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
 	}
 	else
 	{
@@ -46,12 +46,11 @@ bool Mesh::intersect(const Ray & worldRay, Intersection &intersection) const
 	}
 }
 
-void Mesh::compute(const point3f &worldHit, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord, color4f * color) const
+void Mesh::compute(const point3f &worldHit, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord) const
 {
 	const Triangle &tri = m_triangles[indice];
 	*normal = norm3f::normalize(m_localToWorld(interpolate(m_normals[tri.A], m_normals[tri.B], m_normals[tri.C], barycentric)));
 	*texCoord = interpolate(m_uvs[tri.A], m_uvs[tri.B], m_uvs[tri.C], barycentric);
-	*color = interpolate(m_colors[tri.A], m_colors[tri.B], m_colors[tri.C], barycentric);
 }
 
 void Mesh::include(BoundingBox &boundingBox)
@@ -89,7 +88,7 @@ bool Mesh::intersectTri(const Mesh::Triangle & tri, const Ray & localRay, Inters
 	const vec3f h = vec3f::cross(d, AC);
 	const float det = vec3f::dot(AB, h);
 
-	if (localIntersection.cull(det))
+	if (localRay.cull(det))
 		return false;
 
 	float invDet = 1.f / det;

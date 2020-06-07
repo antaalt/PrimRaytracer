@@ -13,7 +13,7 @@ color4f Matte::sample(const ComputedIntersection & info, vec3f * wo, float * pdf
 	*wo = matte.scatter(info.direction, info.normal);
 	*pdf = matte.pdf(*wo, info.normal);
 	*type = m_type;
-	return matte.evaluate(info.color * m_texture->evaluate(info.texcoord), *wo, info.normal);
+	return matte.evaluate(m_texture->evaluate(info.texcoord), *wo, info.normal);
 }
 
 }
