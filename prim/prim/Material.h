@@ -33,7 +33,7 @@ class Material
 {
 public:
 	Material(Texture4f *color, BSDFType type) : m_type(type), m_texture(color) {}
-	virtual geometry::color4f sample(const ComputedIntersection &info, vec3f *wo, float *pdf, BSDFType *type) const = 0;
+	virtual color4f sample(const Intersection &intersection, const vec3f &wi, vec3f *wo, float *pdf, BSDFType *type) const = 0;
 	BSDFType getType() const { return m_type; }
 protected:
 	Texture4f *m_texture;

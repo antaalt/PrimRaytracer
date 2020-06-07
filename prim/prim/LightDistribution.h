@@ -15,7 +15,7 @@ public:
 
 	void addLight(Light* light);
 
-	color4f sampleOneLight(const ComputedIntersection &info, const Scene &scene) const;
+	color4f sampleOneLight(const Intersection &intersection, const Scene &scene) const;
 private:
 	std::vector<Light*> lights;
 };

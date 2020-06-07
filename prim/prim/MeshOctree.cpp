@@ -7,9 +7,9 @@ static const uint32_t maxOctreeDepth = 6;
 static const uint32_t octreeChildCount = 8;
 static const uint32_t maxChildHitable = 10;
 
-MeshOctree::MeshOctree(const mat4f &transform, Material *material) :
-	Mesh(transform, material),
-	m_rootNode(this)
+MeshOctree::MeshOctree(Material *material) :
+	Mesh(material),
+	m_rootNode()
 {
 }
 
@@ -26,100 +26,102 @@ bool MeshOctree::intersect(const Ray & ray, Intersection *intersection) const
 {
 	if (!m_bbox.intersect(ray))
 		return false;
-	return m_rootNode.intersect(ray, *intersection);
+	return m_rootNode.intersect(ray, intersection);
 }
 
-MeshOctree::Node::Node(MeshOctree * mesh) :
-	m_mesh(mesh),
-	m_bbox(),
-	m_childrens{ nullptr },
-	m_origin(0.f)
+MeshOctree::Node::Node() :
+	bbox(),
+	childrens{ nullptr },
+	origin(0.f)
 {
 }
 
 MeshOctree::Node::~Node()
 {
 	for (unsigned int i = 0; i < octreeChildCount; i++)
-		delete m_childrens[i];
+		delete childrens[i];
 }
 
 uint32_t MeshOctree::Node::build(const std::vector<const Triangle*> &triangles, uint32_t depth)
 {
 	// Compute bbox
 	for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
-	{
-		m_bbox.include(m_mesh->m_positions[triangles[iTri]->A]);
-		m_bbox.include(m_mesh->m_positions[triangles[iTri]->B]);
-		m_bbox.include(m_mesh->m_positions[triangles[iTri]->C]);
-	}
+		triangles[iTri]->include(bbox);
 
 	if (--depth == 0 || triangles.size() <= maxChildHitable)
 	{
 		for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
-			m_triangles.push_back(triangles[iTri]);
+			this->triangles.push_back(triangles[iTri]);
 		ASSERT(isLeaf(), "Should be a leaf");
 		return 0;
 	}
 	// Get optimal center of bbox
-#if 0
+#if 1
 	point3f c(0.f);
 	for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
-		c = c + (m_mesh->m_positions[triangles[iTri].A] + m_mesh->m_positions[triangles[iTri].B] + m_mesh->m_positions[triangles[iTri].C]) / 3.f;
+		c = c + (triangles[iTri]->A.position + triangles[iTri]->B.position + triangles[iTri]->C.position) / 3.f;
 	c = c / static_cast<float>(triangles.size());
-	ASSERT(m_bbox.contain(c), "Not inside");
+	ASSERT(bbox.contain(c), "Not inside");
 #else
-	m_origin = m_bbox.center();
+	origin = bbox.center();
 #endif
 	unsigned int created = 0;
 	for (int iChild = 0; iChild < octreeChildCount; iChild++)
 	{
 		// Compute new bounding box for this child
 		BoundingBox childBox;
-		childBox.min.x = (iChild & (1 << 2)) ? m_origin.x : m_bbox.min.x;
-		childBox.max.x = (iChild & (1 << 2)) ? m_bbox.max.x : m_origin.x;
-		childBox.min.y = (iChild & (1 << 1)) ? m_origin.y : m_bbox.min.y;
-		childBox.max.y = (iChild & (1 << 1)) ? m_bbox.max.y : m_origin.y;
-		childBox.min.z = (iChild & (1 << 0)) ? m_origin.z : m_bbox.min.z;
-		childBox.max.z = (iChild & (1 << 0)) ? m_bbox.max.z : m_origin.z;
-		ASSERT(m_bbox.contain(childBox), "Not inside");
+		childBox.min.x = (iChild & (1 << 2)) ? origin.x : bbox.min.x;
+		childBox.max.x = (iChild & (1 << 2)) ? bbox.max.x : origin.x;
+		childBox.min.y = (iChild & (1 << 1)) ? origin.y : bbox.min.y;
+		childBox.max.y = (iChild & (1 << 1)) ? bbox.max.y : origin.y;
+		childBox.min.z = (iChild & (1 << 0)) ? origin.z : bbox.min.z;
+		childBox.max.z = (iChild & (1 << 0)) ? bbox.max.z : origin.z;
+		ASSERT(bbox.contain(childBox), "Not inside");
 
 		std::vector<const Triangle*> childTri;
 		for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 		{
 			const Triangle *tri = triangles[iTri];
 			// TODO fix when all point out, but part of triangle inside child
-			if (childBox.contain(m_mesh->m_positions[tri->A]) || childBox.contain(m_mesh->m_positions[tri->B]) || childBox.contain(m_mesh->m_positions[tri->C]))
+			if (childBox.contain(tri->A.position) || childBox.contain(tri->B.position) || childBox.contain(tri->C.position))
 				childTri.push_back(tri);
 		}
 		if (childTri.size() > 0)
 		{
-			m_childrens[iChild] = new Node(m_mesh);
-			created += m_childrens[iChild]->build(childTri, depth);
+			childrens[iChild] = new Node;
+			created += childrens[iChild]->build(childTri, depth);
 			created++;
 		}
 	}
 	return created;
 }
 
-bool MeshOctree::Node::intersect(const Ray & ray, Intersection &intersection) const
+bool MeshOctree::Node::intersect(const Ray & ray, Intersection *intersection) const
 {
-	if (!m_bbox.intersect(ray))
+	if (!bbox.intersect(ray))
 		return false;
+	bool hit = false;
 	if (isLeaf())
 	{
-		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
-		for (const Triangle *triangle : m_triangles)
-			if (m_mesh->intersectTri(*triangle, ray, intersection) && terminateOnFirstHit)
-				return true;
-		return intersection.valid();
+		for (const Triangle *triangle : triangles)
+		{
+			if (triangle->intersect(ray, intersection))
+			{
+				hit = true;
+			}
+		}
+		return hit;
 	}
 	else
 	{
-		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (uint32_t i = 0; i < octreeChildCount; i++)
-			if (m_childrens[i]->intersect(ray, intersection) && terminateOnFirstHit)
-				return true;
-		return intersection.valid();
+		{
+			if (childrens[i]->intersect(ray, intersection))
+			{
+				hit = true;
+			}
+		}
+		return hit;
 	}
 }
 

@@ -4,19 +4,18 @@
 namespace prim {
 
 
-Sphere::Sphere(const mat4f & transform, float radius, Material * material) :
-	Hitable(transform, material),
+Sphere::Sphere(float radius, Material * material) :
+	Hitable(material),
 	m_radius(radius)
 {
 }
 
-bool Sphere::intersect(const Ray &worldRay, Intersection *intersection) const
+bool Sphere::intersect(const Ray &ray, Intersection *intersection) const
 {
 	// World to local transform
-	const Ray localRay = m_worldToLocal(worldRay);
 
-	vec3f o(localRay.origin);
-	vec3f d(localRay.direction);
+	vec3f o(ray.origin);
+	vec3f d(ray.direction);
 	
 	float a = vec3f::dot(d, d);
 	float b = 2.f * vec3f::dot(d, o);
@@ -31,37 +30,39 @@ bool Sphere::intersect(const Ray &worldRay, Intersection *intersection) const
 	float t1 = (-b - delta) / (2.f * a);
 	float t2 = (-b + delta) / (2.f * a);
 	// Local to world transform
-	if (t1 > localRay.tmin && t1 < localRay.tmax)
+	if (t1 > ray.tmin && t1 < ray.tmax)
 	{
-		point3f localHit = localRay(t1);
-		localHit *= m_radius / point3f::distance(localHit, point3f(0)); // Refine hit
-		point3f worldHit = m_localToWorld(localHit);
-		float dist = point3f::distance(worldHit, worldRay.origin);
-		return intersection->report(dist, vec2f(0.f), this);
+		// Local to world transform
+		const point3f center(0);
+		point3f hitPoint = ray(t1);
+		hitPoint *= m_radius / point3f::distance(hitPoint, center); // Refine hit
+		const norm3f normal = norm3f::normalize(norm3f(hitPoint - center));
+		// https://en.wikipedia.org/wiki/UV_mapping
+		const float u = 0.5f + geometry::arctan2(-normal.z, -normal.x) / (2.f * geometry::pi<float>);
+		const float v = 0.5f - geometry::arcsin(-normal.y)() / geometry::pi<float>();
+		const uv2f texcoord = uv2f(u, v);
+		intersection->report(hitPoint, normal, texcoord, m_material);
+		ray.tmax = t1;
+		return true;
+
 	}
-	else if (t2 > localRay.tmin && t2 < localRay.tmax)
+	else if (t2 > ray.tmin && t2 < ray.tmax)
 	{
-		point3f localHit = localRay(t2);
-		localHit *= m_radius / point3f::distance(localHit, point3f(0)); // Refine hit
-		point3f worldHit = m_localToWorld(localHit);
-		float dist = point3f::distance(worldHit, worldRay.origin);
-		return intersection->report(dist, vec2f(0.f), this);
+		// Local to world transform
+		const point3f center(0);
+		point3f hitPoint = ray(t2);
+		hitPoint *= m_radius / point3f::distance(hitPoint, center); // Refine hit
+		const norm3f normal = norm3f::normalize(norm3f(hitPoint - center));
+		// https://en.wikipedia.org/wiki/UV_mapping
+		const float u = 0.5f + geometry::arctan2(-normal.z, -normal.x) / (2.f * geometry::pi<float>);
+		const float v = 0.5f - geometry::arcsin(-normal.y)() / geometry::pi<float>();
+		const uv2f texcoord = uv2f(u, v);
+		intersection->report(hitPoint, normal, texcoord, m_material);
+		ray.tmax = t2;
+		return true;
 	}
 	else
 		return false;
-}
-
-void Sphere::compute(const point3f &worldHit, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord) const
-{
-	// Local to world transform
-	const point3f center(0);
-	const point3f localHit = m_worldToLocal(worldHit);
-	const norm3f localNormal = norm3f::normalize(norm3f(localHit - center));
-	*normal = m_localToWorld(localNormal);
-	// https://en.wikipedia.org/wiki/UV_mapping
-	const float u = 0.5f + geometry::arctan2(-localNormal.z, -localNormal.x) / (2.f * geometry::pi<float>);
-	const float v = 0.5f - geometry::arcsin(-localNormal.y)() / geometry::pi<float>();
-	*texCoord = uv2f(u, v);
 }
 
 float Sphere::area() const
@@ -69,11 +70,11 @@ float Sphere::area() const
 	return 4.f * geometry::pi<float>() * m_radius * m_radius;
 }
 
-void Sphere::include(BoundingBox &boundingBox)
+void Sphere::include(BoundingBox &boundingBox) const
 {
 	// Local to world transform
-	boundingBox.include(m_localToWorld(point3f(0) + point3f(m_radius)));
-	boundingBox.include(m_localToWorld(point3f(0) - point3f(m_radius)));
+	boundingBox.include(point3f(0) + point3f(m_radius));
+	boundingBox.include(point3f(0) - point3f(m_radius));
 }
 
 }

@@ -4,34 +4,20 @@
 
 namespace prim {
 
-Intersection::Intersection(bool terminateOnFirstHit) :
-	m_terminateOnFirstHit(terminateOnFirstHit),
-	m_distance(std::numeric_limits<float>::max()),
-	m_barycentric(0.f),
-	m_hitable(nullptr),
-	m_indice(0)
+Intersection::Intersection() :
+	point(0.f),
+	normal(0.f),
+	texcoord(0.f),
+	material(nullptr)
 {
 }
 
-bool Intersection::report(float distance, vec2f barycentric, const Hitable * hitable, Indice indice)
+void Intersection::report(const point3f & hitPoint, const norm3f & normal, const uv2f & texcoord, const Material * material)
 {
-	if (m_distance <= distance)
-		return false;
-	m_distance = distance;
-	m_barycentric = barycentric;
-	m_hitable = hitable;
-	m_indice = indice;
-	return true;
-}
-
-ComputedIntersection Intersection::compute(const Ray & ray) const
-{ 
-	ComputedIntersection computedIntersection;
-	computedIntersection.point = ray(m_distance);
-	computedIntersection.direction = ray.direction;
-	computedIntersection.material = m_hitable->getMaterial();
-	m_hitable->compute(computedIntersection.point, m_barycentric, m_indice, &computedIntersection.normal, &computedIntersection.texcoord);
-	return computedIntersection;
+	this->point = hitPoint;
+	this->normal = normal;
+	this->texcoord = texcoord;
+	this->material = material;
 }
 
 }

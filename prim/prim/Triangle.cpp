@@ -3,65 +3,85 @@
 
 namespace prim {
 
-norm3f interpolate(const norm3f &nA, const norm3f &nB, const norm3f &nC, vec2f barycentric)
+norm3f Triangle::interpolate(const norm3f &nA, const norm3f &nB, const norm3f &nC, vec2f barycentric)
 {
 	return norm3f::normalize(norm3f(nB * barycentric.x + nC * barycentric.y + nA * (1.f - barycentric.x - barycentric.y)));
 }
 
-uv2f interpolate(const uv2f &tA, const uv2f &tB, const uv2f &tC, vec2f barycentric)
+uv2f Triangle::interpolate(const uv2f &tA, const uv2f &tB, const uv2f &tC, vec2f barycentric)
 {
 	return tB * barycentric.x + tC * barycentric.y + tA * (1.f - barycentric.x - barycentric.y);
 }
 
-color4f interpolate(const color4f &cA, const color4f &cB, const color4f &cC, vec2f barycentric)
+Triangle::Triangle(Material * material) :
+	Hitable(material)
 {
-	return cB * barycentric.x + cC * barycentric.y + cA * (1.f - barycentric.x - barycentric.y);
 }
 
-bool Triangle::intersect(const Ray & worldRay, Intersection *intersection) const
+Triangle::Triangle(const Vertex & A, const Vertex & B, const Vertex & Cs, Material * material) :
+	Hitable(material),
+	A(A), B(B), C(C)
+{
+}
+
+bool Triangle::intersect(const Ray & ray, Intersection *intersection) const
 {
 	// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 	// This algorithm require ray direction to be normalized. So we normalize
 	// the direction and keep the normalization factor to rescale final t.
-	const Ray localRay = m_worldToLocal(worldRay);
-	const float normalizationScale = localRay.direction.norm();
-	const point3f o = localRay.origin;
-	const vec3f d = localRay.direction / normalizationScale;
-
+	// This let us support intersection which where scaled by a scaled transform.
+	const float normalizationScale = ray.direction.norm();
+	const point3f o = ray.origin;
+	const vec3f d = ray.direction / normalizationScale;
+	
 	vec3f AB(B.position - A.position);
 	vec3f AC(C.position - A.position);
 	vec3f h = vec3f::cross(d, AC);
-	float a = vec3f::dot(AB, h);
+	float det = vec3f::dot(AB, h);
 
-	if (localRay.cull(a))
+	if (ray.cull(det))
 		return false;
 
-	float f = 1.f / a;
+	float invDet = 1.f / det;
 			
 	vec3f s(o - A.position);
-	float u = f * vec3f::dot(s, h);
+	float u = invDet * vec3f::dot(s, h);
 	if (u < 0.f || u > 1.f)
 		return false;
 	vec3f q = vec3f::cross(s, AB);
-	float v = f * vec3f::dot(d, q);
+	float v = invDet * vec3f::dot(d, q);
 	if (v < 0.f || u + v > 1.f)
 		return false;
-	float t = f * vec3f::dot(AC, q);
-	if (t > std::numeric_limits<float>::epsilon() && t > localRay.tmin && t < localRay.tmax)
-		return intersection->report(t * normalizationScale, vec2f(u, v), this);
+	float t = invDet * vec3f::dot(AC, q);
+	if (t > std::numeric_limits<float>::epsilon() && t > ray.tmin && t < ray.tmax)
+	{
+		const vec2f barycentric = vec2f(u, v);
+		const point3f hitPoint = ray(t / normalizationScale);
+		const norm3f normal = interpolate(A.normal, B.normal, C.normal, barycentric);
+		const uv2f texCoord = interpolate(A.texcoord, B.texcoord, C.texcoord, barycentric);
+		intersection->report(hitPoint, normal, texCoord, m_material);
+		ray.tmax = t; // update closest hit
+		return true;
+	}
 	else
 		return false;
 }
 
-void Triangle::compute(const point3f & hitPoint, const vec2f & barycentric, Intersection::Indice indice, norm3f * normal, uv2f * texCoord) const
+void Triangle::include(BoundingBox & boundingBox) const
 {
-	*normal = norm3f::normalize(m_localToWorld(interpolate(A.normal, B.normal, C.normal, barycentric)));
-	*texCoord = interpolate(A.texcoord, B.texcoord, C.texcoord, barycentric);
+	boundingBox.include(A.position);
+	boundingBox.include(B.position);
+	boundingBox.include(C.position);
 }
 
 float Triangle::area() const
 {
-	return geometry::vec3f::cross(geometry::vec3f(B.position - A.position), geometry::vec3f(C.position - A.position)).norm() / 2.f;
+	return vec3f::cross(vec3f(B.position - A.position), vec3f(C.position - A.position)).norm() / 2.f;
+}
+
+point3f Triangle::center() const
+{
+	return (A.position + B.position + C.position) / 3.f;
 }
 
 }

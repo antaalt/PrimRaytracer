@@ -7,13 +7,13 @@ Metal::Metal(Texture4f * color, TextureFloat *roughness) :
 	m_roughness(roughness)
 {
 }
-color4f Metal::sample(const ComputedIntersection & info, geometry::vec3f * wo, float * pdf, BSDFType * type) const
+color4f Metal::sample(const Intersection &intersection, const vec3f &wi, geometry::vec3f * wo, float * pdf, BSDFType * type) const
 {
-	MicrofacetReflection microfacet(m_roughness->evaluate(info.texcoord));
-	*wo = microfacet.scatter(info.direction, info.normal);
-	*pdf = microfacet.pdf(*wo, info.normal);
+	MicrofacetReflection microfacet(m_roughness->evaluate(intersection.texcoord));
+	*wo = microfacet.scatter(wi, intersection.normal);
+	*pdf = microfacet.pdf(*wo, intersection.normal);
 	*type = m_type;
-	return microfacet.evaluate(m_texture->evaluate(info.texcoord), *wo, info.normal);
+	return microfacet.evaluate(m_texture->evaluate(intersection.texcoord), *wo, intersection.normal);
 }
 
 }

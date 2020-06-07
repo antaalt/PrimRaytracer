@@ -11,7 +11,7 @@ PathTracer::PathTracer(uint32_t maxDepth) :
 {
 }
 
-color4f sampleLights(const ComputedIntersection &info, const Scene& scene)
+color4f sampleLights(const Intersection &info, const Scene& scene)
 {
 	color4f radiance(0.f);
 	// TODO sample one light function that return lightID
@@ -20,7 +20,7 @@ color4f sampleLights(const ComputedIntersection &info, const Scene& scene)
 		Culling culling;
 		Ray shadowRay(light->sample(info.point));
 		shadowRay.culling = &culling;
-		Intersection intersection(true);
+		Intersection intersection;
 		if (scene.intersect(shadowRay, intersection))
 			return color4f(0.f);
 		float pdf = light->pdf(shadowRay);
@@ -39,7 +39,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 	rayBounce.culling = &culling;
 	do
 	{
-		Intersection intersection(false);
+		Intersection intersection;
 		if (!scene.intersect(rayBounce, intersection))
 		{
 			// Miss
@@ -47,8 +47,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 			output += reflectance * skyColor;
 			return output;
 		}
-		ComputedIntersection info = intersection.compute(rayBounce);
-
+		//return color4f(intersection.point.x, intersection.point.y, intersection.point.z, 1.f);
 		// if material is emissive, return emission
 		color4f emission(0.f);
 
@@ -56,8 +55,8 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 		float pdf;
 		vec3f wo;
 		BSDFType type;
-		const color4f brdf = info.material->sample(info, &wo, &pdf, &type);
-		reflectance *= brdf * vec3f::dot(wo, vec3f(info.normal)) / pdf;
+		const color4f brdf = intersection.material->sample(intersection, rayBounce.direction, &wo, &pdf, &type);
+		reflectance *= brdf * vec3f::dot(wo, vec3f(intersection.normal)) / pdf;
 
 		// Sample light (depending on type)
 		color4f lightRadiance(0.f);		
@@ -77,7 +76,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 
 		output += lightRadiance * reflectance;
 		rayBounce.direction = wo;
-		rayBounce.origin = info.point;
+		rayBounce.origin = intersection.point;
 	} while (++bounces < m_maxDepth);
 	return output;
 }

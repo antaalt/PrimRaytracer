@@ -3,6 +3,7 @@
 
 #include "math/geometry.h"
 #include "BoundingBox.h"
+#include "Intersection.h"
 
 namespace prim {
 

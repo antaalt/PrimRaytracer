@@ -14,26 +14,26 @@ void setScene(prim::Scene &scene)
 {
 	using namespace prim;
 	using namespace geometry;
-
-	scene.textures.push_back(new ConstantTexture<float>(color4f(0.9f)));
-	scene.textures.push_back(new ConstantTexture<float>(color4f(0.5f, 1.f, 0.5f, 1.f)));
-	scene.textures.push_back(new ConstantTexture<float>(color4f(0.82f, 0.62f, 0.19f, 1.f)));
-	scene.textures.push_back(new Checker<float>(color4f(0.1f), color4f(1.f), 40, 40));
-	scene.textures.push_back(new Checker<float>(color4f(0.5f, 0.5f, 1.f, 1.f), color4f(1.f, 0.5f, 0.5f, 1.f), 2, 2));
-	scene.textures.push_back(new ConstantTexture<float>(color4f(0.1f)));
+#if 1
+	scene.textures.push_back(new ConstantTexture4f(color4f(0.9f)));
+	scene.textures.push_back(new ConstantTexture4f(color4f(0.5f, 1.f, 0.5f, 1.f)));
+	scene.textures.push_back(new ConstantTexture4f(color4f(0.82f, 0.62f, 0.19f, 1.f)));
+	scene.textures.push_back(new CheckerTexture4f(color4f(0.1f), color4f(1.f), 40, 40));
+	scene.textures.push_back(new CheckerTexture4f(color4f(0.5f, 0.5f, 1.f, 1.f), color4f(1.f, 0.5f, 0.5f, 1.f), 2, 2));
+	ConstantTextureFloat *roughness = new ConstantTextureFloat(0.5f); // TODO fix leak
 	
 	scene.materials.push_back(new Glass(scene.textures[0], 1.1f));
 	scene.materials.push_back(new Matte(scene.textures[1]));
-	scene.materials.push_back(new Metal(scene.textures[2], scene.textures[5]));
+	scene.materials.push_back(new Metal(scene.textures[2], roughness));
 	scene.materials.push_back(new Matte(scene.textures[3]));
 	scene.materials.push_back(new Matte(scene.textures[4]));
 
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f)), 0.4f, scene.materials[0]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, 0.1f, -1.0f)), 0.5f, scene.materials[1]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.2f, 0.f)), 0.6f, scene.materials[2]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(0.f, -30.f, 0.f)), 29.f, scene.materials[3]));
-	scene.hitables.push_back(new Sphere(mat4f::translate(vec3f(-1.5f, 0.2f, 0.f)), 0.6f, scene.materials[4]));
-#if 0
+	scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(0.f)), new Sphere(0.5f, scene.materials[0])));
+	scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(0.f, 0.1f, -1.0f)), new Sphere(0.5f, scene.materials[1])));
+	scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(-1.5f, 0.2f, 0.f)), new Sphere(0.6f, scene.materials[2])));
+	scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(0.f, -30.f, 0.f)), new Sphere(29.f, scene.materials[3])));
+	scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(1.5f, 0.2f, 0.f)), new Sphere(0.6f, scene.materials[4])));
+#if 1
 	{
 		OBJLoader loader;
 		std::vector<uint8_t> data;
@@ -48,7 +48,27 @@ void setScene(prim::Scene &scene)
 		}
 		MemoryReader reader(data);
 		loader.load(reader, scene);
-		scene.hitables.back()->setTransform(Transform(mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))));
+		scene.nodes.back()->setTransform(Transform(mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))));
+	}
+#endif
+#else
+	{
+		OBJLoader loader;
+		std::vector<uint8_t> data;
+		{
+			//std::ifstream file("../prim/data/models/aya/091_W_Aya_10K.obj", std::ios::ate);
+			std::ifstream file("F:/Downloads/sponza/sponza.obj", std::ios::ate);
+			if (!file)
+				throw std::runtime_error("Could not load file");
+			std::streampos size = file.tellg();
+			file.seekg(0);
+			data.resize(size);
+			file.read(reinterpret_cast<char*>(data.data()), size);
+		}
+		MemoryReader reader(data);
+		loader.load(reader, scene);
+		scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(0.1f))));
+		//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(15.f))));
 	}
 #endif
 	scene.lights.push_back(new SunLight(norm3f(0.f, 1.f, 0.f), color4f(1.f), 19000.f));

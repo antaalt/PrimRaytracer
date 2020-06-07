@@ -142,29 +142,26 @@ void displayNode(const prim::MeshBVH &mesh, const prim::MeshBVH::Node &node)
 	snprintf(buffer, 256, "Root##%p", &node);
 	if (ImGui::TreeNodeEx(buffer, ImGuiTreeNodeFlags_None))
 	{
-		point3f min = node.getBbox().min;
-		point3f max = node.getBbox().max;
+		point3f min = node.bbox.min;
+		point3f max = node.bbox.max;
 		ImGui::Text("min (%f, %f, %f)", min.x, min.y, min.z);
 		ImGui::Text("max (%f, %f, %f)", max.x, max.y, max.z);
-		ImGui::Text("extent : %f", node.getBbox().extent().norm());
+		ImGui::Text("extent : %f", node.bbox.extent().norm());
 		if (node.isLeaf())
 		{
-			const std::vector<const prim::MeshBVH::Triangle*> &tris = node.getTri();
-			for (const prim::MeshBVH::Triangle *tri : tris)
+			for (const prim::Triangle *tri : node.triangles)
 			{
 				snprintf(buffer, 256, "tri##%p", tri);
 				if (ImGui::TreeNodeEx(buffer, ImGuiTreeNodeFlags_None))
 				{
 					for (int i = 0; i < 3; i++)
 					{
-						point3f pos = mesh.getPosition(tri->data[i]);
-						norm3f norm = mesh.getNormal(tri->data[i]);
-						uv2f uv = mesh.getUV(tri->data[i]);
-						color4f color = mesh.getColor(tri->data[i]);
+						point3f pos = tri->vertices[i].position;
+						norm3f norm = tri->vertices[i].normal;
+						uv2f texcoord = tri->vertices[i].texcoord;
 						ImGui::Text("pos  (%f, %f, %f)", pos.x, pos.y, pos.z);
 						ImGui::Text("norm (%f, %f, %f)", norm.x, norm.y, norm.z);
-						ImGui::Text("uv   (%f, %f)", uv.u, uv.v);
-						ImGui::Text("col  (%f, %f, %f, %f)", color.r, color.g, color.b, color.a);
+						ImGui::Text("uv   (%f, %f)", texcoord.u, texcoord.v);
 						ImGui::Separator();
 					}
 					ImGui::TreePop();
@@ -174,9 +171,9 @@ void displayNode(const prim::MeshBVH &mesh, const prim::MeshBVH::Node &node)
 		else
 		{
 			ImGui::Separator();
-			displayNode(mesh, node.getChild(0));
+			displayNode(mesh, *node.childrens[0]);
 			ImGui::Separator();
-			displayNode(mesh, node.getChild(1));
+			displayNode(mesh, *node.childrens[1]);
 		}
 		ImGui::TreePop();
 	}
@@ -227,10 +224,11 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 		}
 		if (ImGui::CollapsingHeader("Scene"))
 		{
-			if (ImGui::TreeNode("Hitables", "Hitables (%d)", scene.hitables.size()))
+			if (ImGui::TreeNode("Hitables", "Hitables (%d)", scene.nodes.size()))
 			{
-				for (prim::Hitable *hitable : scene.hitables)
+				for (prim::TransformNode *node : scene.nodes)
 				{
+					const prim::Hitable *hitable = node->getHitable();
 					char buffer[256];
 					snprintf(buffer, 256, "Hitable##%p", hitable);
 					if (ImGui::TreeNode(buffer))
@@ -243,7 +241,7 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 							ImGui::Text("Mesh");
 							break;
 						case HitableType::MESH_BVH: {
-							prim::MeshBVH* meshBVH = dynamic_cast<prim::MeshBVH*>(hitable);
+							const prim::MeshBVH* meshBVH = dynamic_cast<const prim::MeshBVH*>(hitable);
 							displayNode(*meshBVH, meshBVH->getRoot());
 							break;
 						}
@@ -254,7 +252,7 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 							ImGui::Text("Nothing here");
 							break;
 						}
-						mat4f mat = hitable->getTransform().getMatrix();
+						mat4f mat = node->getTransform().getMatrix();
 						bool matUpdated = false;
 						matUpdated |= ImGui::InputFloat4("##modeltransformcol1", mat.cols[0].data);
 						matUpdated |= ImGui::InputFloat4("##modeltransformcol2", mat.cols[1].data);
@@ -263,7 +261,7 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 						if (matUpdated)
 						{
 							needUpdate = true;
-							hitable->setTransform(prim::Transform(mat));
+							node->setTransform(prim::Transform(mat));
 						}
 						ImGui::TreePop();
 					}
@@ -271,7 +269,7 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 				}
 				ImGui::TreePop();
 			}
-			if (ImGui::TreeNode("Materials", "Materials (%d)", scene.hitables.size()))
+			if (ImGui::TreeNode("Materials", "Materials (%d)", scene.materials.size()))
 			{
 				for (prim::Material *material : scene.materials)
 				{

@@ -29,8 +29,22 @@
 
 namespace prim {
 
-struct NodeBVH : Hitable {
-	// bbox bounding volume hierarchy with transform
+class TransformNode : public Hitable {
+public:
+	TransformNode(const mat4f &transform, Hitable *hitable);
+	~TransformNode();
+
+	void build() override;
+	bool intersect(const Ray &ray, Intersection *intersection) const override;
+	void include(BoundingBox &boundingBox) const override;
+
+	void setTransform(const Transform &transform);
+	const Transform &getTransform() const;
+	const Hitable *getHitable() const { return m_hitable; }
+private:
+	Transform m_localToWorld;
+	Transform m_worldToLocal;
+	Hitable *m_hitable;
 };
 
 struct Scene {
@@ -38,7 +52,7 @@ struct Scene {
 	bool intersect(const Ray &ray, Intersection &intersection) const;
 
 	std::vector<Light*> lights;
-	std::vector<Hitable*> hitables;
+	std::vector<TransformNode*> nodes;
 	std::vector<Material*> materials;
 	std::vector<Texture4f*> textures;
 	BoundingBox bbox;

@@ -22,7 +22,7 @@ struct Ray {
 	Culling *culling; // Culling of the ray against geometry
 	// TODO add flag terminate on first hit
 	float tmin; // Minimal distance to avoid self intersection
-	mutable float tmax; // Maximum distance. Mutable so that it can register last hit to get closest hit.
+	mutable float tmax; // Maximum distance. Mutable so that it can register closest hit distance.
 };
 
 }

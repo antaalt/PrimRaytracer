@@ -201,14 +201,15 @@ bool OBJLoader::load(Reader & reader, Scene &scene)
 	size_t totalTriCount = 0;
 	for (const obj::Object &object : objects)
 	{
-		//Texture<float> *texture = new ConstantTexture<float>(color4f(0.5f, 0.5f, 0.5f, 1.f));
-		Texture4f *texture = new ImageTexture4f("../prim/data/textures/1.jpg");
+		Texture4f *texture = new ConstantTexture4f(color4f(0.5f, 0.5f, 0.5f, 1.f));
+		//Texture4f *texture = new ImageTexture4f("../prim/data/textures/1.jpg");
 		//Texture4f *texture = new ImageTexture4f("../prim/data/models/aya/tex/091_W_Aya_2K_01.jpg");
 		Material *material = new Matte(texture);
-		MeshBVH *meshBVH = new MeshBVH(geometry::mat4f::identity(), material);
+		MeshBVH *meshBVH = new MeshBVH(material);
+		TransformNode *node = new TransformNode(mat4f::identity(), meshBVH);
 		scene.textures.push_back(texture);
 		scene.materials.push_back(material);
-		scene.hitables.push_back(meshBVH);
+		scene.nodes.push_back(node);
 		uint32_t iVert = 0;
 		for (const obj::Group &group : object.groups)
 		{
@@ -216,60 +217,48 @@ bool OBJLoader::load(Reader & reader, Scene &scene)
 			{
 				if (face.vertices.size() == 3)
 				{
+					Triangle triangle(material);
 					// It's a triangle !
 					vec3f AB(positions[face[1].posID - 1] - positions[face[0].posID - 1]);
 					vec3f AC(positions[face[2].posID - 1] - positions[face[0].posID - 1]);
 					norm3f normal(vec3f::normalize(vec3f::cross(AB, AC)));
 					for (size_t iVert = 0; iVert < 3; iVert++)
 					{
-						meshBVH->addPosition(positions[face[iVert].posID - 1]);
+						triangle.vertices[iVert].position = positions[face[iVert].posID - 1];
 						if (normals.size() > 0)
-							meshBVH->addNormal(normals[face[iVert].normID - 1]);
+							triangle.vertices[iVert].normal = normals[face[iVert].normID - 1];
 						else
-							meshBVH->addNormal(normal);
+							triangle.vertices[iVert].normal = normal;
 						if (uvs.size() > 0)
-							meshBVH->addUV(uvs[face[iVert].uvID - 1]);
+							triangle.vertices[iVert].texcoord = uvs[face[iVert].uvID - 1];
 						else
-							meshBVH->addUV(uv2f(0.f));
-						meshBVH->addColor(color4f(1.f));
+							triangle.vertices[iVert].texcoord = uv2f(0.f);
 					}
-					meshBVH->addTriangle(MeshBVH::Triangle{
-						static_cast<uint32_t>(iVert) + 0,
-						static_cast<uint32_t>(iVert) + 1,
-						static_cast<uint32_t>(iVert) + 2
-					});
 					iVert += 3;
 					totalTriCount += 1;
+					meshBVH->addTriangle(triangle);
 				}
 				else if (face.vertices.size() == 4)
 				{
 					// It's a quad !
+					std::array<Triangle::Vertex, 4> vertices;
 					vec3f AB(positions[face[1].posID - 1] - positions[face[0].posID - 1]);
 					vec3f AC(positions[face[2].posID - 1] - positions[face[0].posID - 1]);
 					norm3f normal(vec3f::normalize(vec3f::cross(AB, AC)));
 					for (size_t iVert = 0; iVert < 4; iVert++)
 					{
-						meshBVH->addPosition(positions[face[iVert].posID - 1]);
+						vertices[iVert].position = positions[face[iVert].posID - 1];
 						if (normals.size() > 0)
-							meshBVH->addNormal(normals[face[iVert].normID - 1]);
+							vertices[iVert].normal = normals[face[iVert].normID - 1];
 						else
-							meshBVH->addNormal(normal);
+							vertices[iVert].normal = normal;
 						if (uvs.size() > 0)
-							meshBVH->addUV(uvs[face[iVert].uvID - 1]);
+							vertices[iVert].texcoord = uvs[face[iVert].uvID - 1];
 						else
-							meshBVH->addUV(uv2f(0.f));
-						meshBVH->addColor(color4f(1.f));
+							vertices[iVert].texcoord = uv2f(0.f);
 					}
-					meshBVH->addTriangle(MeshBVH::Triangle{
-						static_cast<uint32_t>(iVert) + 0,
-						static_cast<uint32_t>(iVert) + 1,
-						static_cast<uint32_t>(iVert) + 2
-					});
-					meshBVH->addTriangle(MeshBVH::Triangle{
-						static_cast<uint32_t>(iVert) + 0,
-						static_cast<uint32_t>(iVert) + 2,
-						static_cast<uint32_t>(iVert) + 3
-					});
+					meshBVH->addTriangle(Triangle(vertices[0], vertices[1], vertices[2], material));
+					meshBVH->addTriangle(Triangle(vertices[0], vertices[2], vertices[3], material));
 					iVert += 4;
 					totalTriCount += 2;
 				}

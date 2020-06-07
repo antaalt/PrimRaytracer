@@ -17,7 +17,7 @@ void LightDistribution::addLight(Light * light)
 {
 	lights.push_back(light);
 }
-color4f LightDistribution::sampleOneLight(const ComputedIntersection & info, const Scene & scene) const
+color4f LightDistribution::sampleOneLight(const Intersection & intersection, const Scene & scene) const
 {
 	/*unsigned int iLight;
 	float contribFactor = 1.f;

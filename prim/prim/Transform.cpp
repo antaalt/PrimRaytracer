@@ -50,7 +50,11 @@ Ray Transform::operator()(const Ray &ray) const
 	Ray out(ray);
 	out.origin = (*this)(ray.origin);
 	out.direction = (*this)(ray.direction);
-	// TODO scale tmin & tmax depending on transform scale
+	if (ray.tmax < std::numeric_limits<float>::max())
+	{
+		out.tmin = point3f::distance(out.origin, (*this)(ray(ray.tmin)));
+		out.tmax = point3f::distance(out.origin, (*this)(ray(ray.tmax)));
+	}
 	return out;
 }
 

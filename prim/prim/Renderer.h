@@ -15,6 +15,19 @@ struct Tile {
 	vec2u size;
 };
 
+struct Renderer2 {
+
+	// setup tiles & co
+	void build(uint32_t width, uint32_t height);
+
+	void render();
+
+	std::function<void()> onTileComplete;
+	std::function<void()> onRenderFinished;
+
+	std::vector<Tile> tiles;
+};
+
 class Renderer {
 public:
 	Renderer(Tracer &tracer, uint32_t width, uint32_t height);

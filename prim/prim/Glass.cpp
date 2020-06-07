@@ -8,13 +8,13 @@ Glass::Glass(Texture4f * color, float ior) :
 {
 }
 
-color4f Glass::sample(const ComputedIntersection & info, vec3f *wo, float *pdf, BSDFType *type) const
+color4f Glass::sample(const Intersection &intersection, const vec3f &wi, vec3f *wo, float *pdf, BSDFType *type) const
 {
 	Specular specular(m_ior);
-	*wo = specular.scatter(info.direction, info.normal);
-	*pdf = specular.pdf(*wo, info.normal);
+	*wo = specular.scatter(wi, intersection.normal);
+	*pdf = specular.pdf(*wo, intersection.normal);
 	*type = m_type;
-	return specular.evaluate(m_texture->evaluate(info.texcoord), *wo, info.normal);
+	return specular.evaluate(m_texture->evaluate(intersection.texcoord), *wo, intersection.normal);
 }
 
 }

@@ -11,9 +11,9 @@ static const uint32_t childCount = 2;
 static const uint32_t maxKmeanDepth = 15;
 static const float kmeanEpsilon = 0.001f;
 
-MeshBVH::MeshBVH(const mat4f &transform, Material *material) :
-	Mesh(transform, material),
-	m_rootNode(this)
+MeshBVH::MeshBVH(Material *material) :
+	Mesh(material),
+	m_rootNode()
 {
 }
 
@@ -28,38 +28,24 @@ void MeshBVH::build()
 	m_rootNode.build(triangles, 20);
 }
 
-bool MeshBVH::intersect(const Ray & worldRay, Intersection *intersection) const
+bool MeshBVH::intersect(const Ray & ray, Intersection *intersection) const
 {
-	Ray localRay = m_worldToLocal(worldRay);
-	if (!m_bbox.intersect(localRay))
+	if (!m_bbox.intersect(ray))
 		return false;
-	bool terminateOnFirstHit = intersection->terminateOnFirstHit();
-	Intersection localIntersection(terminateOnFirstHit);
-	if (m_rootNode.intersect(localRay, localIntersection))
-	{
-		// local Intersection to world intersection
-		point3f localHit = localRay(localIntersection.getDistance());
-		point3f worldHit = m_localToWorld(localHit);
-		return intersection->report(point3f::distance(worldHit, worldRay.origin), localIntersection.getBarycentric(), this, localIntersection.getIndice());
-	}
-	else
-	{
-		return false;
-	}
+	return m_rootNode.intersect(ray, intersection);
 }
 
-MeshBVH::Node::Node(MeshBVH * mesh) : 
-	m_mesh(mesh), 
-	m_bbox(), 
-	m_triangles(), 
-	m_childrens{ nullptr }
+MeshBVH::Node::Node() : 
+	bbox(), 
+	triangles(), 
+	childrens{ nullptr }
 {
 }
 
 MeshBVH::Node::~Node()
 {
 	for (uint32_t i = 0; i < childCount; i++)
-		delete m_childrens[i];
+		delete childrens[i];
 }
 
 uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uint32_t depth)
@@ -67,21 +53,16 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 	// 0. Compute bbox
 	for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 	{
-		m_bbox.include(m_mesh->m_positions[triangles[iTri]->A]);
-		m_bbox.include(m_mesh->m_positions[triangles[iTri]->B]);
-		m_bbox.include(m_mesh->m_positions[triangles[iTri]->C]);
+		bbox.include(triangles[iTri]->A.position);
+		bbox.include(triangles[iTri]->B.position);
+		bbox.include(triangles[iTri]->C.position);
 	}
 
 	// 1. check the depth and add element
 	if (--depth == 0 || triangles.size() < maxChildHitable)
 	{
 		for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
-		{
-			m_triangles.push_back(triangles[iTri]);
-			ASSERT(triangles[iTri]->A < m_mesh->m_positions.size(), "Incorrect tri id");
-			ASSERT(triangles[iTri]->B < m_mesh->m_positions.size(), "Incorrect tri id");
-			ASSERT(triangles[iTri]->C < m_mesh->m_positions.size(), "Incorrect tri id");
-		}
+			this->triangles.push_back(triangles[iTri]);
 		ASSERT(isLeaf(), "Should be a leaf");
 		return 0;
 	}
@@ -94,8 +75,8 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 			triIndex[1] = Rand::sample<uint32_t>(0, (uint32_t)triangles.size() - 1);
 		} while (triIndex[1] == triIndex[0]);
 		std::array<geometry::point3f, childCount> centroid = {
-			m_mesh->center(*triangles[triIndex[0]]),
-			m_mesh->center(*triangles[triIndex[1]])
+			triangles[triIndex[0]]->center(),
+			triangles[triIndex[1]]->center()
 		};
 		unsigned int loop = 0;
 		// TODO Instead of copying, sort triangle in array
@@ -108,8 +89,8 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 			for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 			{
 				const Triangle *triangle = triangles[iTri];
-				const geometry::point3f triBarycentre = m_mesh->center(*triangle);
-				ASSERT(m_bbox.contain(triBarycentre), "Should be inside");
+				const geometry::point3f triBarycentre = triangle->center();
+				ASSERT(bbox.contain(triBarycentre), "Should be inside");
 				const std::array<float, childCount> dist = {
 					geometry::point3f::distance(triBarycentre, centroid[0]),
 					geometry::point3f::distance(triBarycentre, centroid[1])
@@ -134,8 +115,8 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 				float weights = 0.f;
 				for (const Triangle* triangle : subGroup[iGroup])
 				{
-					float weight = m_mesh->area(*triangle);
-					point3f triBarycentre = m_mesh->center(*triangle);
+					float weight = triangle->area();
+					point3f triBarycentre = triangle->center();
 					tmp += triBarycentre * weight;
 					weights += weight;
 				}
@@ -152,34 +133,41 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 		for (unsigned int iGroup = 0; iGroup < childCount; iGroup++)
 		{
 			ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
-			m_childrens[iGroup] = new Node(m_mesh);
-			nodeCount += m_childrens[iGroup]->build(subGroup[iGroup], depth);
-			ASSERT(m_bbox.contain(m_childrens[iGroup]->m_bbox), "Should contain container");
+			this->childrens[iGroup] = new Node;
+			nodeCount += this->childrens[iGroup]->build(subGroup[iGroup], depth);
+			ASSERT(this->bbox.contain(this->childrens[iGroup]->bbox), "Should contain container");
 			nodeCount++;
 		}
 		return nodeCount;
 	}
 }
 
-bool MeshBVH::Node::intersect(const Ray & localRay, Intersection &intersection) const
+bool MeshBVH::Node::intersect(const Ray & ray, Intersection *intersection) const
 {
-	if (!m_bbox.intersect(localRay))
+	if (!bbox.intersect(ray))
 		return false;
+	bool hit = false;
 	if (isLeaf())
 	{
-		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
-		for (const Triangle *triangle : m_triangles)
-			if (m_mesh->intersectTri(*triangle, localRay, intersection) && terminateOnFirstHit)
-				return true;
-		return intersection.valid();
+		for (const Triangle *triangle : triangles)
+		{
+			if (triangle->intersect(ray, intersection))
+			{
+				hit = true;
+			}
+		}
+		return hit;
 	}
 	else
 	{
-		bool terminateOnFirstHit = intersection.terminateOnFirstHit();
 		for (uint32_t i = 0; i < childCount; i++)
-			if (m_childrens[i]->intersect(localRay, intersection) && terminateOnFirstHit)
-				return true;
-		return intersection.valid();
+		{
+			if (childrens[i]->intersect(ray, intersection))
+			{
+				hit = true;
+			}
+		}
+		return hit;
 	}
 }
 
