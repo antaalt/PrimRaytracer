@@ -62,7 +62,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 		color4f lightRadiance(0.f);		
 		//if (!(type & BSDF_SPECULAR))
 		{
-			//lightRadiance = sampleLights(info, scene);
+			lightRadiance = sampleLights(intersection, scene);
 		}
 
 		// Russian roulette
@@ -77,6 +77,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 		output += lightRadiance * reflectance;
 		rayBounce.direction = wo;
 		rayBounce.origin = intersection.point;
+		rayBounce.tmax = std::numeric_limits<float>::max();
 	} while (++bounces < m_maxDepth);
 	return output;
 }
