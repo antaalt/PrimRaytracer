@@ -18,7 +18,7 @@ Triangle::Triangle(Material * material) :
 {
 }
 
-Triangle::Triangle(const Vertex & A, const Vertex & B, const Vertex & Cs, Material * material) :
+Triangle::Triangle(const Vertex & A, const Vertex & B, const Vertex & C, Material * material) :
 	Hitable(material),
 	A(A), B(B), C(C)
 {
@@ -81,7 +81,7 @@ float Triangle::area() const
 
 point3f Triangle::center() const
 {
-	return (A.position + B.position + C.position) / 3.f;
+	return (A.position + B.position + C.position) * (1.f / 3.f);
 }
 
 }

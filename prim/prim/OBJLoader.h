@@ -7,7 +7,7 @@ namespace prim {
 class OBJLoader : public Loader
 {
 public:
-	bool load(Reader &reader, Scene &scene) override;
+	bool load(const std::string &path, Scene &scene) override;
 };
 
 }

@@ -33,11 +33,12 @@ struct LambertianReflection : BRDF {
 	}
 	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
-		return geometry::vec3f::dot(wo, geometry::vec3f(normal)) / geometry::pi<float>();
+		// We can remove pi as it cancel itself with evaluate pi
+		return geometry::vec3f::dot(wo, geometry::vec3f(normal));// / geometry::pi<float>();
 	}
 	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return albedo / geometry::pi<float>();
+		return albedo;// / geometry::pi<float>();
 	}
 };
 

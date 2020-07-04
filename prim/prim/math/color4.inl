@@ -85,6 +85,18 @@ inline color4<T>::color4(T r, T g, T b, T a) :
 {
 }
 
+template<typename T>
+inline color4<T>::color4(const vec3<T>& vec, T a) :
+	r(vec.x), g(vec.y), b(vec.z), a(a)
+{
+}
+
+template<typename T>
+inline color4<T>::color4(const vec4<T>& vec) :
+	r(vec.x), g(vec.y), b(vec.z), a(vec.w)
+{
+}
+
 template <typename T>
 inline bool operator==(const color4<T> &lhs, const color4<T> &rhs)
 {

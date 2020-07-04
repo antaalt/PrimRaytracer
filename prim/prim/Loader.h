@@ -59,7 +59,7 @@ public:
 	virtual ~Loader() {}
 
 	// Load the file and append it into the scene
-	virtual bool load(Reader &reader, Scene &scene) = 0;
+	virtual bool load(const std::string &path, Scene &scene) = 0;
 };
 
 

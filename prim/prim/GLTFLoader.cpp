@@ -10,7 +10,7 @@
 
 namespace prim {
 
-bool GLTFLoader::load(Reader & reader, Scene & scene)
+bool GLTFLoader::load(const std::string &path, Scene & scene)
 {
 #if 0
 	tinygltf::TinyGLTF ctx;

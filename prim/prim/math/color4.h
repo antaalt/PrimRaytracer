@@ -5,6 +5,11 @@
 namespace geometry {
 
 template <typename T>
+struct vec3;
+template <typename T>
+struct vec4;
+
+template <typename T>
 struct color4 {
 	union {
 		T data[4];
@@ -17,6 +22,8 @@ struct color4 {
 	template <typename U>
 	explicit color4(const color4<U> &value);
 	explicit color4(T r, T g, T b, T a);
+	explicit color4(const vec3<T> &vec, T a);
+	explicit color4(const vec4<T> &vec);
 
 	T &operator[](size_t index);
 	const T &operator[](size_t index) const;

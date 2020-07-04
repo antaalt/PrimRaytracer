@@ -1,9 +1,11 @@
 #include "OBJLoader.h"
 
+#include <string>
 #include <sstream>
 #include <array>
 #include <map>
 #include <fstream>
+#include <memory>
 
 #include "MeshBVH.h"
 
@@ -23,14 +25,26 @@ struct Face {
 	const Vertex &operator[](size_t iVert) const { return vertices[iVert]; }
 };
 
+// https://www.fileformat.info/format/material/index.htm
 struct Material {
-
+	std::string name;
+	vec3f Ka; // ambiant color
+	vec3f Kd; // diffuse color
+	vec3f Ks; // specular color
+	vec3f Ke; // emissive color
+	float Ni; // optic density
+	float Ns; // specular exponent
+	float d; // transparency [0, 1], 1 = no transparency
+	unsigned int illum; // light parameters
+	std::string map_Kd;
+	std::string map_Ka;
+	std::string map_bump;
 };
 
 struct Group {
 	std::string name;
 	std::vector<Face> faces;
-	Material *material;
+	std::vector<prim::Material*> materials;
 };
 
 struct Object {
@@ -58,16 +72,106 @@ void skipWhitespace(std::stringstream &ss)
 	} while (true);
 }
 
-bool OBJLoader::load(Reader & reader, Scene &scene)
+void parseMaterials(const std::string &fileName, std::map<std::string, std::unique_ptr<obj::Material>> &materials) {
+	std::ifstream file(fileName);
+	if (!file)
+		throw std::runtime_error("Could not load file " + fileName);
+
+	obj::Material *currentMaterial = nullptr;
+
+	std::string line;
+	while (std::getline(file, line))
+	{
+		if (file.eof())
+			break;
+		if (line.size() == 0)
+			continue;
+		std::stringstream ss(line);
+		std::string header;
+		ss >> header;
+
+		if (header == "newmtl")
+		{
+			std::string materialName;
+			ss >> materialName;
+			std::unique_ptr<obj::Material> material = std::make_unique<obj::Material>();
+			currentMaterial = material.get();
+			currentMaterial->name = materialName;
+			materials.insert(std::make_pair(materialName, std::move(material)));
+		}
+		else 
+		{
+			if (header == "map_Kd") {
+				std::string texturePath;
+				ss >> texturePath;
+				currentMaterial->map_Kd = texturePath;
+			} else if (header == "map_Ka") {
+				std::string texturePath;
+				ss >> texturePath;
+				currentMaterial->map_Ka = texturePath;
+			} else if (header == "map_bump") {
+				std::string texturePath;
+				ss >> texturePath;
+				currentMaterial->map_bump = texturePath;
+			} else if (header == "Ka") {
+				ss >> currentMaterial->Ka.x;
+				ss >> currentMaterial->Ka.y;
+				ss >> currentMaterial->Ka.z;
+			} else if (header == "Kd") {
+				ss >> currentMaterial->Kd.x;
+				ss >> currentMaterial->Kd.y;
+				ss >> currentMaterial->Kd.z;
+			} else if (header == "Ks") {
+				ss >> currentMaterial->Ks.x;
+				ss >> currentMaterial->Ks.y;
+				ss >> currentMaterial->Ks.z;
+			} else if (header == "Ke") {
+				ss >> currentMaterial->Ke.x;
+				ss >> currentMaterial->Ke.y;
+				ss >> currentMaterial->Ke.z;
+			} else if (header == "Ni") {
+				ss >> currentMaterial->Ni;
+			} else if (header == "Ns") {
+				ss >> currentMaterial->Ns;
+			} else if (header == "d") {
+				ss >> currentMaterial->d;
+			} else if (header == "illum") {
+				ss >> currentMaterial->illum;
+			}
+		}
+	}
+}
+
+Material *convert(const std::string &path, Scene &scene, obj::Material *objMaterial)
+{
+	// TODO use others parameters.
+	Texture4f *texture;
+	if(objMaterial->map_Kd.length() > 0)
+		texture = new ImageTexture4f(path + objMaterial->map_Kd);
+	else if (objMaterial->map_Ka.length() > 0)
+		texture = new ImageTexture4f(path + objMaterial->map_Ka);
+	else 
+		texture = new ConstantTexture4f(color4f(objMaterial->Kd, 1.f));
+	Material *material = new Matte(texture);
+	scene.textures.push_back(texture);
+	scene.materials.push_back(material);
+	return material;
+}
+
+bool OBJLoader::load(const std::string &fileName, Scene &scene)
 {
 	std::vector<point3f> positions;
 	std::vector<norm3f> normals;
 	std::vector<uv2f> uvs;
 	std::vector<obj::Object> objects;
-	std::map<std::string, obj::Material> materials;
+	std::map<std::string, Material*> materials;
+	Material *currentMaterial;
 
-	std::stringstream file;
-	file << reader.data();
+	std::string path = fileName.substr(0, fileName.find_last_of("/") + 1);
+
+	std::ifstream file(fileName);
+	if (!file)
+		throw std::runtime_error("Could not load file " + fileName);
 	std::string line;
 	while (std::getline(file, line))
 	{
@@ -80,14 +184,25 @@ bool OBJLoader::load(Reader & reader, Scene &scene)
 		ss >> header;
 		if (header == "mtllib")
 		{
-			// TODO load materials
+			std::string materialFileName;
+			ss >> materialFileName;
+			std::map<std::string, std::unique_ptr<obj::Material>> parsedMaterials;
+			parseMaterials(path + materialFileName, parsedMaterials);
+			// convert obj::materials to materials.
+			for (auto const& it : parsedMaterials) {
+				Material *material = convert(path, scene, it.second.get());
+				materials.insert(std::make_pair(it.first, material));
+			}
 			continue;
 		}
 		else if (header == "usemtl")
 		{
 			std::string materialName;
-			ss >> materialName;
-			// TODO ensure material exist.
+			ss >> materialName; 
+			auto it = materials.find(materialName);
+			if (it == materials.end())
+				throw std::runtime_error("Material not found : " + materialName);
+			currentMaterial = it->second;
 			continue;
 		}
 		switch (header[0])
@@ -137,6 +252,7 @@ bool OBJLoader::load(Reader & reader, Scene &scene)
 			}
 			obj::Group &group = objects.back().groups.back();
 			group.faces.emplace_back();
+			group.materials.push_back(currentMaterial);
 			obj::Face &face = group.faces.back();
 			while (ss.peek() != std::char_traits<char>::eof())
 			{
@@ -197,24 +313,19 @@ bool OBJLoader::load(Reader & reader, Scene &scene)
 			break;
 		}
 	}
-	// TODO load mtl
 	size_t totalTriCount = 0;
 	for (const obj::Object &object : objects)
 	{
-		Texture4f *texture = new ConstantTexture4f(color4f(0.5f, 0.5f, 0.5f, 1.f));
-		//Texture4f *texture = new ImageTexture4f("../prim/data/textures/1.jpg");
-		//Texture4f *texture = new ImageTexture4f("../prim/data/models/aya/tex/091_W_Aya_2K_01.jpg");
-		Material *material = new Matte(texture);
-		MeshBVH *meshBVH = new MeshBVH(material);
+		MeshBVH *meshBVH = new MeshBVH(nullptr);
 		TransformNode *node = new TransformNode(mat4f::identity(), meshBVH);
-		scene.textures.push_back(texture);
-		scene.materials.push_back(material);
 		scene.nodes.push_back(node);
 		uint32_t iVert = 0;
 		for (const obj::Group &group : object.groups)
 		{
-			for (const obj::Face &face : group.faces)
+			for (size_t iFace = 0; iFace < group.faces.size(); iFace++)
 			{
+				const obj::Face &face = group.faces[iFace];
+				Material *material = group.materials[iFace];
 				if (face.vertices.size() == 3)
 				{
 					Triangle triangle(material);
