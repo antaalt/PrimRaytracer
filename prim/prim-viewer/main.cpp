@@ -36,37 +36,14 @@ void setScene(prim::Scene &scene)
 #if 1
 	{
 		OBJLoader loader;
-		std::vector<uint8_t> data;
-		{
-			std::ifstream file("../prim/data/models/bunny/bunny.obj", std::ios::ate);
-			if (!file)
-				throw std::runtime_error("Could not load file");
-			std::streampos size = file.tellg();
-			file.seekg(0);
-			data.resize(size);
-			file.read(reinterpret_cast<char*>(data.data()), size);
-		}
-		MemoryReader reader(data);
-		loader.load(reader, scene);
+		loader.load("../prim/data/models/bunny/bunny.obj", scene);
 		scene.nodes.back()->setTransform(Transform(mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))));
 	}
 #endif
 #else
 	{
 		OBJLoader loader;
-		std::vector<uint8_t> data;
-		{
-			//std::ifstream file("../prim/data/models/aya/091_W_Aya_10K.obj", std::ios::ate);
-			std::ifstream file("F:/Downloads/sponza/sponza.obj", std::ios::ate);
-			if (!file)
-				throw std::runtime_error("Could not load file");
-			std::streampos size = file.tellg();
-			file.seekg(0);
-			data.resize(size);
-			file.read(reinterpret_cast<char*>(data.data()), size);
-		}
-		MemoryReader reader(data);
-		loader.load(reader, scene);
+		loader.load("F:/Downloads/sponza/sponza.obj", scene);
 		scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(0.1f))));
 		//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(15.f))));
 	}

@@ -165,7 +165,7 @@ bool OBJLoader::load(const std::string &fileName, Scene &scene)
 	std::vector<uv2f> uvs;
 	std::vector<obj::Object> objects;
 	std::map<std::string, Material*> materials;
-	Material *currentMaterial;
+	Material *currentMaterial = nullptr;
 
 	std::string path = fileName.substr(0, fileName.find_last_of("/") + 1);
 
@@ -252,7 +252,17 @@ bool OBJLoader::load(const std::string &fileName, Scene &scene)
 			}
 			obj::Group &group = objects.back().groups.back();
 			group.faces.emplace_back();
-			group.materials.push_back(currentMaterial);
+			if (currentMaterial != nullptr)
+			{
+				group.materials.push_back(currentMaterial);
+			}
+			else
+			{
+				scene.textures.push_back(new ConstantTexture4f(color4f(0.8, 0.8, 0.8, 1.0)));
+				currentMaterial = new Matte(scene.textures.back());
+				scene.materials.push_back(currentMaterial);
+				group.materials.push_back(currentMaterial);
+			}
 			obj::Face &face = group.faces.back();
 			while (ss.peek() != std::char_traits<char>::eof())
 			{
