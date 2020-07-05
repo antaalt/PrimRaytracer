@@ -1,0 +1,3 @@
+[submodule "engine/thirdparty-libs/imgui"]
+	path = engine/thirdparty-libs/imgui
+	url = git@github.com:ocornut/imgui.git

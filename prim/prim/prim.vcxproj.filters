@@ -1,0 +1,452 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Sampler">
+      <UniqueIdentifier>{8af80c32-6d9d-42ae-aeeb-5a8004786917}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene">
+      <UniqueIdentifier>{3bc938a0-52c4-4a40-8d88-211e832ba33a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tracer">
+      <UniqueIdentifier>{758eade0-92e6-40a7-854e-deaddb3f6095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{f8de84e6-a9f1-4507-bb30-fc0f001c1533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sampler">
+      <UniqueIdentifier>{988c6c42-f9ba-4710-81b1-99f21afae3d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene">
+      <UniqueIdentifier>{0864e4d0-5fb3-4800-9a1f-c22f75dd2e59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tracer">
+      <UniqueIdentifier>{53dd5c97-19d3-443e-9120-69874a6c48d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{3f836c4c-8e88-479a-b01d-305be72e336a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math\Geometry">
+      <UniqueIdentifier>{eb1eaba5-d674-49a1-ba59-0635a3930930}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Loader">
+      <UniqueIdentifier>{b588d8a2-f8ba-40d5-8154-0fc805215f04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Loader">
+      <UniqueIdentifier>{fbc23e0e-5290-43ee-8386-fdaae9192e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Materials">
+      <UniqueIdentifier>{b4de70b7-492a-4f58-80d5-c08f64e220b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Lights">
+      <UniqueIdentifier>{181e8d3f-7bf1-4fa4-8f85-5ad6c26c0a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Materials">
+      <UniqueIdentifier>{ef023b32-e9ad-4290-be9d-d1f9e451eaf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Lights">
+      <UniqueIdentifier>{5553454f-481c-4046-8745-39b0191093d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Camera">
+      <UniqueIdentifier>{4d8ebcb6-e677-454f-8662-16798a6665e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Camera">
+      <UniqueIdentifier>{aa192e70-9fa1-4a65-8d16-648963dfc979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BSDF">
+      <UniqueIdentifier>{b12407f0-96fa-430e-b15e-5c8f1d5312d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shapes">
+      <UniqueIdentifier>{f29e0853-c4c4-4173-9a0f-fde9b942a8f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shapes">
+      <UniqueIdentifier>{49a4abf7-e2da-4ada-8c4b-8cbf2d2e15de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Hitables">
+      <UniqueIdentifier>{d1fb203f-c489-46eb-a923-dac41bc00260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\Textures">
+      <UniqueIdentifier>{de3aa7cd-2b87-41d4-be6f-71991aa87a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Textures">
+      <UniqueIdentifier>{32f3abc8-3fbc-4db0-8032-43e071995adf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Hitables">
+      <UniqueIdentifier>{2ed6ba05-8dbb-46a5-9ef4-31e2075f5ebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{04fbe1b3-74de-41e8-a6a5-2b68c1cc3277}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PinholeCamera.h">
+      <Filter>Header Files\Scene\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files\Scene\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files\Scene\Hitables</Filter>
+    </ClInclude>
+    <ClInclude Include="PathTracer.h">
+      <Filter>Header Files\Tracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Header Files\Tracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracer.h">
+      <Filter>Header Files\Tracer</Filter>
+    </ClInclude>
+    <ClInclude Include="WhittedTracer.h">
+      <Filter>Header Files\Tracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Header Files\Sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantTexture.h">
+      <Filter>Header Files\Scene\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Metal.h">
+      <Filter>Header Files\Scene\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Matte.h">
+      <Filter>Header Files\Scene\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Glass.h">
+      <Filter>Header Files\Scene\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Location.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="StrictType.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeLight.h">
+      <Filter>Header Files\Scene\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="LightDistribution.h">
+      <Filter>Header Files\Scene\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="math\mat3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\mat4.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\norm3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\point3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\print.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\quat.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\uv2.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec2.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec3.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="StopWatch.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJLoader.h">
+      <Filter>Header Files\Scene\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="GLTFLoader.h">
+      <Filter>Header Files\Scene\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="math\angle.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\color4.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\geometry.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\gpu.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\half.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\sampling.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\vec4.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="math\scientific.h">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Scene\Hitables</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshBVH.h">
+      <Filter>Header Files\Scene\Hitables</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshOctree.h">
+      <Filter>Header Files\Scene\Hitables</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PerspectiveCamera.h">
+      <Filter>Header Files\Scene\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="OrthographicCamera.h">
+      <Filter>Header Files\Scene\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="BSDF.h">
+      <Filter>Header Files\BSDF</Filter>
+    </ClInclude>
+    <ClInclude Include="Fresnel.h">
+      <Filter>Header Files\BSDF</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Loader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Hitable.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="SunLight.h">
+      <Filter>Header Files\Scene\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>Header Files\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeDisk.h">
+      <Filter>Header Files\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeSphere.h">
+      <Filter>Header Files\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Intersection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageTexture.h">
+      <Filter>Header Files\Scene\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckerTexture.h">
+      <Filter>Header Files\Scene\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Header Files\Scene\Hitables</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Scene\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="PinholeCamera.cpp">
+      <Filter>Source Files\Scene\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Scene\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files\Scene\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="PathTracer.cpp">
+      <Filter>Source Files\Tracer</Filter>
+    </ClCompile>
+    <ClCompile Include="WhittedTracer.cpp">
+      <Filter>Source Files\Tracer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source Files\Sampler</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantTexture.cpp">
+      <Filter>Source Files\Scene\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="BSDF.cpp">
+      <Filter>Source Files\Scene\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Matte.cpp">
+      <Filter>Source Files\Scene\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Metal.cpp">
+      <Filter>Source Files\Scene\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Glass.cpp">
+      <Filter>Source Files\Scene\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeLight.cpp">
+      <Filter>Source Files\Scene\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="LightDistribution.cpp">
+      <Filter>Source Files\Scene\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Loader.cpp">
+      <Filter>Source Files\Scene\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJLoader.cpp">
+      <Filter>Source Files\Scene\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="GLTFLoader.cpp">
+      <Filter>Source Files\Scene\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="math\test.cpp">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshBVH.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshOctree.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+    <ClCompile Include="Hitable.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PerspectiveCamera.cpp">
+      <Filter>Source Files\Scene\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="OrthographicCamera.cpp">
+      <Filter>Source Files\Scene\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SunLight.cpp">
+      <Filter>Source Files\Scene\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeSphere.cpp">
+      <Filter>Source Files\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeDisk.cpp">
+      <Filter>Source Files\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Intersection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckerTexture.cpp">
+      <Filter>Source Files\Scene\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageTexture.cpp">
+      <Filter>Source Files\Scene\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Ray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="math\mat3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\mat4.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\norm3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\point3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\quat.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\uv2.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\vec2.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\vec3.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\angle.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\color4.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\gpu.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\half.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\sampling.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\scientific.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+    <None Include="math\vec4.inl">
+      <Filter>Header Files\Math\Geometry</Filter>
+    </None>
+  </ItemGroup>
+</Project>
