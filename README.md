@@ -29,6 +29,3 @@ Sponza with 80 samples compared to 1 sample
 - [ ] Better light sampling to handle multiple light sources
 - [ ] Atmosphere simulation
 - [ ] [...]
-
-Check this :
-https://casual-effects.com/g3d/data10/index.html
