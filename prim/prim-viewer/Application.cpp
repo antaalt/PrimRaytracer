@@ -134,7 +134,8 @@ void Application::run(prim::Scene &scene, prim::Camera &camera, prim::Tracer &tr
 			
 		if (m_renderer->isWaiting())
 		{
-			Log::info("Launching render (", renderStopWatch.elapsed(), "ms)");
+			
+			Log::info("Launching render (", renderStopWatch.elapsed(), "ms) - sample ", m_renderer->getSampleCount());
 			renderStopWatch.start();
 			m_renderer->getOutput(m_output.data(), 0, m_output.size());
 			m_renderer->launch(camera, scene);
