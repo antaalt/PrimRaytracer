@@ -36,14 +36,14 @@ void setScene(prim::Scene &scene)
 #if 1
 	{
 		OBJLoader loader;
-		loader.load("../prim/data/models/bunny/bunny.obj", scene);
+		loader.load("./data/models/bunny/bunny.obj", scene);
 		scene.nodes.back()->setTransform(Transform(mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))));
 	}
 #endif
 #else
 	{
 		OBJLoader loader;
-		loader.load("F:/Downloads/sponza/sponza.obj", scene);
+		loader.load("./data/models/sponza/sponza.obj", scene);
 		scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(0.1f))));
 		//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(15.f))));
 	}

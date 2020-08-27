@@ -279,6 +279,9 @@
     <ClInclude Include="Triangle.h">
       <Filter>Header Files\Scene\Hitables</Filter>
     </ClInclude>
+    <ClInclude Include="TransformNode.h">
+      <Filter>Header Files\Scene\Hitables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -393,6 +396,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
+      <Filter>Source Files\Scene\Hitables</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformNode.cpp">
       <Filter>Source Files\Scene\Hitables</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,7 +5,7 @@ namespace prim {
 PerspectiveCamera::PerspectiveCamera() :
 	perspective(mat4f::perspective(degreef(60.f), 16.f / 9.f, 0.1f, 1000.f)),
 	hFov(60.f),
-	lensRadius(0.5f),
+	lensRadius(0.01f),
 	focalDistance(10.f)
 {
 }
