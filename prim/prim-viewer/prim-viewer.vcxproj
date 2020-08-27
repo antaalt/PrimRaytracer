@@ -134,6 +134,9 @@
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;x64\glew32.lib;$(SolutionDir)x64\Release\prim.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)thirdparty-libs\glew-2.0.0\bin\x64\glew32.dll" "$(TargetDir)" /Y /S /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\thirdparty-libs\imgui\examples\imgui_impl_glfw.cpp" />
