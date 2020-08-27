@@ -40,6 +40,7 @@ public:
 	void getOutput(color4f *data, size_t offset, size_t size);
 	size_t getTileCount() const { return m_tiles.size(); }
 	size_t getCompletedTileCount() const { return m_completedTiles; }
+	uint32_t getSampleCount() const { return m_samples; }
 private:
 	void generateTiles();
 private:
