@@ -4,7 +4,6 @@
 #include "StopWatch.h"
 #include "PathTracer.h"
 #include "WhittedTracer.h"
-#include "PinholeCamera.h"
 #include "stb_image_write.h"
 
 namespace app {
@@ -125,6 +124,7 @@ void Application::run(prim::Scene &scene, prim::Camera &camera, prim::Tracer &tr
 
 		m_gui.startFrame();
 		m_gui.setProgress(m_renderer->getCompletedTileCount(), m_renderer->getTileCount());
+		m_gui.setSamples(m_renderer->getSampleCount());
 		bool inputsUpdated = inputs(camera, m_gui.events());
 		bool sceneUpdated = m_gui.draw(scene, camera);
 		if (inputsUpdated || sceneUpdated)
@@ -157,24 +157,27 @@ bool Application::inputs(prim::Camera &camera, const Inputs &inputs)
 {
 	bool needUpdate = false;
 	const float scaleFactor = 0.01f;
+	mat4f transform = camera.transform.getMatrix();
 	if (inputs.mouse.mouse[LEFT])
 	{
 		needUpdate = true;
-		camera.transform *= geometry::mat4f::rotate(vec3f(0.f, 1.f, 0.f), geometry::degreef(static_cast<float>(-inputs.mouse.relPos[0])));
-		camera.transform *= geometry::mat4f::rotate(vec3f(1.f, 0.f, 0.f), geometry::degreef(static_cast<float>(-inputs.mouse.relPos[1])));
+		transform *= geometry::mat4f::rotate(vec3f(0.f, 1.f, 0.f), geometry::degreef(static_cast<float>(-inputs.mouse.relPos[0])));
+		transform *= geometry::mat4f::rotate(vec3f(1.f, 0.f, 0.f), geometry::degreef(static_cast<float>(-inputs.mouse.relPos[1])));
 	}
 	if (inputs.mouse.mouse[RIGHT])
 	{
 		needUpdate = true;
-		camera.transform *= geometry::mat4f::translate(vec3f(-inputs.mouse.relPos[0] * 0.01f, inputs.mouse.relPos[1] * 0.01f, 0.f));
+		transform *= geometry::mat4f::translate(vec3f(-inputs.mouse.relPos[0] * 0.01f, inputs.mouse.relPos[1] * 0.01f, 0.f));
 	}
 	if (inputs.mouse.wheel != 0)
 	{
 		needUpdate = true;
-		camera.transform *= geometry::mat4f::translate(vec3f(0.f, 0.f, static_cast<float>(inputs.mouse.wheel)* 0.1f));
+		transform *= geometry::mat4f::translate(vec3f(0.f, 0.f, static_cast<float>(inputs.mouse.wheel)* 0.1f));
 	}
 	if (inputs.keyboard.printScreen)
 		this->save("output.jpg");
+
+	camera.transform = prim::Transform(transform);
 	return needUpdate;
 }
 

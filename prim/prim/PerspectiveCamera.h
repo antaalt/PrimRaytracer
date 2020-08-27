@@ -5,8 +5,12 @@
 namespace prim {
 
 struct PerspectiveCamera : public Camera {
+	PerspectiveCamera();
+
 	mat4f perspective;
 	float hFov;
+	float lensRadius;
+	float focalDistance;
 
 	Ray generateRay(const RaySampler::Type &screenPos) const override;
 };

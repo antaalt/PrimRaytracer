@@ -68,6 +68,8 @@ void GUI::startFrame()
 
 enum class CameraType {
 	PERSPECTIVE,
+	ORTHOGRAPHIC,
+	ENVIRONMENT,
 	UNDEFINED
 };
 
@@ -96,6 +98,10 @@ CameraType getType(const prim::Camera &camera)
 {
 	if (nullptr != dynamic_cast<const prim::PerspectiveCamera*>(&camera))
 		return CameraType::PERSPECTIVE;
+	else if (nullptr != dynamic_cast<const prim::OrthographicCamera*>(&camera))
+		return CameraType::ORTHOGRAPHIC;
+	//else if (nullptr != dynamic_cast<const prim::EnvironmentCamera*>(&camera))
+	//	return CameraType::ENVIRONMENT;
 	return CameraType::UNDEFINED;
 }
 
@@ -186,7 +192,7 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 	{
 		if (ImGui::CollapsingHeader("Settings"))
 		{
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS) (%u spp)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate, m_spp);
 			static int depth = 10;
 			ImGui::SliderInt("Depth", &depth, 0, 15);
 			ImGui::Text("Progress %d/%d tiles completed", m_tileComplete, m_tileCount);
@@ -201,6 +207,8 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 				static float zFar = 1000.f;
 				bool projUpdated = false;
 				projUpdated |= ImGui::SliderFloat("Field of view", &pCamera.hFov, 1.0f, 180.0f);
+				projUpdated |= ImGui::SliderFloat("Focal distance", &pCamera.focalDistance, 0.f, 1000.f);
+				projUpdated |= ImGui::SliderFloat("Lens radius", &pCamera.lensRadius, 0.f, 5.f);
 				projUpdated |= ImGui::SliderFloat("Near", &zNear, 0.001f, zFar - 0.1f);
 				projUpdated |= ImGui::SliderFloat("Far", &zFar, zNear + 0.1f, 1000.0f);
 				if (projUpdated)
@@ -209,17 +217,29 @@ bool GUI::draw(prim::Scene &scene, prim::Camera &camera)
 					needUpdate = true;
 				}
 			}
+			else if (type == CameraType::ORTHOGRAPHIC)
+			{
+				prim::OrthographicCamera &pCamera = dynamic_cast<prim::OrthographicCamera&>(camera);
+			}
 			
 			ImGui::Text("Transform");
-			geometry::mat4f &mat = camera.transform;
-			needUpdate |= ImGui::InputFloat4("##transformcol1", mat.cols[0].data);
-			needUpdate |= ImGui::InputFloat4("##transformcol2", mat.cols[1].data);
-			needUpdate |= ImGui::InputFloat4("##transformcol3", mat.cols[2].data);
-			needUpdate |= ImGui::InputFloat4("##transformcol4", mat.cols[3].data);
+			geometry::mat4f mat = camera.transform.getMatrix();
+
+			bool transformUpdated = false;
+			transformUpdated |= ImGui::InputFloat4("##transformcol1", mat.cols[0].data);
+			transformUpdated |= ImGui::InputFloat4("##transformcol2", mat.cols[1].data);
+			transformUpdated |= ImGui::InputFloat4("##transformcol3", mat.cols[2].data);
+			transformUpdated |= ImGui::InputFloat4("##transformcol4", mat.cols[3].data);
+
+			if (transformUpdated)
+			{
+				camera.transform = prim::Transform(mat);
+				needUpdate = true;
+			}
 			if (ImGui::Button("Identity"))
 			{
 				needUpdate = true;
-				camera.transform = geometry::mat4f::identity();
+				camera.transform = prim::Transform(geometry::mat4f::identity());
 			}
 		}
 		if (ImGui::CollapsingHeader("Scene"))
@@ -378,6 +398,11 @@ void GUI::setProgress(size_t tileComplete, size_t tileCount)
 {
 	m_tileComplete = tileComplete;
 	m_tileCount = tileCount;
+}
+
+void GUI::setSamples(uint32_t spp)
+{
+	m_spp = spp;
 }
 
 }

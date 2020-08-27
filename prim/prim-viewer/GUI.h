@@ -20,6 +20,7 @@
 #include "Config.h"
 #include "Scene.h"
 #include "Camera.h"
+#include "OrthographicCamera.h"
 #include "PerspectiveCamera.h"
 
 #include <vector>
@@ -71,9 +72,11 @@ public:
 	Inputs &events();
 
 	void setProgress(size_t tileComplete, size_t tileCount);
+	void setSamples(uint32_t spp);
 
 private:
 	size_t m_tileComplete, m_tileCount;
+	uint32_t m_spp;
 	GLFWwindow *m_window;
 	unsigned int m_width, m_height;
 	Inputs m_inputs;

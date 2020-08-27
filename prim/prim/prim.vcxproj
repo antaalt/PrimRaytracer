@@ -178,7 +178,6 @@
     <ClInclude Include="OrthographicCamera.h" />
     <ClInclude Include="PathTracer.h" />
     <ClInclude Include="PerspectiveCamera.h" />
-    <ClInclude Include="PinholeCamera.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
@@ -224,7 +223,6 @@
     <ClCompile Include="OrthographicCamera.cpp" />
     <ClCompile Include="PathTracer.cpp" />
     <ClCompile Include="PerspectiveCamera.cpp" />
-    <ClCompile Include="PinholeCamera.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />

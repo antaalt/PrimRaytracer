@@ -21,9 +21,9 @@ Sponza with 80 samples compared to 1 sample
 - [x] Custom BVH mesh intersection
 - [x] Scalable materials
 - [x] Manage color correction & sRGB
+- [x] Depth of field
 - [ ] Improve path tracing implementation
 - [ ] Load and display glTF
-- [ ] Depth of field
 - [ ] Mipmaping & anisotropy
 - [ ] Embree or such BVH intersection
 - [ ] Better light sampling to handle multiple light sources

@@ -3,6 +3,7 @@
 
 #include "Ray.h"
 #include "Random.h"
+#include "Transform.h"
 
 
 namespace prim {
@@ -23,7 +24,7 @@ struct RandomRaySampler : public RaySampler {
 };
 
 struct Camera {
-	mat4f transform;
+	Transform transform;
 
 	virtual Ray generateRay(const RaySampler::Type &screenPos) const = 0;
 };

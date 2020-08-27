@@ -90,9 +90,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PinholeCamera.h">
-      <Filter>Header Files\Scene\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Scene\Lights</Filter>
     </ClInclude>
@@ -285,9 +282,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Scene\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="PinholeCamera.cpp">
       <Filter>Source Files\Scene\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
