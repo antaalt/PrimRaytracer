@@ -61,7 +61,7 @@ void Renderer::launch(const Camera & camera, const Scene & scene)
 				{
 					RaySampler::Type sample = m_sampler(vec2u(x, y), vec2u(m_width, m_height));
 					Ray ray = camera.generateRay(sample);
-					color4f p = m_tracer.render(ray, scene);
+					color4f p = color4f::linear2srgb(m_tracer.render(ray, scene));
 					std::lock_guard<std::mutex> lock(m_mutexOutput);
 					color4f &output = m_output[y * m_width + x];
 					m_output[y * m_width + x] = geometry::lerp(output, p, 1.f / (samples + 1.f));

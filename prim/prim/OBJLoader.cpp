@@ -258,7 +258,7 @@ bool OBJLoader::load(const std::string &fileName, Scene &scene)
 			}
 			else
 			{
-				scene.textures.push_back(new ConstantTexture4f(color4f(0.8, 0.8, 0.8, 1.0)));
+				scene.textures.push_back(new ConstantTexture4f(color4f(0.8f, 0.8f, 0.8f, 1.f)));
 				currentMaterial = new Matte(scene.textures.back());
 				scene.materials.push_back(currentMaterial);
 				group.materials.push_back(currentMaterial);

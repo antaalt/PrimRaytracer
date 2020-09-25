@@ -16,11 +16,6 @@ public:
 	virtual ~Texture() {}
 
 	virtual T evaluate(const uv2f &uv = uv2f(0.f)) const = 0;
-
-	template <typename U>
-	U evaluate(const uv2f &uv = uv2f(0.f)) const {
-		return 0.f;
-	}
 };
 
 using Texture32 = Texture<color4<uint8_t>>;
