@@ -1,3 +1,6 @@
 [submodule "prim/thirdparty-libs/imgui"]
 	path = prim/thirdparty-libs/imgui
 	url = git@github.com:ocornut/imgui.git
+[submodule "prim/prim-viewer/data/models/Sponza"]
+	path = prim/prim-viewer/data/models/Sponza
+	url = git@github.com:jimmiebergmann/Sponza.git
