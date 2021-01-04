@@ -4,3 +4,6 @@
 [submodule "prim/prim-viewer/data/models/Sponza"]
 	path = prim/prim-viewer/data/models/Sponza
 	url = git@github.com:jimmiebergmann/Sponza.git
+[submodule "prim/thirdparty-libs/tinygltf"]
+	path = prim/thirdparty-libs/tinygltf
+	url = git@github.com:syoyo/tinygltf.git

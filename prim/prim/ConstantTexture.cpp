@@ -9,7 +9,7 @@ ConstantTexture<T>::ConstantTexture(T albedo) : m_albedo(albedo)
 }
 
 template <typename T>
-T ConstantTexture<T>::evaluate(const uv2f &uv = uv2f(0.f)) const
+T ConstantTexture<T>::evaluate(const uv2f &uv) const
 {
 	return m_albedo;
 }

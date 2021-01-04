@@ -14,7 +14,7 @@ void setScene(prim::Scene &scene)
 {
 	using namespace prim;
 	using namespace geometry;
-#if 1
+#if 0
 	scene.textures.push_back(new ConstantTexture4f(color4f(0.9f)));
 	scene.textures.push_back(new ConstantTexture4f(color4f(0.5f, 1.f, 0.5f, 1.f)));
 	scene.textures.push_back(new ConstantTexture4f(color4f(0.82f, 0.62f, 0.19f, 1.f)));
