@@ -10,46 +10,53 @@ add_subdirectory(lib/Aka)
 
 add_executable(Prim
 	"src/main.cpp"
-
 	"src/Viewer.cpp"
 
-	"src/Prim/BoundingBox.cpp"
-	"src/Prim/BSDF.cpp"
-	"src/Prim/Camera.cpp"
-	"src/Prim/CheckerTexture.cpp"
-	"src/Prim/ConstantTexture.cpp"
-	"src/Prim/Glass.cpp"
-	"src/Prim/GLTFLoader.cpp"
-	"src/Prim/Hitable.cpp"
-	"src/Prim/ImageTexture.cpp"
-	"src/Prim/Intersection.cpp"
-	"src/Prim/Light.cpp"
-	"src/Prim/LightDistribution.cpp"
-	"src/Prim/Loader.cpp"
-	"src/Prim/Matte.cpp"
-	"src/Prim/Mesh.cpp"
-	"src/Prim/MeshBVH.cpp"
-	"src/Prim/MeshOctree.cpp"
-	"src/Prim/Metal.cpp"
-	"src/Prim/OBJLoader.cpp"
-	"src/Prim/OrthographicCamera.cpp"
-	"src/Prim/PathTracer.cpp"
-	"src/Prim/PerspectiveCamera.cpp"
-	"src/Prim/PointLight.cpp"
-	"src/Prim/Random.cpp"
-	"src/Prim/Ray.cpp"
-	
-	"src/Prim/Scene.cpp"
-	"src/Prim/ShapeDisk.cpp"
-	"src/Prim/ShapeLight.cpp"
-	"src/Prim/ShapeSphere.cpp"
-	"src/Prim/Sphere.cpp"
-	"src/Prim/SunLight.cpp"
 	"src/Prim/ThreadPool.cpp"
-	"src/Prim/Transform.cpp"
-	"src/Prim/TransformNode.cpp"
-	"src/Prim/Triangle.cpp"
-	"src/Prim/WhittedTracer.cpp"
+
+	"src/Prim/Core/BoundingBox.cpp"
+	"src/Prim/Core/BSDF.cpp"
+	"src/Prim/Core/Camera.cpp"
+	"src/Prim/Core/Hitable.cpp"
+	"src/Prim/Core/Intersection.cpp"
+	"src/Prim/Core/Light.cpp"
+	"src/Prim/Core/LightDistribution.cpp"
+	"src/Prim/Core/Loader.cpp"
+	"src/Prim/Core/Ray.cpp"
+	"src/Prim/Core/Scene.cpp"
+	"src/Prim/Core/Transform.cpp"
+	"src/Prim/Core/Random.cpp"
+
+	"src/Prim/Scene/Camera/OrthographicCamera.cpp"
+	"src/Prim/Scene/Camera/PerspectiveCamera.cpp"
+
+	"src/Prim/Scene/Hitable/Mesh.cpp"
+	"src/Prim/Scene/Hitable/MeshBVH.cpp"
+	"src/Prim/Scene/Hitable/MeshOctree.cpp"
+	"src/Prim/Scene/Hitable/Sphere.cpp"
+	"src/Prim/Scene/Hitable/Triangle.cpp"
+	"src/Prim/Scene/Hitable/TransformNode.cpp"
+
+	"src/Prim/Scene/Light/PointLight.cpp"
+	"src/Prim/Scene/Light/ShapeLight.cpp"
+	"src/Prim/Scene/Light/SunLight.cpp"
+	
+	"src/Prim/Scene/Loader/OBJLoader.cpp"
+	"src/Prim/Scene/Loader/GLTFLoader.cpp"
+
+	"src/Prim/Scene/Material/Matte.cpp"
+	"src/Prim/Scene/Material/Metal.cpp"
+	"src/Prim/Scene/Material/Glass.cpp"
+	
+	"src/Prim/Scene/Texture/CheckerTexture.cpp"
+	"src/Prim/Scene/Texture/ConstantTexture.cpp"
+	"src/Prim/Scene/Texture/ImageTexture.cpp"
+
+	"src/Prim/Shape/ShapeDisk.cpp"
+	"src/Prim/Shape/ShapeSphere.cpp"
+
+	"src/Prim/Tracer/PathTracer.cpp"
+	"src/Prim/Tracer/WhittedTracer.cpp"
 )
 
 # Add third party libs

@@ -3,9 +3,10 @@
 #include <Aka/Aka.h>
 
 #include "Prim/ThreadPool.h"
-#include "Prim/PathTracer.h"
-#include "Prim/OBJLoader.h"
-#include "Prim/PerspectiveCamera.h"
+#include "Prim/Tracer/PathTracer.h"
+#include "Prim/Scene/Loader/OBJLoader.h"
+#include "Prim/Scene/Camera/PerspectiveCamera.h"
+#include "Prim/Scene/Light/SunLight.h"
 
 namespace viewer {
 using namespace aka;
@@ -136,7 +137,7 @@ void Viewer::initialize()
 			OBJLoader loader; 
 			Path path = Asset::path("models/Sponza/sponza.obj");
 			loader.load(path, scene);
-			scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(0.1f))));
+			//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(0.1f))));
 			//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(15.f))));
 		}
 #endif
