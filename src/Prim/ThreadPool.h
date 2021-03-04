@@ -3,13 +3,15 @@
 #include <string>
 #include <queue>
 #include <mutex>
+#include <atomic>
+#include <thread>
 #include <condition_variable>
 #include <functional>
 
 namespace prim {
 
 class ThreadPool {
-	using Task = std::function<void()>;
+	using Task = std::function<void(void)>;
 public:
 	ThreadPool();
 	~ThreadPool();
@@ -29,7 +31,7 @@ public:
 private:
 	void loop();
 private:
-	bool m_running;
+	std::atomic<bool> m_running;
 	mutable std::mutex m_mutex;
 	std::condition_variable m_condition;
 	std::queue<Task> m_queue;

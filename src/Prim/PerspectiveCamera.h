@@ -8,6 +8,7 @@ struct PerspectiveCamera : public Camera {
 	PerspectiveCamera();
 
 	mat4f perspective;
+	mat4f inverse; // inverse perspective cache
 	float hFov;
 	float lensRadius;
 	float focalDistance;

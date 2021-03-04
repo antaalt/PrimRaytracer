@@ -1,7 +1,7 @@
 #include "ThreadPool.h"
 
 namespace prim {
-// https://stackoverflow.com/questions/15752659/thread-pooling-in-c11
+
 ThreadPool::ThreadPool() : 
 	m_running(false), 
 	m_threads(std::thread::hardware_concurrency())

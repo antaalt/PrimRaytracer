@@ -12,26 +12,27 @@ PerspectiveCamera::PerspectiveCamera() :
 
 Ray PerspectiveCamera::generateRay(const RaySampler::Type & screenPos) const
 {
-	const vec4f camPos = vec4f(0, 0, 0, 1);
-	const vec4f camTarget = perspective * vec4f(screenPos.x, screenPos.y, 1, 1);
-	const vec4f camDir = vec4f(vec3f::normalize(vec3f(camTarget)), 0);
+	const vec4f camTarget = inverse * vec4f(screenPos.x, screenPos.y, 1, 1);
+
+	const point3f camPos = point3f(0);
+	const vec3f camDir = vec3f::normalize(vec3f(camTarget));
 
 	if (lensRadius > 0)
 	{
 		vec2f pLens = lensRadius * sample::unitDisk(Rand::sample<float>(), Rand::sample<float>());
 		float ft = focalDistance / camDir.z;
-		point3f pFocus = point3f(camPos) + vec3f(camDir) * ft;
+		point3f pFocus = camPos + camDir * ft;
 		point3f origin = point3f(pLens.x, pLens.y, 0.f);
 		return Ray(
 			transform(origin),
-			transform(vec3f::normalize(vec3f(pFocus - origin)))
+			transform(vec3f::normalize(pFocus - origin))
 		);
 	}
 	else
 	{
 		return Ray(
-			transform(point3f(camPos)),
-			transform(vec3f(camDir))
+			transform(camPos),
+			transform(camDir)
 		);
 	}
 }

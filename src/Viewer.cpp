@@ -51,16 +51,24 @@ std::vector<Tile> generateTiles(uint32_t width, uint32_t height)
 			tiles.push_back(Tile{ 
 				vec2u(tileSize.x * tileCount.x, tileSize.y * y), 
 				vec2u(tileRemainderSize.x, tileSize.y), 
-				std::vector<color4f>(tileSize.x * tileSize.y, color4f(0.f, 0.f, 0.f, 1.f))
+				std::vector<color4f>(tileRemainderSize.x * tileSize.y, color4f(0.f, 0.f, 0.f, 1.f))
 			});
 	}
 	if (tileRemainderSize.y > 0)
+	{
 		for (uint32_t x = 0; x < tileCount.x; x++)
 			tiles.push_back(Tile{
 				vec2u(tileSize.x * x, tileSize.y * tileCount.y),
-				vec2u(tileSize.x, tileRemainderSize.y), 
-				std::vector<color4f>(tileSize.x * tileSize.y, color4f(0.f, 0.f, 0.f, 1.f))
+				vec2u(tileSize.x, tileRemainderSize.y),
+				std::vector<color4f>(tileSize.x * tileRemainderSize.y, color4f(0.f, 0.f, 0.f, 1.f))
 			});
+		if (tileRemainderSize.x > 0)
+			tiles.push_back(Tile{
+				vec2u(tileSize.x * tileCount.x, tileSize.y * tileCount.y),
+				vec2u(tileRemainderSize.x, tileRemainderSize.y),
+				std::vector<color4f>(tileRemainderSize.x * tileRemainderSize.y, color4f(0.f, 0.f, 0.f, 1.f))
+			});
+	}
 	return tiles;
 }
 
@@ -79,7 +87,7 @@ void launch()
 					prim::RaySampler::Type sample = sampler(vec2u(tile.offset.x + x, tile.offset.y + y), vec2u(swidth, sheight));
 					prim::Ray ray = camera.generateRay(sample);
 					color4f outSrgb = color4f::linear2srgb(tracer.render(ray, scene));
-					tile.output[y * tile.size.x + x] = geometry::lerp(tile.output[y * tile.size.x + x], outSrgb, 1.f / (samples + 1.f));
+					tile.output[y * tile.size.x + x] = lerp(tile.output[y * tile.size.x + x], outSrgb, 1.f / (samples + 1.f));
 					tile.output[y * tile.size.x + x].a = 1.f;
 				}
 			}
@@ -136,6 +144,7 @@ void Viewer::initialize()
 	}
 	{
 		camera.perspective = mat4f::perspective(degreef(60.f), width() / (float)height(), 0.1f, 1000.f);
+		camera.inverse = mat4f::inverse(camera.perspective);
 		camera.hFov = 60.f;
 		camera.transform = prim::Transform(mat4f::translate(vec3f(
 			0.f,
@@ -238,11 +247,18 @@ void Viewer::render()
 void Viewer::resize(uint32_t width, uint32_t height) 
 {
 	{
-		threadPool.reset();
+		// Wait for thread pool
+		threadPool.stop();
+		threadPool.start();
+	}
+	{
 		swidth = width;
 		sheight = height;
 		samples = 0;
+		tilesFinished.clear();
 		tiles = generateTiles(width, height);
+		camera.perspective = mat4f::perspective(degreef(camera.hFov), width / (float)height, 0.1f, 1000.f);
+		camera.inverse = mat4f::inverse(camera.perspective);
 	}
 	{
 		Sampler sampler;
