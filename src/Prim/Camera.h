@@ -1,6 +1,6 @@
 #pragma once
-#include "Config.h"
 
+#include "Geometry.h"
 #include "Ray.h"
 #include "Random.h"
 #include "Transform.h"

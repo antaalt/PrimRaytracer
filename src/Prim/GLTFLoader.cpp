@@ -8,7 +8,7 @@
 
 namespace prim {
 
-bool GLTFLoader::load(const std::string &path, Scene & scene)
+bool GLTFLoader::load(const aka::Path& path, Scene & scene)
 {
 #if 0
 	tinygltf::TinyGLTF ctx;

@@ -3,6 +3,8 @@
 #include "Random.h"
 #include "MeshOctree.h"
 
+#include <Aka/Core/Debug.h>
+
 namespace prim {
 
 
@@ -74,7 +76,7 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 		do {
 			triIndex[1] = Rand::sample<uint32_t>(0, (uint32_t)triangles.size() - 1);
 		} while (triIndex[1] == triIndex[0]);
-		std::array<geometry::point3f, childCount> centroid = {
+		std::array<point3f, childCount> centroid = {
 			triangles[triIndex[0]]->center(),
 			triangles[triIndex[1]]->center()
 		};
@@ -89,11 +91,11 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 			for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 			{
 				const Triangle *triangle = triangles[iTri];
-				const geometry::point3f triBarycentre = triangle->center();
+				const point3f triBarycentre = triangle->center();
 				ASSERT(bbox.contain(triBarycentre), "Should be inside");
 				const std::array<float, childCount> dist = {
-					geometry::point3f::distance(triBarycentre, centroid[0]),
-					geometry::point3f::distance(triBarycentre, centroid[1])
+					point3f::distance(triBarycentre, centroid[0]),
+					point3f::distance(triBarycentre, centroid[1])
 				};
 				if (dist[0] > dist[1])
 					subGroup[1].push_back(triangle);
@@ -111,7 +113,7 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 			for (uint32_t iGroup = 0; iGroup < childCount; iGroup++)
 			{
 				ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
-				geometry::point3f tmp(0.f);
+				point3f tmp(0.f);
 				float weights = 0.f;
 				for (const Triangle* triangle : subGroup[iGroup])
 				{
@@ -120,9 +122,9 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 					tmp += triBarycentre * weight;
 					weights += weight;
 				}
-				geometry::point3f newGroupCentroid = tmp / weights;
+				point3f newGroupCentroid = tmp / weights;
 				// Check weights
-				epsilon[iGroup] = geometry::point3f::distance(newGroupCentroid, centroid[iGroup]);
+				epsilon[iGroup] = point3f::distance(newGroupCentroid, centroid[iGroup]);
 				centroid[iGroup] = newGroupCentroid;
 			}
 			// 5. redo from 3 until difference small enough

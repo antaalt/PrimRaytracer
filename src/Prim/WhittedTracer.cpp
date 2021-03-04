@@ -44,7 +44,7 @@ geometry::color4f WhittedTracer::render(const Ray & ray, const Scene & scene) co
 		case prim::BSDFType::BSDF_REFLECTION:
 		{
 			vec3f refractedDirection;
-			vec3f reflectedDirection = geo::reflect(rayBounce.direction, intersection.normal);
+			vec3f reflectedDirection = reflect(rayBounce.direction, intersection.normal);
 			float eta = 1.1f;
 			bool inside = (vec3f::dot(rayBounce.direction, vec3f(intersection.normal)) > 0.f);
 			norm3f n;
@@ -57,7 +57,7 @@ geometry::color4f WhittedTracer::render(const Ray & ray, const Scene & scene) co
 			{
 				n = -intersection.normal;
 			}
-			if (geo::refract(refractedDirection, rayBounce.direction, n, eta))
+			if (refract(refractedDirection, rayBounce.direction, n, eta))
 			{
 				depth--;
 				return render(Ray(intersection.point, reflectedDirection), scene);
@@ -72,7 +72,7 @@ geometry::color4f WhittedTracer::render(const Ray & ray, const Scene & scene) co
 		}
 		case prim::BSDFType::BSDF_TRANSMISSION:
 		{
-			Ray nextRay(intersection.point, geo::reflect(rayBounce.direction, intersection.normal));
+			Ray nextRay(intersection.point, reflect(rayBounce.direction, intersection.normal));
 			depth--;
 			return output * render(nextRay, scene);
 		}

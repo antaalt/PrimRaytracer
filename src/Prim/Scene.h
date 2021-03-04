@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Config.h"
+#include "Geometry.h"
 
 // Textures
 #include "Texture.h"

@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.12)
 
-project(AkaPrim)
+project(Prim)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Include Aka
 add_subdirectory(lib/Aka)
 
-add_executable(AkaPrim
+add_executable(Prim
 	"src/main.cpp"
 
 	"src/Viewer.cpp"
@@ -17,7 +17,6 @@ add_executable(AkaPrim
 	"src/Prim/BSDF.cpp"
 	"src/Prim/Camera.cpp"
 	"src/Prim/CheckerTexture.cpp"
-	"src/Prim/Config.cpp"
 	"src/Prim/ConstantTexture.cpp"
 	"src/Prim/Glass.cpp"
 	"src/Prim/GLTFLoader.cpp"
@@ -39,7 +38,7 @@ add_executable(AkaPrim
 	"src/Prim/PointLight.cpp"
 	"src/Prim/Random.cpp"
 	"src/Prim/Ray.cpp"
-	"src/Prim/Renderer.cpp"
+	
 	"src/Prim/Scene.cpp"
 	"src/Prim/ShapeDisk.cpp"
 	"src/Prim/ShapeLight.cpp"
@@ -54,18 +53,25 @@ add_executable(AkaPrim
 )
 
 # Add third party libs
-#target_include_directories(AkaPrim PUBLIC lib/imgui)
-#target_include_directories(AkaPrim PUBLIC lib/Aka/lib/glfw/include)
-#target_include_directories(AkaPrim PUBLIC lib/Aka/lib/glew/include)
-#target_include_directories(AkaPrim PUBLIC lib/IconFontCppHeaders)
-#target_include_directories(AkaPrim PUBLIC lib/json/include)
-target_include_directories(AkaPrim PUBLIC lib/Aka/lib/stb)
+#target_include_directories(Prim PUBLIC lib/imgui)
+#target_include_directories(Prim PUBLIC lib/Aka/lib/glfw/include)
+#target_include_directories(Prim PUBLIC lib/Aka/lib/glew/include)
+#target_include_directories(Prim PUBLIC lib/IconFontCppHeaders)
+#target_include_directories(Prim PUBLIC lib/json/include)
+target_include_directories(Prim PUBLIC lib/Aka/lib/stb)
 
-target_link_libraries(AkaPrim Aka)
+target_link_libraries(Prim Aka)
 
 add_custom_command(
-	TARGET AkaPrim POST_BUILD
+	TARGET Prim POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${PROJECT_SOURCE_DIR}/lib/Aka/lib/glew/bin/glew32.dll"
-    $<TARGET_FILE_DIR:AkaPrim>
+    $<TARGET_FILE_DIR:Prim>
+)
+
+add_custom_command(
+	TARGET Prim POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${PROJECT_SOURCE_DIR}/asset
+	$<TARGET_FILE_DIR:Prim>/asset
 )

@@ -1,5 +1,6 @@
 #include "MeshOctree.h"
 
+#include <Aka/Core/Debug.h>
 
 namespace prim {
 

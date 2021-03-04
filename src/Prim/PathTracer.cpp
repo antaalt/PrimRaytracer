@@ -24,7 +24,7 @@ color4f sampleLights(const Intersection &info, const Scene& scene)
 		if (scene.intersect(shadowRay, intersection))
 			return color4f(0.f);
 		float pdf = light->pdf(shadowRay);
-		return light->emission() * geo::max(0.f, vec3f::dot(shadowRay.direction, vec3f(info.normal))) / pdf;
+		return light->emission() * max(0.f, vec3f::dot(shadowRay.direction, vec3f(info.normal))) / pdf;
 	}
 	return color4f(0.f);
 }
@@ -68,7 +68,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 		// Russian roulette
 		if (bounces > (m_maxDepth / 2))
 		{
-			float probability = geo::max(reflectance.r, geo::max(reflectance.g, reflectance.b));
+			float probability = max(reflectance.r, max(reflectance.g, reflectance.b));
 			if (probability < Rand::sample<float>())
 				break;
 			reflectance = reflectance / probability;

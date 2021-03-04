@@ -1,5 +1,6 @@
 #pragma once
-#include "Config.h"
+
+#include "Geometry.h"
 #include "Ray.h"
 
 namespace prim {

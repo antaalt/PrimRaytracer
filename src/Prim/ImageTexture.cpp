@@ -69,15 +69,15 @@ T ImageTexture<T>::evaluate(const uv2f &uv) const
 	uint32_t uPixel = static_cast<uint32_t>(ui) % m_width;
 	uint32_t vPixel = static_cast<uint32_t>(vi) % m_height;
 #if defined(BILINEAR_FILTER_TEXTURE)
-	float uf = ui - geo::floor(ui);
-	float vf = vi - geo::floor(vi);
-	return geo::lerp<T>(
-		geo::lerp<T>(
+	float uf = ui - floor(ui);
+	float vf = vi - floor(vi);
+	return lerp<T>(
+		lerp<T>(
 			at(uPixel, vPixel),
 			at(uPixel + 1, vPixel),
 			uf
 		),
-		geo::lerp<T>(
+		lerp<T>(
 			at(uPixel, vPixel + 1),
 			at(uPixel + 1, vPixel + 1),
 			uf

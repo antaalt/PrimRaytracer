@@ -1,8 +1,7 @@
 #pragma once
-#include <vector>
-#include "Config.h"
 
-#include <Aka/Core/Geometry.h>
+#include "Geometry.h"
+#include <vector>
 
 namespace prim {
 

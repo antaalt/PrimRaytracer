@@ -2,7 +2,7 @@
 
 #include <Aka/Aka.h>
 
-#include "Prim/Renderer.h"
+#include "Prim/ThreadPool.h"
 #include "Prim/PathTracer.h"
 #include "Prim/OBJLoader.h"
 #include "Prim/PerspectiveCamera.h"
@@ -66,7 +66,7 @@ std::vector<Tile> generateTiles(uint32_t width, uint32_t height)
 
 void launch()
 {
-	Log::info("Launching render (previous : ", (Time::now() - renderTime).milliseconds(), "ms) - samples : ", samples);
+	Logger::info("Launching render (previous : ", (Time::now() - renderTime).milliseconds(), "ms) - samples : ", samples);
 	renderTime = Time::now();
 	for (Tile& tile : tiles)
 	{
@@ -78,7 +78,7 @@ void launch()
 				{
 					prim::RaySampler::Type sample = sampler(vec2u(tile.offset.x + x, tile.offset.y + y), vec2u(swidth, sheight));
 					prim::Ray ray = camera.generateRay(sample);
-					color4f outSrgb = tracer.render(ray, scene);
+					color4f outSrgb = color4f::linear2srgb(tracer.render(ray, scene));
 					tile.output[y * tile.size.x + x] = geometry::lerp(tile.output[y * tile.size.x + x], outSrgb, 1.f / (samples + 1.f));
 					tile.output[y * tile.size.x + x].a = 1.f;
 				}
@@ -97,7 +97,7 @@ void Viewer::initialize()
 	{
 		// Set scene
 		using namespace prim;
-#if 1
+#if 0
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.9f)));
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.5f, 1.f, 0.5f, 1.f)));
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.82f, 0.62f, 0.19f, 1.f)));
@@ -119,14 +119,15 @@ void Viewer::initialize()
 #if 0
 		{
 			OBJLoader loader;
-			loader.load("./data/models/bunny/bunny.obj", scene);
+			loader.load("models/bunny/bunny.obj", scene);
 			scene.nodes.back()->setTransform(Transform(mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))));
 		}
 #endif
 #else
 		{
-			OBJLoader loader;
-			loader.load("./data/models/sponza/sponza.obj", scene);
+			OBJLoader loader; 
+			Path path = Asset::path("models/Sponza/sponza.obj");
+			loader.load(path, scene);
 			scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(0.1f))));
 			//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(15.f))));
 		}
@@ -154,6 +155,8 @@ void Viewer::initialize()
 	}
 	swidth = width();
 	sheight = height();
+
+	scene.build();
 
 	Framebuffer::Ptr backbuffer = GraphicBackend::backbuffer();
 	backbuffer->clear(0.f, 0.f, 0.f, 1.f);

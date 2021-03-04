@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Hitable.h"
-#include "Config.h"
+#include "Geometry.h"
 
 #include <array>
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Ray.h"
 #include "BoundingBox.h"
-#include "Config.h"
+#include "Geometry.h"
 #include "Intersection.h"
 #include "Transform.h"
 

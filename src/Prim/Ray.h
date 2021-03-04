@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Config.h"
+#include "Geometry.h"
+
 #include <climits>
 
 namespace prim {

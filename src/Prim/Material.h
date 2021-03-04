@@ -2,7 +2,7 @@
 
 #include "Ray.h"
 #include "Hitable.h"
-#include "Config.h"
+#include "Geometry.h"
 #include "Random.h"
 #include "Texture.h"
 #include "Random.h"

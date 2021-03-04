@@ -1,5 +1,5 @@
 #pragma once
-#include "Config.h"
+#include "Geometry.h"
 #include "Random.h"
 #include "Light.h"
 #include "Shape.h"

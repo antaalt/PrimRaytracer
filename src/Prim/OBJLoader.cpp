@@ -7,6 +7,10 @@
 #include <fstream>
 #include <memory>
 
+#include <Aka/OS/Logger.h>
+#include <Aka/OS/Image.h>
+#include <utf8.h>
+
 #include "MeshBVH.h"
 
 namespace prim {
@@ -72,10 +76,16 @@ void skipWhitespace(std::stringstream &ss)
 	} while (true);
 }
 
-void parseMaterials(const std::string &fileName, std::map<std::string, std::unique_ptr<obj::Material>> &materials) {
-	std::ifstream file(fileName);
+void parseMaterials(const aka::Path& fileName, std::map<std::string, std::unique_ptr<obj::Material>> &materials) {
+#if defined(AKA_PLATFORM_WINDOWS)
+	std::wstring wstr;
+	utf8::utf8to16(fileName.str().begin(), fileName.str().end(), std::back_inserter(wstr));
+	std::ifstream file(wstr.c_str());
+#else
+	std::ifstream file(fileName.c_str());
+#endif
 	if (!file)
-		throw std::runtime_error("Could not load file " + fileName);
+		throw std::runtime_error("Could not load file " + fileName.str());
 
 	obj::Material *currentMaterial = nullptr;
 
@@ -142,14 +152,20 @@ void parseMaterials(const std::string &fileName, std::map<std::string, std::uniq
 	}
 }
 
-Material *convert(const std::string &path, Scene &scene, obj::Material *objMaterial)
+Material *convert(const aka::Path &path, Scene &scene, obj::Material *objMaterial)
 {
 	// TODO use others parameters.
 	Texture4f *texture;
-	if(objMaterial->map_Kd.length() > 0)
-		texture = new ImageTexture4f(path + objMaterial->map_Kd);
+	if (objMaterial->map_Kd.length() > 0)
+	{
+		aka::ImageHDR image = aka::ImageHDR::load(path + objMaterial->map_Kd);
+		texture = new ImageTexture4f((color4f*)image.bytes.data(), image.width, image.height);
+	}
 	else if (objMaterial->map_Ka.length() > 0)
-		texture = new ImageTexture4f(path + objMaterial->map_Ka);
+	{
+		aka::ImageHDR image = aka::ImageHDR::load(path + objMaterial->map_Ka);
+		texture = new ImageTexture4f((color4f*)image.bytes.data(), image.width, image.height);
+	}
 	else 
 		texture = new ConstantTexture4f(color4f(objMaterial->Kd, 1.f));
 	Material *material = new Matte(texture);
@@ -158,7 +174,7 @@ Material *convert(const std::string &path, Scene &scene, obj::Material *objMater
 	return material;
 }
 
-bool OBJLoader::load(const std::string &fileName, Scene &scene)
+bool OBJLoader::load(const aka::Path &fileName, Scene &scene)
 {
 	std::vector<point3f> positions;
 	std::vector<norm3f> normals;
@@ -167,11 +183,17 @@ bool OBJLoader::load(const std::string &fileName, Scene &scene)
 	std::map<std::string, Material*> materials;
 	Material *currentMaterial = nullptr;
 
-	std::string path = fileName.substr(0, fileName.find_last_of("/") + 1);
-
-	std::ifstream file(fileName);
+	aka::Path path = fileName.up();
+#if defined(AKA_PLATFORM_WINDOWS)
+	std::wstring wstr;
+	utf8::utf8to16(fileName.begin(), fileName.end(), std::back_inserter(wstr));
+	std::ifstream file(wstr.c_str());
+#else
+	std::ifstream file(fileName.c_str());
+#endif
 	if (!file)
-		throw std::runtime_error("Could not load file " + fileName);
+		throw std::runtime_error("Could not load file " + fileName.str());
+
 	std::string line;
 	while (std::getline(file, line))
 	{
@@ -319,7 +341,7 @@ bool OBJLoader::load(const std::string &fileName, Scene &scene)
 			break;
 		}
 		default:
-			Log::warn("Unknown data : ", line);
+			aka::Logger::warn("Unknown data : ", line);
 			break;
 		}
 	}
@@ -385,7 +407,7 @@ bool OBJLoader::load(const std::string &fileName, Scene &scene)
 				}
 				else
 				{
-					Log::error("Face type not supported, skipping : ", face.vertices.size());
+					aka::Logger::error("Face type not supported, skipping : ", face.vertices.size());
 				}
 			}
 		}
