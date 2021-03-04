@@ -8,10 +8,10 @@ The BVH implementation is totally custom and non optimized, based on a kmean clu
 
 The path tracing implementation is simple and uses next event estimation to provide faster lighting.
 
-![](screens/bunnyAndSpheres.jpg)
+![](asset/screens/bunnyAndSpheres.jpg)
 Some spheres and Stanford bunny rendered within Prim.
 
-![](screens/sponza.jpg)
+![](asset/screens/sponza.jpg)
 Sponza with 80 samples compared to 1 sample
 
 
