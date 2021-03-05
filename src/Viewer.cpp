@@ -119,7 +119,7 @@ void Viewer::initialize()
 	{
 		// Set scene
 		using namespace prim;
-#if 1
+#if 0
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.9f)));
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.5f, 1.f, 0.5f, 1.f)));
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.82f, 0.62f, 0.19f, 1.f)));
@@ -138,11 +138,14 @@ void Viewer::initialize()
 		scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(-1.5f, 0.2f, 0.f)), new Sphere(0.6f, scene.materials[2])));
 		scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(0.f, -30.f, 0.f)), new Sphere(29.f, scene.materials[3])));
 		scene.nodes.push_back(new TransformNode(mat4f::translate(vec3f(1.5f, 0.2f, 0.f)), new Sphere(0.6f, scene.materials[4])));
-#if 0
+#if 1
 		{
 			OBJLoader loader;
-			loader.load("models/bunny/bunny.obj", scene);
-			scene.nodes.back()->setTransform(Transform(mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))));
+			Path path = Asset::path("models/Bunny/bunny.obj");
+			loader.load(path, scene);
+			reinterpret_cast<TransformNode*>(scene.nodes.back())->setTransform(Transform(
+				mat4f::translate(vec3f(0.f, 1.f, 0.f)) * mat4f::scale(vec3f(15.f))
+			));
 		}
 #endif
 #else
@@ -150,8 +153,6 @@ void Viewer::initialize()
 			OBJLoader loader; 
 			Path path = Asset::path("models/Sponza/sponza.obj");
 			loader.load(path, scene);
-			//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(0.1f))));
-			//scene.nodes.back()->setTransform(Transform(mat4f::scale(vec3f(15.f))));
 		}
 #endif
 		scene.lights.push_back(new SunLight(norm3f(0.f, 1.f, 0.f), color4f(1.f), 19000.f));
@@ -196,7 +197,10 @@ void Viewer::destroy()
 {
 	m_editor.destroy();
 	threadPool.stop();
-	GraphicBackend::screenshot("output.png");
+	ImageHDR hdr(texture->width(), texture->height(), 4);
+	texture->download(hdr.bytes.data());
+	Image img(hdr);
+	img.save("output.png");
 }
 
 void Viewer::frame()
