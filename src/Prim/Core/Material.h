@@ -3,9 +3,7 @@
 #include "Ray.h"
 #include "Hitable.h"
 #include "Geometry.h"
-#include "Random.h"
 #include "Texture.h"
-#include "Random.h"
 #include "BSDF.h"
 #include "Intersection.h"
 

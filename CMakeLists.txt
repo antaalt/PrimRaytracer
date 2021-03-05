@@ -25,7 +25,7 @@ add_executable(Prim
 	"src/Prim/Core/Ray.cpp"
 	"src/Prim/Core/Scene.cpp"
 	"src/Prim/Core/Transform.cpp"
-	"src/Prim/Core/Random.cpp"
+	
 
 	"src/Prim/Scene/Camera/OrthographicCamera.cpp"
 	"src/Prim/Scene/Camera/PerspectiveCamera.cpp"

@@ -1,6 +1,5 @@
 #pragma once
 #include "../../Core/Geometry.h"
-#include "../../Core/Random.h"
 #include "../../Core/Light.h"
 #include "../../Core/Shape.h"
 

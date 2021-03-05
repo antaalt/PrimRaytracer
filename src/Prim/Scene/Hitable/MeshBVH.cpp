@@ -1,6 +1,5 @@
 #include "MeshBVH.h"
 
-#include "../../Core/Random.h"
 #include "MeshOctree.h"
 
 #include <Aka/Core/Debug.h>
@@ -72,9 +71,9 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 	{
 		// 2. set two distinct random points as centroid
 		uint32_t triIndex[2];
-		triIndex[0] = Rand::sample<uint32_t>(0, (uint32_t)triangles.size() - 1);
+		triIndex[0] = random<uint32_t>(0, (uint32_t)(triangles.size() - 1));
 		do {
-			triIndex[1] = Rand::sample<uint32_t>(0, (uint32_t)triangles.size() - 1);
+			triIndex[1] = random<uint32_t>(0, (uint32_t)(triangles.size() - 1));
 		} while (triIndex[1] == triIndex[0]);
 		std::array<point3f, childCount> centroid = {
 			triangles[triIndex[0]]->center(),

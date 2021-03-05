@@ -1,7 +1,5 @@
 #include "ShapeSphere.h"
 
-#include "../Core/Random.h"
-
 namespace prim {
 
 ShapeSphere::ShapeSphere(const point3f & center, float radius) : m_center(center), m_radius(radius)
@@ -9,12 +7,14 @@ ShapeSphere::ShapeSphere(const point3f & center, float radius) : m_center(center
 }
 vec3f ShapeSphere::sample(const point3f & from) const
 {
-	vec3f sample = sample::unitSphere(Rand::sample<float>(), Rand::sample<float>());
-	return vec3f(m_center - from) + sample * m_radius;
+	float r1 = random<float>();
+	float r2 = random<float>();
+	vec3f sample = spherical<float>(2.f * pi<float> *r1, arccos(1.f - 2.f * r2), 1.f).cartesian();
+	return (m_center - from) + sample * m_radius;
 }
 float ShapeSphere::pdf() const
 {
-	return 4.f * geometry::pi<float>() * m_radius * m_radius;;
+	return 4.f * pi<float>() * m_radius * m_radius;;
 }
 point3f ShapeSphere::position() const
 {

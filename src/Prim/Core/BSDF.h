@@ -2,7 +2,6 @@
 #include "../Core/Geometry.h"
 #include "../Core/Ray.h"
 #include "../Core/Hitable.h"
-#include "../Core/Random.h"
 #include "../Core/Transform.h"
 #include "Fresnel.h"
 
@@ -25,20 +24,26 @@ struct BTDF : BSDF {
 struct LambertianReflection : BRDF {
 	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
-		float r1 = Rand::sample<float>();
-		float r2 = Rand::sample<float>();
-		geometry::vec3f randomDirection = sample::unitHemisphere(r1, r2);
+		float r1 = random();
+		float r2 = random();
+		// Disk sampling projected on hemisphere. More efficient and give a cosine weighted distribution
+		// from Global Illuination Compendium item 35
+		// http://www.rorydriscoll.com/2009/01/07/better-sampling/
+		vec3f randomDirection = vec3f(
+			polar<float>(2.0 * pi<float> *r2, sqrt(r1)).cartesian(), 
+			sqrt(1.f - r1)
+		);
 		Onb onb(normal);
 		return onb(randomDirection);
 	}
 	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
 		// We can remove pi as it cancel itself with evaluate pi
-		return geometry::vec3f::dot(wo, geometry::vec3f(normal));// / geometry::pi<float>();
+		return vec3f::dot(wo, vec3f(normal));// / pi<float>();
 	}
 	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return albedo;// / geometry::pi<float>();
+		return albedo;// / pi<float>();
 	}
 };
 
@@ -53,7 +58,7 @@ struct SpecularReflection : BRDF {
 	}
 	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return albedo / geometry::vec3f::dot(wo, geometry::vec3f(normal));
+		return albedo / vec3f::dot(wo, vec3f(normal));
 	}
 };
 
@@ -62,23 +67,23 @@ struct Specular : BSDF {
 	Specular(float eta) : m_eta(eta) {}
 	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
-		geometry::norm3f nn = normal;
+		norm3f nn = normal;
 
 		float etar = 1.f / m_eta;
-		if (geometry::vec3f::dot(wi, geometry::vec3f(normal)) >= 0.f)
+		if (vec3f::dot(wi, vec3f(normal)) >= 0.f)
 		{
 			etar = m_eta;
 			nn = -normal;
 		}
 
-		geometry::vec3f refracted;
-		geometry::vec3f reflected = reflect(wi, normal);
+		vec3f refracted;
+		vec3f reflected = reflect(wi, normal);
 		if (refract(refracted, wi, nn, etar)) // TIR
 			return reflected;
 
 		Schlick schlick(1.f, m_eta);
 		float R = schlick.evaluate(wi, normal);
-		float z = Rand::sample<float>();
+		float z = random();
 		if (z <= R)
 			return reflected;
 		else
@@ -88,9 +93,9 @@ struct Specular : BSDF {
 	{
 		return 1.f;
 	}
-	geometry::color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
+	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return albedo / geometry::vec3f::dot(wo, geometry::vec3f(normal));
+		return albedo / vec3f::dot(wo, vec3f(normal));
 	}
 private:
 	float m_eta;
@@ -102,17 +107,23 @@ struct MicrofacetReflection : BRDF
 
 	vec3f scatter(const vec3f &wi, const norm3f &normal) const override
 	{
-		geometry::vec3f m = sample::unitMicrofacet(m_roughness, Rand::sample<float>(), Rand::sample<float>());
+		float r1 = random();
+		float r2 = random();
+		vec3f m = spherical<float>(
+			arctan(m_roughness * sqrt(r1) / sqrt(1.f - r1)),
+			2.f * pi<float> *r2, 
+			1.f
+		).cartesian();
 		Onb onb(normal);
 		return onb(m);
 	}
 	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
-		return geometry::vec3f::dot(wo, geometry::vec3f(normal)) / geometry::pi<float>();
+		return vec3f::dot(wo, vec3f(normal)) / pi<float>();
 	}
-	geometry::color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
+	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return albedo / geometry::pi<float>();
+		return albedo / pi<float>();
 	}
 private:
 	float m_roughness;

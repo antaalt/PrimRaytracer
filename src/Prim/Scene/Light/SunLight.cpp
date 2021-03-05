@@ -1,6 +1,6 @@
 #include "SunLight.h"
 
-#include "../../Core/Random.h"
+#include "../../Core/Geometry.h"
 
 namespace prim {
 
@@ -15,10 +15,12 @@ SunLight::SunLight(const norm3f &direction, const color4f &albedo, float intensi
 
 Ray SunLight::sample(const point3f &hitPoint) const
 {
+	float r1 = random<float>();
+	float r2 = random<float>();
 	Ray ray;
 	Onb onb(m_direction);
 	ray.origin = hitPoint;
-	ray.direction = onb(vec3f::normalize(vec3f(unitSunRadius * sample::unitDisk(Rand::sample<float>(), Rand::sample<float>()), 1.f)));
+	ray.direction = onb(vec3f::normalize(vec3f(unitSunRadius * polar<float>(2.0 * pi<float> *r2, sqrt(r1)).cartesian(), 1.f)));
 	return ray;
 }
 

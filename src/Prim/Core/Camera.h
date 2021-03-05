@@ -2,13 +2,10 @@
 
 #include "Geometry.h"
 #include "Ray.h"
-#include "Random.h"
 #include "Transform.h"
 
 
 namespace prim {
-
-using vec2u = vec2<uint32_t>;
 
 struct RaySampler {
 	using Type = vec2f;
@@ -20,7 +17,9 @@ struct LinearRaySampler : public RaySampler {
 };
 
 struct RandomRaySampler : public RaySampler {
+	RandomRaySampler(uint32_t sample);
 	RaySampler::Type operator()(vec2u position, vec2u size) override;
+	uint32_t iSample;
 };
 
 struct Camera {

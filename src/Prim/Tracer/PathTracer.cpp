@@ -1,7 +1,6 @@
 #include "PathTracer.h"
 #include "../Core/Hitable.h"
 #include "../Core/Material.h"
-#include "../Core/Random.h"
 #include "../Core/Light.h"
 
 namespace prim {
@@ -69,7 +68,7 @@ color4f PathTracer::render(const Ray & ray, const Scene & scene) const
 		if (bounces > (m_maxDepth / 2))
 		{
 			float probability = max(reflectance.r, max(reflectance.g, reflectance.b));
-			if (probability < Rand::sample<float>())
+			if (probability < random<float>())
 				break;
 			reflectance = reflectance / probability;
 		}

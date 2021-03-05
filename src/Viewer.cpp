@@ -8,6 +8,17 @@
 #include "Prim/Scene/Camera/PerspectiveCamera.h"
 #include "Prim/Scene/Light/SunLight.h"
 
+#include "Prim/Scene/Texture/ConstantTexture.h"
+#include "Prim/Scene/Texture/ImageTexture.h"
+#include "Prim/Scene/Texture/CheckerTexture.h"
+
+#include "Prim/Scene/Hitable/Sphere.h"
+#include "Prim/Scene/Hitable/TransformNode.h"
+
+#include "Prim/Scene/Material/Glass.h"
+#include "Prim/Scene/Material/Matte.h"
+#include "Prim/Scene/Material/Metal.h"
+
 namespace viewer {
 using namespace aka;
 
@@ -80,7 +91,7 @@ void launch()
 	for (Tile& tile : tiles)
 	{
 		threadPool.addTask([&]() {
-			prim::RandomRaySampler sampler;
+			prim::RandomRaySampler sampler{ samples };
 			for (uint32_t y = 0; y < tile.size.y; y++)
 			{
 				for (uint32_t x = 0; x < tile.size.x; x++)

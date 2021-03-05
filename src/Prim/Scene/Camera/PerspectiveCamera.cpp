@@ -19,7 +19,9 @@ Ray PerspectiveCamera::generateRay(const RaySampler::Type & screenPos) const
 
 	if (lensRadius > 0)
 	{
-		vec2f pLens = lensRadius * sample::unitDisk(Rand::sample<float>(), Rand::sample<float>());
+		float r1 = random();
+		float r2 = random();
+		vec2f pLens = lensRadius * polar<float>(2.0 * pi<float> * r2, sqrt(r1)).cartesian();
 		float ft = focalDistance / camDir.z;
 		point3f pFocus = camPos + camDir * ft;
 		point3f origin = point3f(pLens.x, pLens.y, 0.f);

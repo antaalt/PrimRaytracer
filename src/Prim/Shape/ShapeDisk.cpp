@@ -1,6 +1,5 @@
 #include "ShapeDisk.h"
 
-#include "../Core/Random.h"
 #include "../Core/Transform.h"
 
 namespace prim {
@@ -11,7 +10,9 @@ ShapeDisk::ShapeDisk(const point3f & center, float radius, const norm3f &up) : m
 
 vec3f ShapeDisk::sample(const point3f & from) const
 {
-	vec3f sample = vec3f(sample::unitDisk(Rand::sample<float>(), Rand::sample<float>()), 1.f);
+	float r1 = random<float>();
+	float r2 = random<float>();
+	vec3f sample = vec3f(polar<float>(2.0 * pi<float> *r2, sqrt(r1)).cartesian(), 1.f);
 	Onb onb(m_up);
 	return vec3f(m_center) + onb(sample * m_radius);
 }
