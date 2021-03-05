@@ -1,9 +1,9 @@
-[submodule "prim/thirdparty-libs/imgui"]
-	path = prim/thirdparty-libs/imgui
-	url = git@github.com:ocornut/imgui.git
-[submodule "prim/prim-viewer/data/models/Sponza"]
-	path = prim/prim-viewer/data/models/Sponza
+[submodule "asset/models/Sponza"]
+	path = asset/models/Sponza
 	url = git@github.com:jimmiebergmann/Sponza.git
-[submodule "prim/thirdparty-libs/tinygltf"]
-	path = prim/thirdparty-libs/tinygltf
-	url = git@github.com:syoyo/tinygltf.git
+[submodule "lib/Aka"]
+	path = lib/Aka
+	url = git@github.com:antaalt/Aka.git
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = git@github.com:ocornut/imgui.git
