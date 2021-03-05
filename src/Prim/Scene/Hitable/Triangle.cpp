@@ -59,7 +59,7 @@ bool Triangle::intersect(const Ray & ray, Intersection *intersection) const
 		const point3f hitPoint = ray(t / normalizationScale);
 		const norm3f normal = interpolate(A.normal, B.normal, C.normal, barycentric);
 		const uv2f texCoord = interpolate(A.texcoord, B.texcoord, C.texcoord, barycentric);
-		intersection->report(hitPoint, normal, texCoord, m_material);
+		intersection->report(hitPoint, normal, texCoord, this, m_material);
 		ray.tmax = t; // update closest hit
 		return true;
 	}

@@ -40,7 +40,7 @@ bool Sphere::intersect(const Ray &ray, Intersection *intersection) const
 		const float u = 0.5f + geometry::arctan2(-normal.z, -normal.x) / (2.f * geometry::pi<float>);
 		const float v = 0.5f - geometry::arcsin(-normal.y)() / geometry::pi<float>();
 		const uv2f texcoord = uv2f(u, v);
-		intersection->report(hitPoint, normal, texcoord, m_material);
+		intersection->report(hitPoint, normal, texcoord, this, m_material);
 		ray.tmax = t1;
 		return true;
 
@@ -56,7 +56,7 @@ bool Sphere::intersect(const Ray &ray, Intersection *intersection) const
 		const float u = 0.5f + geometry::arctan2(-normal.z, -normal.x) / (2.f * geometry::pi<float>);
 		const float v = 0.5f - geometry::arcsin(-normal.y)() / geometry::pi<float>();
 		const uv2f texcoord = uv2f(u, v);
-		intersection->report(hitPoint, normal, texcoord, m_material);
+		intersection->report(hitPoint, normal, texcoord, this, m_material);
 		ray.tmax = t2;
 		return true;
 	}
@@ -74,6 +74,11 @@ void Sphere::include(BoundingBox &boundingBox) const
 	// Local to world transform
 	boundingBox.include(point3f(0) + vec3f(m_radius));
 	boundingBox.include(point3f(0) - vec3f(m_radius));
+}
+
+float Sphere::getRadius() const
+{
+	return m_radius;
 }
 
 }

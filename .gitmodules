@@ -4,3 +4,6 @@
 [submodule "lib/Aka"]
 	path = lib/Aka
 	url = git@github.com:antaalt/Aka.git
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = git@github.com:ocornut/imgui.git

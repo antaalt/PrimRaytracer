@@ -18,6 +18,8 @@ public:
 
 	// Is thread pool waiting for tasks
 	bool empty() const;
+	// Get the thread pool size
+	size_t size() const;
 	// Wait for thread pool to be idle
 	void wait();
 	// Reset the queue

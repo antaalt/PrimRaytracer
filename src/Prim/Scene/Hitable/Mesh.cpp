@@ -36,4 +36,19 @@ void Mesh::include(BoundingBox &boundingBox) const
 	boundingBox.include(m_bbox);
 }
 
+size_t Mesh::getTriangleCount() const
+{
+	return m_triangles.size();
+}
+
+Triangle& Mesh::getTriangle(size_t index)
+{
+	return m_triangles[index];
+}
+
+const Triangle& Mesh::getTriangle(size_t index) const
+{
+	return m_triangles[index];
+}
+
 }

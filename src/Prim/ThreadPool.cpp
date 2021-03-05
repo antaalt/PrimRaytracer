@@ -24,6 +24,11 @@ bool ThreadPool::empty() const
 	return m_queue.empty();
 }
 
+size_t ThreadPool::size() const
+{
+	return m_threads.size();
+}
+
 void ThreadPool::wait()
 {
 	/*std::unique_lock<std::mutex> lock(m_mutex);

@@ -15,6 +15,8 @@ public:
 
 	void setTransform(const Transform &transform);
 	const Transform &getTransform() const;
+
+	Hitable* getHitable() { return m_hitable; }
 	const Hitable *getHitable() const { return m_hitable; }
 private:
 	Transform m_localToWorld;

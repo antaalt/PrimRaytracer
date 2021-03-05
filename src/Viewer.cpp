@@ -2,6 +2,8 @@
 
 #include <Aka/Aka.h>
 
+#include "Editor/SceneUI.h"
+
 #include "Prim/ThreadPool.h"
 #include "Prim/Tracer/PathTracer.h"
 #include "Prim/Scene/Loader/OBJLoader.h"
@@ -41,6 +43,7 @@ struct Tile {
 };
 static std::vector<const Tile*> tilesFinished;
 static std::vector<Tile> tiles;
+static std::deque<Rect> renderTile;
 
 static std::mutex mutex;
 
@@ -86,7 +89,6 @@ std::vector<Tile> generateTiles(uint32_t width, uint32_t height)
 
 void launch()
 {
-	Logger::info("Launching render (previous : ", (Time::now() - renderTime).milliseconds(), "ms) - samples : ", samples);
 	renderTime = Time::now();
 	for (Tile& tile : tiles)
 	{
@@ -117,7 +119,7 @@ void Viewer::initialize()
 	{
 		// Set scene
 		using namespace prim;
-#if 0
+#if 1
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.9f)));
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.5f, 1.f, 0.5f, 1.f)));
 		scene.textures.push_back(new ConstantTexture4f(color4f(0.82f, 0.62f, 0.19f, 1.f)));
@@ -179,6 +181,11 @@ void Viewer::initialize()
 
 	scene.build();
 
+	m_sceneUI = m_editor.attach<SceneUI>();
+	m_sceneUI->setScene(&scene);
+	m_sceneUI->setCamera(&camera);
+	m_editor.initialize();
+
 	Framebuffer::Ptr backbuffer = GraphicBackend::backbuffer();
 	backbuffer->clear(0.f, 0.f, 0.f, 1.f);
 
@@ -187,32 +194,47 @@ void Viewer::initialize()
 
 void Viewer::destroy()
 {
+	m_editor.destroy();
 	threadPool.stop();
 	GraphicBackend::screenshot("output.png");
+}
+
+void Viewer::frame()
+{
+	m_editor.frame();
 }
 
 void Viewer::update(aka::Time::Unit deltaTime)
 {
 	bool updated = false;
 	mat4f transform = camera.transform.getMatrix();
-	if (input::pressed(input::Button::Button1))
+	if (!m_editor.focused() && input::pressed(input::Button::Button1))
 	{
-		updated = true;
 		const input::Position& delta = input::delta();
-		transform *= mat4f::rotate(vec3f(0.f, 1.f, 0.f), degreef(static_cast<float>(-delta.x)));
-		transform *= mat4f::rotate(vec3f(1.f, 0.f, 0.f), degreef(static_cast<float>(-delta.y)));
+		if (delta.x != 0.f || delta.y != 0.f)
+		{
+			transform *= mat4f::rotate(vec3f(0.f, 1.f, 0.f), degreef(delta.x * deltaTime.seconds() * 10.f));
+			transform *= mat4f::rotate(vec3f(1.f, 0.f, 0.f), degreef(delta.y * deltaTime.seconds() * 10.f));
+			updated = true;
+		}
 	}
-	if (input::pressed(input::Button::Button2))
+	if (!m_editor.focused() && input::pressed(input::Button::Button2))
 	{
-		updated = true;
 		const input::Position& delta = input::delta();
-		transform *= geometry::mat4f::translate(vec3f(-delta.x * 0.01f, delta.y * 0.01f, 0.f));
+		if (delta.x != 0.f || delta.y != 0.f)
+		{
+			transform *= geometry::mat4f::translate(vec3f(delta.x * deltaTime.seconds() * 0.5f, -delta.y * deltaTime.seconds() * 0.5f, 0.f));
+			updated = true;
+		}
 	}
 	const input::Position& scroll = input::scroll();
-	if (scroll.y != 0.f)
+	if (!m_editor.focused() && scroll.y != 0.f)
 	{
-		updated = true;
-		transform *= geometry::mat4f::translate(vec3f(0.f, 0.f, scroll.y * 0.1f));
+		if (scroll.y != 0.f)
+		{
+			updated = true;
+			transform *= geometry::mat4f::translate(vec3f(0.f, 0.f, scroll.y * deltaTime.seconds() * 10.f));
+		}
 	}
 	camera.transform = prim::Transform(transform);
 	if (updated)
@@ -223,6 +245,7 @@ void Viewer::update(aka::Time::Unit deltaTime)
 	}
 	if (aka::input::pressed(aka::input::Key::Escape))
 		quit();
+	m_editor.update(deltaTime);
 }
 
 void Viewer::render()
@@ -240,20 +263,31 @@ void Viewer::render()
 			region.w = tile->size.x;
 			region.h = tile->size.y;
 			texture->upload(region, tile->output.data());
+			// Store tile to draw them
+			renderTile.push_back(region);
+			if (renderTile.size() > threadPool.size())
+				renderTile.pop_front();
 		}
 		tilesFinished.clear();
 	}
 	if (threadPool.empty())
 	{
 		samples++;
+		m_sceneUI->setSampleCount(samples);
 		launch();
 	}
 
 	batch.draw(mat3f::identity(), Batch::Rect(vec2f(0), vec2f((float)width(), (float)height()), texture, 0));
+	for (const Rect& rect : renderTile)
+		batch.draw(mat3f::identity(), Batch::Rect(vec2f(rect.x, rect.y), vec2f(rect.w, rect.h), color4f(0.93f, 0.04f, 0.26f, 0.2f), 1));
+
 	std::unique_lock<std::mutex> m(mutex);
 	batch.render(GraphicBackend::backbuffer(), mat4f::identity(), mat4f::orthographic(0.f, (float)height(), 0.f, (float)width()));
 	m.unlock();
 	batch.clear();
+
+	m_editor.draw();
+	m_editor.render();
 }
 
 void Viewer::resize(uint32_t width, uint32_t height) 

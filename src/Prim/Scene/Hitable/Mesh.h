@@ -19,6 +19,11 @@ public:
 	bool intersect(const Ray &ray, Intersection *intersection) const override;
 
 	void include(BoundingBox &boundingBox) const override;
+
+	size_t getTriangleCount() const;
+
+	Triangle& getTriangle(size_t index);
+	const Triangle& getTriangle(size_t index) const;
 protected:
 	BoundingBox m_bbox;
 	std::vector<Triangle> m_triangles;

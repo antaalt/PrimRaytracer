@@ -34,6 +34,7 @@ public:
 	virtual color4f sample(const Intersection &intersection, const vec3f &wi, vec3f *wo, float *pdf, BSDFType *type) const = 0;
 	vec3f scatter() const;
 	BSDFType getType() const { return m_type; }
+	Texture4f* getTexture() { return m_texture; }
 protected:
 	Texture4f *m_texture;
 	BSDFType m_type;

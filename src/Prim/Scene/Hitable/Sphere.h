@@ -11,6 +11,8 @@ public:
 	bool intersect(const Ray &ray, Intersection *intersection) const override;
 
 	void include(BoundingBox &boundingBox) const override;
+
+	float getRadius() const;
 protected:
 	float area() const;
 protected:
