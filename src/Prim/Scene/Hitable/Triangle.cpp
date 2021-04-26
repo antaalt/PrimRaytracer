@@ -26,7 +26,7 @@ Triangle::Triangle(const Vertex & A, const Vertex & B, const Vertex & C, Materia
 
 bool Triangle::intersect(const Ray & ray, Intersection *intersection) const
 {
-	// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
+	// https://en.wikipedia.org/wiki/Moller–Trumbore_intersection_algorithm
 	// This algorithm require ray direction to be normalized. So we normalize
 	// the direction and keep the normalization factor to rescale final t.
 	// This let us support intersection which where scaled by a scaled transform.

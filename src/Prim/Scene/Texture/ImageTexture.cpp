@@ -1,7 +1,5 @@
 #include "ImageTexture.h"
 
-#include <stb_image.h>
-
 #define BILINEAR_FILTER_TEXTURE
 
 namespace prim {

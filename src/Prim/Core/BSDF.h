@@ -30,7 +30,7 @@ struct LambertianReflection : BRDF {
 		// from Global Illuination Compendium item 35
 		// http://www.rorydriscoll.com/2009/01/07/better-sampling/
 		vec3f randomDirection = vec3f(
-			polar<float>(2.0 * pi<float> *r2, sqrt(r1)).cartesian(), 
+			polar<float>(2.f * pi<float> *r2, sqrt(r1)).cartesian(), 
 			sqrt(1.f - r1)
 		);
 		Onb onb(normal);
@@ -119,11 +119,11 @@ struct MicrofacetReflection : BRDF
 	}
 	float pdf(const vec3f &wo, const norm3f &normal) const override
 	{
-		return vec3f::dot(wo, vec3f(normal)) / pi<float>();
+		return vec3f::dot(wo, vec3f(normal)) / pi<float>.radian();
 	}
 	color4f evaluate(const color4f &albedo, const vec3f &wo, const norm3f &normal) const override
 	{
-		return albedo / pi<float>();
+		return albedo / pi<float>.radian();
 	}
 private:
 	float m_roughness;

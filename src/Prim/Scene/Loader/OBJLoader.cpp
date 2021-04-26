@@ -9,7 +9,6 @@
 
 #include <Aka/OS/Logger.h>
 #include <Aka/OS/Image.h>
-#include <utf8.h>
 
 #include "../Hitable/MeshBVH.h"
 #include "../Hitable/TransformNode.h"
@@ -82,11 +81,10 @@ void skipWhitespace(std::stringstream &ss)
 
 void parseMaterials(const aka::Path& fileName, std::map<std::string, std::unique_ptr<obj::Material>> &materials) {
 #if defined(AKA_PLATFORM_WINDOWS)
-	std::wstring wstr;
-	utf8::utf8to16(fileName.str().begin(), fileName.str().end(), std::back_inserter(wstr));
-	std::ifstream file(wstr.c_str());
+	aka::StrWide wstr = aka::encoding::wide(fileName.str());
+	std::ifstream file(wstr.cstr());
 #else
-	std::ifstream file(fileName.c_str());
+	std::ifstream file(fileName.cstr());
 #endif
 	if (!file)
 		throw std::runtime_error("Could not load file " + fileName.str());
@@ -162,12 +160,12 @@ Material *convert(const aka::Path &path, Scene &scene, obj::Material *objMateria
 	Texture4f *texture;
 	if (objMaterial->map_Kd.length() > 0)
 	{
-		aka::ImageHDR image = aka::ImageHDR::load(path + objMaterial->map_Kd);
+		aka::ImageHDR image = aka::ImageHDR::load(path + aka::Path(objMaterial->map_Kd));
 		texture = new ImageTexture4f((color4f*)image.bytes.data(), image.width, image.height);
 	}
 	else if (objMaterial->map_Ka.length() > 0)
 	{
-		aka::ImageHDR image = aka::ImageHDR::load(path + objMaterial->map_Ka);
+		aka::ImageHDR image = aka::ImageHDR::load(path + aka::Path(objMaterial->map_Ka));
 		texture = new ImageTexture4f((color4f*)image.bytes.data(), image.width, image.height);
 	}
 	else 
@@ -189,11 +187,10 @@ bool OBJLoader::load(const aka::Path &fileName, Scene &scene)
 
 	aka::Path path = fileName.up();
 #if defined(AKA_PLATFORM_WINDOWS)
-	std::wstring wstr;
-	utf8::utf8to16(fileName.begin(), fileName.end(), std::back_inserter(wstr));
-	std::ifstream file(wstr.c_str());
+	aka::StrWide wstr = aka::encoding::wide(fileName.str());
+	std::ifstream file(wstr.cstr());
 #else
-	std::ifstream file(fileName.c_str());
+	std::ifstream file(fileName.cstr());
 #endif
 	if (!file)
 		throw std::runtime_error("Could not load file " + fileName.str());
@@ -213,7 +210,7 @@ bool OBJLoader::load(const aka::Path &fileName, Scene &scene)
 			std::string materialFileName;
 			ss >> materialFileName;
 			std::map<std::string, std::unique_ptr<obj::Material>> parsedMaterials;
-			parseMaterials(path + materialFileName, parsedMaterials);
+			parseMaterials(path + aka::Path(materialFileName), parsedMaterials);
 			// convert obj::materials to materials.
 			for (auto const& it : parsedMaterials) {
 				Material *material = convert(path, scene, it.second.get());

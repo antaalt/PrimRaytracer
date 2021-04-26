@@ -53,7 +53,7 @@ uint32_t MeshOctree::Node::build(const std::vector<const Triangle*> &triangles, 
 	{
 		for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 			this->triangles.push_back(triangles[iTri]);
-		ASSERT(isLeaf(), "Should be a leaf");
+		AKA_ASSERT(isLeaf(), "Should be a leaf");
 		return 0;
 	}
 	// Get optimal center of bbox
@@ -62,7 +62,7 @@ uint32_t MeshOctree::Node::build(const std::vector<const Triangle*> &triangles, 
 	for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 		c += vec3f(triangles[iTri]->center());
 	c = c / static_cast<float>(triangles.size());
-	ASSERT(bbox.contain(c), "Not inside");
+	AKA_ASSERT(bbox.contain(c), "Not inside");
 #else
 	origin = bbox.center();
 #endif
@@ -77,7 +77,7 @@ uint32_t MeshOctree::Node::build(const std::vector<const Triangle*> &triangles, 
 		childBox.max.y = (iChild & (1 << 1)) ? bbox.max.y : origin.y;
 		childBox.min.z = (iChild & (1 << 0)) ? origin.z : bbox.min.z;
 		childBox.max.z = (iChild & (1 << 0)) ? bbox.max.z : origin.z;
-		ASSERT(bbox.contain(childBox), "Not inside");
+		AKA_ASSERT(bbox.contain(childBox), "Not inside");
 
 		std::vector<const Triangle*> childTri;
 		for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)

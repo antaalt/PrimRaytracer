@@ -30,7 +30,6 @@ static prim::PathTracer tracer(6);
 static prim::ThreadPool threadPool;
 static Time::Unit renderTime = Time::now();
 static Texture::Ptr texture;
-static Batch batch;
 static uint32_t samples = 0;
 static uint32_t swidth;
 static uint32_t sheight;
@@ -112,9 +111,10 @@ void launch()
 	}
 }
 
-void Viewer::initialize()
+void Viewer::onCreate()
 {
-	tiles = generateTiles(width(), height());
+	Framebuffer::Ptr backbuffer = GraphicBackend::backbuffer();
+	tiles = generateTiles(backbuffer->width(), backbuffer->height());
 	threadPool.start();
 	{
 		// Set scene
@@ -158,27 +158,27 @@ void Viewer::initialize()
 		scene.lights.push_back(new SunLight(norm3f(0.f, 1.f, 0.f), color4f(1.f), 19000.f));
 	}
 	{
-		camera.perspective = mat4f::perspective(degreef(60.f), width() / (float)height(), 0.1f, 1000.f);
+		camera.perspective = mat4f::perspective(anglef::degree(60.f), backbuffer->width() / (float)backbuffer->height(), 0.1f, 1000.f);
 		camera.inverse = mat4f::inverse(camera.perspective);
 		camera.hFov = 60.f;
 		camera.transform = prim::Transform(mat4f::translate(vec3f(
 			0.f,
 			1.f,
 			0.f
-		)) * mat4f::rotate(vec3f(0.f, 1.f, 0.f), degreef(90.f)));
+		)) * mat4f::rotate(vec3f(0.f, 1.f, 0.f), anglef::degree(90.f)));
 	}
 	{
 		Sampler sampler;
 		sampler.filterMag = Sampler::Filter::Nearest;
 		sampler.filterMin = Sampler::Filter::Nearest;
-		sampler.wrapS = Sampler::Wrap::Clamp;
-		sampler.wrapT = Sampler::Wrap::Clamp;
-		texture = Texture::create(width(), height(), Texture::Format::Float, Texture::Component::RGBA, sampler);
+		sampler.wrapU = Sampler::Wrap::ClampToEdge;
+		sampler.wrapV = Sampler::Wrap::ClampToEdge;
+		texture = Texture::create(backbuffer->width(), backbuffer->height(), TextureFormat::Float, TextureComponent::RGBA, TextureFlag::None, sampler);
 		std::vector<color4f> bytes(swidth * sheight, color4f(0.f, 0.f, 0.f, 1.f));
 		texture->upload(bytes.data());
 	}
-	swidth = width();
-	sheight = height();
+	swidth = backbuffer->width();
+	sheight = backbuffer->height();
 
 	scene.build();
 
@@ -187,13 +187,12 @@ void Viewer::initialize()
 	m_sceneUI->setCamera(&camera);
 	m_editor.initialize();
 
-	Framebuffer::Ptr backbuffer = GraphicBackend::backbuffer();
-	backbuffer->clear(0.f, 0.f, 0.f, 1.f);
+	backbuffer->clear(color4f(0.f, 0.f, 0.f, 1.f));
 
 	launch();
 }
 
-void Viewer::destroy()
+void Viewer::onDestroy()
 {
 	m_editor.destroy();
 	threadPool.stop();
@@ -203,35 +202,35 @@ void Viewer::destroy()
 	img.save("output.png");
 }
 
-void Viewer::frame()
+void Viewer::onFrame()
 {
 	m_editor.frame();
 }
 
-void Viewer::update(aka::Time::Unit deltaTime)
+void Viewer::onUpdate(aka::Time::Unit deltaTime)
 {
 	bool updated = false;
 	mat4f transform = camera.transform.getMatrix();
-	if (!m_editor.focused() && input::pressed(input::Button::Button1))
+	if (!m_editor.focused() && Mouse::pressed(MouseButton::Button1))
 	{
-		const input::Position& delta = input::delta();
+		const Position& delta = Mouse::delta();
 		if (delta.x != 0.f || delta.y != 0.f)
 		{
-			transform *= mat4f::rotate(vec3f(0.f, 1.f, 0.f), degreef(delta.x * deltaTime.seconds() * 10.f));
-			transform *= mat4f::rotate(vec3f(1.f, 0.f, 0.f), degreef(delta.y * deltaTime.seconds() * 10.f));
+			transform *= mat4f::rotate(vec3f(0.f, 1.f, 0.f), anglef::degree(delta.x * deltaTime.seconds() * 10.f));
+			transform *= mat4f::rotate(vec3f(1.f, 0.f, 0.f), anglef::degree(delta.y * deltaTime.seconds() * 10.f));
 			updated = true;
 		}
 	}
-	if (!m_editor.focused() && input::pressed(input::Button::Button2))
+	if (!m_editor.focused() && Mouse::pressed(MouseButton::Button2))
 	{
-		const input::Position& delta = input::delta();
+		const Position& delta = Mouse::delta();
 		if (delta.x != 0.f || delta.y != 0.f)
 		{
 			transform *= geometry::mat4f::translate(vec3f(delta.x * deltaTime.seconds() * 0.5f, -delta.y * deltaTime.seconds() * 0.5f, 0.f));
 			updated = true;
 		}
 	}
-	const input::Position& scroll = input::scroll();
+	const Position& scroll = Mouse::scroll();
 	if (!m_editor.focused() && scroll.y != 0.f)
 	{
 		if (scroll.y != 0.f)
@@ -247,12 +246,12 @@ void Viewer::update(aka::Time::Unit deltaTime)
 		samples = 0;
 		launch();
 	}
-	if (aka::input::pressed(aka::input::Key::Escape))
-		quit();
+	if (Keyboard::pressed(KeyboardKey::Escape))
+		EventDispatcher<QuitEvent>::emit();
 	m_editor.update(deltaTime);
 }
 
-void Viewer::render()
+void Viewer::onRender()
 {
 	Time::Unit start = Time::now();
 
@@ -281,20 +280,20 @@ void Viewer::render()
 		launch();
 	}
 
-	batch.draw(mat3f::identity(), Batch::Rect(vec2f(0), vec2f((float)width(), (float)height()), texture, 0));
+	Framebuffer::Ptr backbuffer = GraphicBackend::backbuffer();
+	backbuffer->clear(color4f(0.f, 0.f, 0.f, 1.f));
+	Renderer2D::drawRect(mat3f::identity(), vec2f(0), vec2f((float)backbuffer->width(), (float)backbuffer->height()), texture, color4f(1.f), 0);
 	for (const Rect& rect : renderTile)
-		batch.draw(mat3f::identity(), Batch::Rect(vec2f(rect.x, rect.y), vec2f(rect.w, rect.h), color4f(0.93f, 0.04f, 0.26f, 0.2f), 1));
+		Renderer2D::drawRect(mat3f::identity(), vec2f(rect.x, rect.y), vec2f(rect.w, rect.h), nullptr, color4f(0.93f, 0.04f, 0.26f, 0.2f), 1);
 
-	std::unique_lock<std::mutex> m(mutex);
-	batch.render(GraphicBackend::backbuffer(), mat4f::identity(), mat4f::orthographic(0.f, (float)height(), 0.f, (float)width()));
-	m.unlock();
-	batch.clear();
+	Renderer2D::render(backbuffer, mat4f::identity(), mat4f::orthographic(0.f, (float)backbuffer->height(), 0.f, (float)backbuffer->width()));
+	Renderer2D::clear();
 
 	m_editor.draw();
 	m_editor.render();
 }
 
-void Viewer::resize(uint32_t width, uint32_t height) 
+void Viewer::onResize(uint32_t width, uint32_t height) 
 {
 	{
 		// Wait for thread pool
@@ -307,16 +306,16 @@ void Viewer::resize(uint32_t width, uint32_t height)
 		samples = 0;
 		tilesFinished.clear();
 		tiles = generateTiles(width, height);
-		camera.perspective = mat4f::perspective(degreef(camera.hFov), width / (float)height, 0.1f, 1000.f);
+		camera.perspective = mat4f::perspective(anglef::degree(camera.hFov), width / (float)height, 0.1f, 1000.f);
 		camera.inverse = mat4f::inverse(camera.perspective);
 	}
 	{
 		Sampler sampler;
 		sampler.filterMag = Sampler::Filter::Nearest;
 		sampler.filterMin = Sampler::Filter::Nearest;
-		sampler.wrapS = Sampler::Wrap::Clamp;
-		sampler.wrapT = Sampler::Wrap::Clamp;
-		texture = Texture::create(width, height, Texture::Format::Float, Texture::Component::RGBA, sampler);
+		sampler.wrapU = Sampler::Wrap::ClampToEdge;
+		sampler.wrapV = Sampler::Wrap::ClampToEdge;
+		texture = Texture::create(width, height, TextureFormat::Float, TextureComponent::RGBA, TextureFlag::None, sampler);
 		std::vector<color4f> bytes(swidth * sheight, color4f(0.f, 0.f, 0.f, 1.f));
 		texture->upload(bytes.data());
 	}

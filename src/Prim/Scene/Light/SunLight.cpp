@@ -4,7 +4,7 @@
 
 namespace prim {
 
-static constexpr radianf sunAngle = radianf(0.00465472f);
+static constexpr anglef sunAngle = anglef::radian(0.00465472f);
 static const float unitSunRadius = tan(sunAngle);
 
 SunLight::SunLight(const norm3f &direction, const color4f &albedo, float intensity) :
@@ -26,7 +26,7 @@ Ray SunLight::sample(const point3f &hitPoint) const
 
 float SunLight::pdf(const Ray & ray) const
 {
-	return 1.f / (2.f * pi<float>() * (1.f - cos(sunAngle))); // output near 19000.f
+	return 1.f / (2.f * pi<float>.radian() * (1.f - cos(sunAngle))); // output near 19000.f
 }
 
 }

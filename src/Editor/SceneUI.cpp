@@ -279,9 +279,9 @@ bool displayTexture(prim::Texture4f* texture)
 void SceneUI::update(aka::Time::Unit deltaTime)
 {
 	ImGuiIO& io = ImGui::GetIO();
-	if (aka::input::down(aka::input::Button::ButtonLeft) && !io.WantCaptureMouse)
+	if (aka::Mouse::down(aka::MouseButton::ButtonLeft) && !io.WantCaptureMouse)
 	{
-		const aka::input::Position& p = aka::input::mouse();
+		const aka::Position& p = aka::Mouse::position();
 		prim::LinearRaySampler sampler;
 		prim::RaySampler::Type sample = sampler(
 			prim::vec2u(p.x, p.y), 
@@ -326,7 +326,7 @@ void SceneUI::draw()
 				{
 
 					pCamera.perspective = mat4f::perspective(
-						degreef(pCamera.hFov),
+						anglef::degree(pCamera.hFov),
 						GraphicBackend::backbuffer()->width() / (float)GraphicBackend::backbuffer()->height(),
 						zNear,
 						zFar

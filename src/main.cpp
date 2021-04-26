@@ -2,13 +2,13 @@
 
 int main(int argc, char* argv[])
 {
-	viewer::Viewer app;
+	viewer::Viewer viewer;
 
 	aka::Config cfg{};
 	cfg.width = 800;
 	cfg.height = 600;
 	cfg.name = "Game";
-	cfg.app = &app;
+	cfg.app = &viewer;
 
 	aka::Application::run(cfg);
 

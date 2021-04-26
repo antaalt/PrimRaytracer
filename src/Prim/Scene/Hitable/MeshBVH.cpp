@@ -64,7 +64,7 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 	{
 		for (uint32_t iTri = 0; iTri < triangles.size(); iTri++)
 			this->triangles.push_back(triangles[iTri]);
-		ASSERT(isLeaf(), "Should be a leaf");
+		AKA_ASSERT(isLeaf(), "Should be a leaf");
 		return 0;
 	}
 	else
@@ -91,7 +91,7 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 			{
 				const Triangle *triangle = triangles[iTri];
 				const point3f triBarycentre = triangle->center();
-				ASSERT(bbox.contain(triBarycentre), "Should be inside");
+				AKA_ASSERT(bbox.contain(triBarycentre), "Should be inside");
 				const std::array<float, childCount> dist = {
 					point3f::distance(triBarycentre, centroid[0]),
 					point3f::distance(triBarycentre, centroid[1])
@@ -111,7 +111,7 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 			// 4. set two points as center of groups
 			for (uint32_t iGroup = 0; iGroup < childCount; iGroup++)
 			{
-				ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
+				AKA_ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
 				point3f tmp(0.f);
 				float weights = 0.f;
 				for (const Triangle* triangle : subGroup[iGroup])
@@ -133,10 +133,10 @@ uint32_t MeshBVH::Node::build(const std::vector<const Triangle*> &triangles, uin
 		uint32_t nodeCount = 0;
 		for (unsigned int iGroup = 0; iGroup < childCount; iGroup++)
 		{
-			ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
+			AKA_ASSERT(subGroup[iGroup].size() > 0, "Should not be empty");
 			this->childrens[iGroup] = new Node;
 			nodeCount += this->childrens[iGroup]->build(subGroup[iGroup], depth);
-			ASSERT(this->bbox.contain(this->childrens[iGroup]->bbox), "Should contain container");
+			AKA_ASSERT(this->bbox.contain(this->childrens[iGroup]->bbox), "Should contain container");
 			nodeCount++;
 		}
 		return nodeCount;

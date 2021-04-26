@@ -19,7 +19,7 @@ vec3f ShapeDisk::sample(const point3f & from) const
 
 float ShapeDisk::pdf() const
 {
-	return geometry::pi<float>() * m_radius * m_radius;
+	return pi<float>.radian() * m_radius * m_radius;
 }
 
 point3f ShapeDisk::position() const

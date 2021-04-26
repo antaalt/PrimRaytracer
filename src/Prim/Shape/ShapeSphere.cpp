@@ -14,7 +14,7 @@ vec3f ShapeSphere::sample(const point3f & from) const
 }
 float ShapeSphere::pdf() const
 {
-	return 4.f * pi<float>() * m_radius * m_radius;;
+	return 4.f * pi<float>.radian() * m_radius * m_radius;;
 }
 point3f ShapeSphere::position() const
 {

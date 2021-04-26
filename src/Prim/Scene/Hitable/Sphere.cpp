@@ -37,8 +37,8 @@ bool Sphere::intersect(const Ray &ray, Intersection *intersection) const
 		hitPoint *= m_radius / point3f::distance(hitPoint, center); // Refine hit
 		const norm3f normal = norm3f::normalize(norm3f(hitPoint - center));
 		// https://en.wikipedia.org/wiki/UV_mapping
-		const float u = 0.5f + geometry::arctan2(-normal.z, -normal.x) / (2.f * geometry::pi<float>);
-		const float v = 0.5f - geometry::arcsin(-normal.y)() / geometry::pi<float>();
+		const float u = 0.5f + (arctan2(-normal.z, -normal.x) / (2.f * pi<float>)).radian();
+		const float v = 0.5f - (arcsin(-normal.y) / pi<float>).radian();
 		const uv2f texcoord = uv2f(u, v);
 		intersection->report(hitPoint, normal, texcoord, this, m_material);
 		ray.tmax = t1;
@@ -53,8 +53,8 @@ bool Sphere::intersect(const Ray &ray, Intersection *intersection) const
 		hitPoint *= m_radius / point3f::distance(hitPoint, center); // Refine hit
 		const norm3f normal = norm3f::normalize(norm3f(hitPoint - center));
 		// https://en.wikipedia.org/wiki/UV_mapping
-		const float u = 0.5f + geometry::arctan2(-normal.z, -normal.x) / (2.f * geometry::pi<float>);
-		const float v = 0.5f - geometry::arcsin(-normal.y)() / geometry::pi<float>();
+		const float u = 0.5f + (arctan2(-normal.z, -normal.x) / (2.f * pi<float>)).radian();
+		const float v = 0.5f - (arcsin(-normal.y) / pi<float>).radian();
 		const uv2f texcoord = uv2f(u, v);
 		intersection->report(hitPoint, normal, texcoord, this, m_material);
 		ray.tmax = t2;
@@ -66,7 +66,7 @@ bool Sphere::intersect(const Ray &ray, Intersection *intersection) const
 
 float Sphere::area() const
 {
-	return 4.f * geometry::pi<float>() * m_radius * m_radius;
+	return 4.f * pi<float>.radian() * m_radius * m_radius;
 }
 
 void Sphere::include(BoundingBox &boundingBox) const
